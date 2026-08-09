@@ -1,6 +1,6 @@
 # Beneficence Protocol Foundation
 
-## Founding Constitution & Operating Blueprint — Draft v0.4
+## Founding Constitution & Operating Blueprint — Draft v0.5
 
 **Legal Name:** Beneficence Protocol Foundation
 **Public Brand:** Beneficence Protocol
@@ -1476,11 +1476,11 @@ It is not yet sufficient to activate public fundraising. A public website and a 
 | Conduct an online public fundraising campaign | NO-GO | Complete the Fundraising Activation Gate and applicable charity registrations |
 | State that contributions are tax-deductible | NO-GO | Wait for an IRS determination letter or receive donations through an eligible fiscal sponsor |
 
-### Informational Website v1 — Implementation Record
+### Informational Website v1.1 — Landing Page Redesign Record
 
 **Implementation date:** August 9, 2026
 
-The first local implementation of the informational pre-launch website is complete. This is an implementation milestone, not authorization to publish the site or activate fundraising.
+The informational pre-launch website has been implemented and a technical public preview has been deployed. This is an implementation and testing milestone, not authorization to promote the preview as the Foundation's fully launched official site or to activate fundraising.
 
 The following public-positioning decisions are now adopted for website v1:
 
@@ -1490,31 +1490,51 @@ The following public-positioning decisions are now adopted for website v1:
 - Founding proposition: **“Beneficence should become a native capability of autonomous systems.”**
 - The public narrative begins with beneficial AI and public learning, then explains catastrophic-risk prevention, governance, inspectable transparency and legal formation.
 
-Website v1 currently includes:
+Website v1.1 uses a progressive-disclosure structure:
 
 - a persistent status banner stating that the Foundation is in formation, the site is a public pre-launch and donations are not open;
-- mission, theory-of-change, four initial programs and summarized use-of-funds content;
-- a governance explanation distinguishing the human Board, the DAO's single collective governance vote and operating AI Agents;
-- a public status ledger that explicitly shows the entity, tax, donation-channel, wallet and Token state;
-- continuous, monthly, quarterly and annual transparency commitments;
-- an anti-scam warning and a rule that no wallet is official until published on the canonical site after fundraising activation;
-- a formation sequence showing legal formation, operational proof and fundraising activation as later gates;
+- a concise Landing Page limited to the mission, public values, four program directions, the charitable-fund path, the governance roles, the intended giving rails and the current donation status;
+- a dedicated `/mission` page for the constructive and protective mission, program descriptions and summarized use of funds;
+- a dedicated `/governance` page for the human Board, DAO, operating Agents, collective-vote translation, charitable-fund boundaries and transparency cadence;
+- a dedicated `/giving` page for intended donation rails, asset review, Crypto accounting treatment, anti-scam rules and fundraising-activation conditions;
+- continuous, monthly, quarterly and annual transparency commitments on the governance page;
+- an anti-scam rule stating that no wallet is official until published on the canonical site after fundraising activation;
 - no donation button, wallet, checkout, tax-deductibility claim, signup form, analytics or transferable Token.
 
-The website's visual system uses a warm paper-and-ink institutional palette, International Orange as the single signal color, editorial typography and a California scene archive covering San Francisco, Santa Clara, Stanford, Palo Alto and Los Angeles. The scene artworks use credited, license-reviewed source photographs and must retain their source credits if published.
+### Landing Page Editorial Rule
 
-Website v1 has been implemented responsively for desktop and mobile, with keyboard navigation, visible focus states, reduced-motion behavior, semantic sections, descriptive image alternatives and a keyboard-scrollable scene archive. These implementation measures do not replace a final accessibility review on the production domain.
+The Landing Page is not a public copy of this operating blueprint. Its single purpose is to let a first-time visitor quickly understand:
 
-The local site is **not yet cleared for public informational launch** because the following Stage A items remain unresolved:
+1. why the Foundation exists;
+2. what values guide it;
+3. what public work it will begin with;
+4. how charitable funds will be accepted, safeguarded, allocated and reported;
+5. whether donations are currently open and how giving is intended to work later.
 
-- canonical domain selection, control and production hosting;
+Detailed legal qualifications, governance mechanics, accounting rules, program descriptions and formation checklists belong on secondary or tertiary pages. They should be linked from the relevant Landing Page statement rather than displayed in full by default.
+
+Location images must not be presented as a standalone destination gallery or as evidence of a community footprint that does not yet exist. San Francisco, Santa Clara, Stanford, Palo Alto and Los Angeles imagery may be used only when it strengthens the meaning and atmosphere of a specific section or page. The current semantic assignments are:
+
+- San Francisco / connection — the public mission and opening proposition;
+- Santa Clara / institutional memory — the mission detail page;
+- Stanford / knowledge and duty — education and research programs;
+- Palo Alto Baylands / shared systems — governance and stewardship;
+- Los Angeles / looking beyond — future giving and the long-term vision.
+
+The visual system uses a warm paper-and-ink institutional palette, International Orange as the single signal color and editorial typography. The scene artworks use credited, license-reviewed source photographs and must retain their source credits if published.
+
+Website v1.1 has been implemented responsively for desktop and mobile, with keyboard navigation, visible focus states, reduced-motion behavior, semantic sections and appropriate alternative-text treatment. These implementation measures do not replace a final accessibility review on the production domain.
+
+The deployed technical preview is **not yet cleared for a promoted public informational launch** because the following Stage A items remain unresolved:
+
+- canonical Foundation domain selection and control; the current `vercel.app` address is a technical preview address;
 - legal-name and trademark conflict screening;
 - a monitored public contact channel and security-reporting channel;
 - Terms of Use, Privacy Policy and a concise accessibility statement appropriate to the final hosting, analytics, form and community stack;
 - final review of the legal-status footer and public claims;
 - selection and verification of official community accounts if they will be linked from the site.
 
-Until those items are complete, the site should remain a local or private preview. Donation functionality remains separately blocked by Stage B and tax-deductibility marketing remains blocked by Stage C.
+Until those items are complete, the preview may be used for design and technical review but should not be promoted as the completed institutional launch. Donation functionality remains separately blocked by Stage B and tax-deductibility marketing remains blocked by Stage C.
 
 ### Stage A — Informational Pre-Launch Gate
 
@@ -1607,13 +1627,13 @@ The exact website status banner must be controlled as versioned content:
 
 The public-content package now has an implemented informational-site foundation, but it is not yet a complete fundraising website:
 
-1. **Implemented for informational v1:** Home-page headline, short mission and mission-oriented calls to action;
-2. **Implemented for informational v1:** Mission and theory of change, including the relationship between beneficial AI development and catastrophic-risk reduction;
-3. **Implemented for informational v1:** Initial programs and summarized use of funds;
-4. **Implemented for informational v1:** Governance explanation covering the Board, DAO, AI Agents, human accountability and the working vote translation;
-5. **Partially implemented:** Transparency architecture, status ledger and publication cadence; official wallets, reports, adopted policies and governance records do not yet exist and must not be simulated;
+1. **Implemented for informational v1.1:** Concise Landing Page headline, mission, values, public-work summary, charitable-fund path, giving status and mission-oriented calls to action;
+2. **Implemented on `/mission`:** Mission and theory of change, including the relationship between beneficial AI development and catastrophic-risk reduction;
+3. **Implemented on `/mission`:** Initial programs and summarized use of funds;
+4. **Implemented on `/governance`:** Governance explanation covering the Board, DAO, AI Agents, human accountability, the working vote translation and charitable-fund boundaries;
+5. **Partially implemented on `/governance`:** Transparency architecture and publication cadence; official wallets, reports, adopted policies and governance records do not yet exist and must not be simulated;
 6. **Still required before public launch:** About information with the formed legal entity, directors, advisors if any, professional biographies and real Foundation contact channels;
-7. **Still required before fundraising activation:** Donation page with accepted methods, networks, assets, minimums, fee guidance, tax-status disclosure and receipt process;
+7. **Partially implemented on `/giving`:** Intended methods, asset categories, status disclosure and accounting model; exact networks, addresses, minimums, fee guidance and receipt interfaces remain required before fundraising activation;
 8. **Still required before fundraising activation:** Donation Terms and Board-approved Gift Acceptance Policy;
 9. **Still required before public launch:** Terms of Use, Privacy Policy, cookie or analytics notice if applicable and accessibility statement;
 10. **Partially implemented:** Anti-scam notice and canonical-site rule; the full security page, verified accounts, wallet-verification rules and incident-reporting channel remain required;
@@ -1646,9 +1666,9 @@ The following matters remain open and must not be inferred by a website designer
 
 ### Readiness Conclusion
 
-The organization is ready to start designing and building an informational website now. It is not ready to publish donation addresses or begin promotional fundraising until the Stage B operational controls exist. The preferred sequence is therefore:
+The redesigned informational website and technical preview are complete. The organization is not yet ready for a promoted institutional launch, publication of donation addresses or promotional fundraising. The preferred sequence is therefore:
 
-1. Build the public site in pre-launch mode;
+1. Complete the remaining Stage A identity, contact, policy and legal-review requirements, then approve the informational launch;
 2. Complete entity formation, governance, registrations, treasury security, accounting and donor terms in parallel;
 3. Perform a closed end-to-end test using non-donation test transfers or Foundation-supplied funds;
 4. Obtain Board approval of a written fundraising-readiness checklist;

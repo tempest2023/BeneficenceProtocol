@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState, type MouseEvent } from 'react'
 import sanFrancisco from './assets/scenes/san-francisco.webp'
 import santaClara from './assets/scenes/santa-clara.webp'
 import stanford from './assets/scenes/stanford.webp'
@@ -6,157 +6,70 @@ import paloAlto from './assets/scenes/palo-alto.webp'
 import losAngeles from './assets/scenes/los-angeles.webp'
 import './App.css'
 
-const navItems = [
-  { href: '#purpose', label: 'Purpose' },
-  { href: '#programs', label: 'Programs' },
-  { href: '#governance', label: 'Governance' },
-  { href: '#transparency', label: 'Transparency' },
-]
+type Navigate = (href: string) => void
 
 const programs = [
   {
     number: '01',
-    title: 'A public voice for beneficial AI',
-    summary:
-      'Build credible channels inside AI communities for public education, informed debate, and a shared language for beneficial and safe Agents.',
-    activity: 'Essays · public forums · research translation · multilingual media',
+    title: 'Make AI legible',
+    short: 'Public education and an independent voice inside AI communities.',
+    detail:
+      'Publish accessible research interpretation, public forums, interviews and multilingual material that help more people understand beneficial and safe AI Agents.',
   },
   {
     number: '02',
-    title: 'Research conversations where the field gathers',
-    summary:
-      'Convene independent workshops, panels, and events around ICML, NeurIPS, ICLR, ACL, and other research communities.',
-    activity: 'Agent ethics · oversight · safety infrastructure · social impact',
+    title: 'Convene the field',
+    short: 'Independent events around the places where AI research gathers.',
+    detail:
+      'Organize workshops, panels and community events around ICML, NeurIPS, ICLR, ACL and related research communities, with accurate affiliation language.',
   },
   {
     number: '03',
-    title: 'Free paths into AI, LLMs, and Agents',
-    summary:
-      'Create open courses that help more people enter responsible AI research and industry—with practical projects, mentorship, and public learning resources.',
-    activity: 'Open curriculum · code · reading groups · mentorship',
+    title: 'Teach openly',
+    short: 'Free paths into AI, LLMs and responsible Agent development.',
+    detail:
+      'Create open courses, curricula, practical projects, reading groups and mentorship that widen access to research and responsible industry work.',
   },
   {
     number: '04',
-    title: 'Learning communities with a real civic life',
-    summary:
-      'Connect learners through primarily free local and online gatherings focused on Agent safety, infrastructure, ethics, and responsible deployment.',
-    activity: 'Community cohorts · local events · project circles · public talks',
+    title: 'Build civic community',
+    short: 'Primarily free online and local spaces for learning and action.',
+    detail:
+      'Connect learners, researchers and builders through cohorts, local gatherings and public discussions on Agent safety, infrastructure and social impact.',
   },
 ]
 
-const scenes = [
-  {
-    city: 'San Francisco',
-    note: 'Connection as a public promise',
-    image: sanFrancisco,
-    alt: 'A paper-collage interpretation of the Golden Gate Bridge, with the bridge photograph crossing a torn edge into orange and charcoal lines.',
-  },
-  {
-    city: 'Santa Clara',
-    note: 'Memory makes room',
-    image: santaClara,
-    alt: 'A paper-collage interpretation of Mission Santa Clara, with its tower and roof reduced into large charcoal and orange forms.',
-  },
-  {
-    city: 'Stanford',
-    note: 'Knowledge bears duty',
-    image: stanford,
-    alt: 'A paper-collage interpretation of Hoover Tower, with the building rising through a torn paper edge and a narrow orange line.',
-  },
-  {
-    city: 'Palo Alto',
-    note: 'Systems share a shore',
-    image: paloAlto,
-    alt: 'A paper-collage interpretation of Palo Alto Baylands, showing utility towers and their reflections joined by an orange horizon.',
-  },
-  {
-    city: 'Los Angeles',
-    note: 'Look beyond',
-    image: losAngeles,
-    alt: 'A paper-collage interpretation of Griffith Observatory, with its domes continuing into charcoal and orange arcs.',
-  },
+const fundPath = [
+  { label: 'Accept', text: 'Only through verified channels and approved assets.' },
+  { label: 'Safeguard', text: 'Segregated custody, policy limits and accountable signers.' },
+  { label: 'Allocate', text: 'Mission budgets governed by humans, DAO and policy.' },
+  { label: 'Publish', text: 'Transactions, decisions, expenses and outcomes.' },
 ]
 
 const governanceActors = [
   {
     label: 'Human Board',
     role: 'Legally accountable',
-    details:
-      'Formation, fiduciary duties, hiring, fundraising, major direction, government interface, and oversight of operating Agents.',
+    text: 'Fiduciary duties, formation, people, major direction and Agent oversight.',
   },
   {
     label: 'DAO',
     role: 'Collectively governing',
-    details:
-      'One authenticated collective governance vote with the same policy weight as one human director, within the adopted constitution.',
+    text: 'One authenticated collective governance vote within the adopted constitution.',
   },
   {
     label: 'AI Agents',
     role: 'Operating by default',
-    details:
-      'Planning, research, reporting, reconciliation, community operations, program delivery, and policy-bound execution.',
+    text: 'Planning, research, reporting and policy-bound program execution.',
   },
 ]
 
-const cadence = [
-  {
-    frequency: 'Live',
-    title: 'Verifiable state',
-    details: 'Official wallets, material transactions, proposals, votes, policies, and execution status.',
-  },
-  {
-    frequency: 'Monthly',
-    title: 'Operating pulse',
-    details: 'Treasury movement, donation accounting, expenses, program work, Agent activity, and human interventions.',
-  },
-  {
-    frequency: 'Quarterly',
-    title: 'Accountability review',
-    details: 'Budget versus actuals, outcomes, concentration risk, governance participation, failures, and control improvements.',
-  },
-  {
-    frequency: 'Annual',
-    title: 'Public record',
-    details: 'Impact report, financial statements, filings, current governance documents, and independent review when proportionate.',
-  },
+const disclosureCadence = [
+  ['Live', 'Wallets, material transactions, proposals and votes'],
+  ['Monthly', 'Treasury movement, expenses, programs and Agent activity'],
+  ['Quarterly', 'Budget, outcomes, risks, failures and control improvements'],
+  ['Annual', 'Financial, governance, impact and filing record'],
 ]
-
-const formationSteps = [
-  {
-    state: 'Current',
-    title: 'Public pre-launch',
-    details: 'Mission, program design, governance architecture, and the public website are being established.',
-  },
-  {
-    state: 'Next',
-    title: 'Legal foundation',
-    details: 'Form the Wyoming nonprofit corporation, obtain an EIN, appoint the Board, and adopt governing policies.',
-  },
-  {
-    state: 'Then',
-    title: 'Operational proof',
-    details: 'Deploy treasury controls, authenticated DAO governance, accounting, screening, receipts, and public reporting.',
-  },
-  {
-    state: 'Gate',
-    title: 'Fundraising activation',
-    details: 'Open verified giving channels only after the Board approves the legal, security, and donor-protection checklist.',
-  },
-]
-
-function Arrow({ direction = 'right' }: { direction?: 'right' | 'down' }) {
-  return (
-    <svg
-      className={`arrow arrow--${direction}`}
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      aria-hidden="true"
-    >
-      <path d="M2 9h13M10 4l5 5-5 5" fill="none" stroke="currentColor" strokeWidth="1.5" />
-    </svg>
-  )
-}
 
 function FoundationMark() {
   return (
@@ -169,8 +82,609 @@ function FoundationMark() {
   )
 }
 
-function App() {
+function Arrow() {
+  return (
+    <svg className="arrow" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+      <path d="M2 9h13M10 4l5 5-5 5" fill="none" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  )
+}
+
+function DeferredImage({ src, width, height }: { src: string; width: number; height: number }) {
+  const imageRef = useRef<HTMLImageElement>(null)
+  const [shouldLoad, setShouldLoad] = useState(false)
+  const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    const image = imageRef.current
+    if (!image) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldLoad(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin: '300px 0px' },
+    )
+    observer.observe(image)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <img
+      ref={imageRef}
+      className={`deferred-image ${loaded ? 'is-loaded' : ''}`}
+      src={shouldLoad ? src : undefined}
+      alt=""
+      width={width}
+      height={height}
+      decoding="async"
+      onLoad={() => setLoaded(true)}
+    />
+  )
+}
+
+function InternalLink({
+  href,
+  navigate,
+  className,
+  children,
+  onNavigate,
+}: {
+  href: string
+  navigate: Navigate
+  className?: string
+  children: React.ReactNode
+  onNavigate?: () => void
+}) {
+  const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+    event.preventDefault()
+    onNavigate?.()
+    navigate(href)
+  }
+
+  return (
+    <a href={href} className={className} onClick={handleClick}>
+      {children}
+    </a>
+  )
+}
+
+function SiteHeader({ navigate }: { navigate: Navigate }) {
   const [menuOpen, setMenuOpen] = useState(false)
+
+  useEffect(() => {
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMenuOpen(false)
+    }
+    window.addEventListener('keydown', closeOnEscape)
+    return () => window.removeEventListener('keydown', closeOnEscape)
+  }, [])
+
+  return (
+    <header className="site-header">
+      <div className="status-strip" aria-label="Organization status">
+        <span className="status-dot" aria-hidden="true" />
+        <span>Public pre-launch</span>
+        <strong>Donations are not yet open</strong>
+      </div>
+      <div className="nav-shell">
+        <InternalLink
+          href="/"
+          navigate={navigate}
+          className="wordmark"
+          onNavigate={() => setMenuOpen(false)}
+        >
+          <FoundationMark />
+          <span>
+            Beneficence Protocol
+            <small>Foundation</small>
+          </span>
+        </InternalLink>
+
+        <button
+          className="menu-toggle"
+          type="button"
+          aria-expanded={menuOpen}
+          aria-controls="primary-navigation"
+          aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          <span />
+          <span />
+        </button>
+
+        <nav
+          id="primary-navigation"
+          className={`primary-navigation ${menuOpen ? 'is-open' : ''}`}
+          aria-label="Primary navigation"
+        >
+          <InternalLink href="/mission" navigate={navigate} onNavigate={() => setMenuOpen(false)}>
+            Mission
+          </InternalLink>
+          <InternalLink href="/mission#programs" navigate={navigate} onNavigate={() => setMenuOpen(false)}>
+            Programs
+          </InternalLink>
+          <InternalLink href="/governance" navigate={navigate} onNavigate={() => setMenuOpen(false)}>
+            Governance
+          </InternalLink>
+          <InternalLink
+            href="/giving"
+            navigate={navigate}
+            className="nav-action"
+            onNavigate={() => setMenuOpen(false)}
+          >
+            Giving <Arrow />
+          </InternalLink>
+        </nav>
+      </div>
+    </header>
+  )
+}
+
+function ImageCreditFooter({ navigate }: { navigate: Navigate }) {
+  return (
+    <footer className="site-footer">
+      <div className="footer-main page-shell">
+        <InternalLink href="/" navigate={navigate} className="wordmark wordmark--footer">
+          <FoundationMark />
+          <span>
+            Beneficence Protocol
+            <small>Foundation</small>
+          </span>
+        </InternalLink>
+        <p className="footer-thesis">Web3 first. Agent operated. Human accountable.</p>
+        <nav aria-label="Footer navigation">
+          <InternalLink href="/mission" navigate={navigate}>Mission</InternalLink>
+          <InternalLink href="/governance" navigate={navigate}>Governance</InternalLink>
+          <InternalLink href="/giving" navigate={navigate}>Giving</InternalLink>
+        </nav>
+      </div>
+      <div className="footer-legal page-shell">
+        <p>
+          Beneficence Protocol Foundation is in formation. It is not yet recognized by the IRS as a §501(c)(3)
+          organization, and this website does not currently accept donations.
+        </p>
+        <p>© 2026 Beneficence Protocol Foundation</p>
+      </div>
+      <details className="image-credits page-shell">
+        <summary>Image sources and notes</summary>
+        <p>Atmospheric artworks are source-preserving paper-collage interpretations, not documentary photographs.</p>
+        <ul>
+          <li><a href="https://commons.wikimedia.org/wiki/File:Golden_Gate_Bridge,_SF.jpg" target="_blank" rel="noreferrer">Golden Gate Bridge — Bernard Gagnon</a></li>
+          <li><a href="https://commons.wikimedia.org/wiki/File:Mission_Santa_Clara.jpg" target="_blank" rel="noreferrer">Mission Santa Clara — JaGa</a></li>
+          <li><a href="https://commons.wikimedia.org/wiki/File:Hoover_Tower_west_face.JPG" target="_blank" rel="noreferrer">Hoover Tower — © BrokenSphere, CC BY-SA</a></li>
+          <li><a href="https://commons.wikimedia.org/wiki/File:Palo_Alto_Baylands_January_2013_001.jpg" target="_blank" rel="noreferrer">Palo Alto Baylands — King of Hearts, CC BY-SA 3.0</a></li>
+          <li><a href="https://commons.wikimedia.org/wiki/File:Griffith_Observatory.jpg" target="_blank" rel="noreferrer">Griffith Observatory — Serouj, public domain</a></li>
+        </ul>
+      </details>
+    </footer>
+  )
+}
+
+function TextLink({ href, navigate, children, light = false }: { href: string; navigate: Navigate; children: React.ReactNode; light?: boolean }) {
+  return (
+    <InternalLink href={href} navigate={navigate} className={`text-link ${light ? 'text-link--light' : ''}`}>
+      <span>{children}</span>
+      <Arrow />
+    </InternalLink>
+  )
+}
+
+function HomePage({ navigate }: { navigate: Navigate }) {
+  return (
+    <>
+      <main id="main-content">
+        <section className="home-hero" aria-labelledby="home-title">
+          <div className="home-hero__art" aria-hidden="true">
+            <img src={sanFrancisco} alt="" width="971" height="1619" fetchPriority="high" />
+          </div>
+          <div className="home-hero__content page-shell">
+            <p className="eyebrow hero-enter hero-enter--1">A public institution for the Agent age</p>
+            <h1 id="home-title">
+              AI Agents should enlarge human possibility—<em>not erase it.</em>
+            </h1>
+            <p className="home-hero__mission hero-enter hero-enter--3">
+              We advance beneficial AI Agents, widen access to AI knowledge, and build safeguards against catastrophic harm from AGI and ASI.
+            </p>
+            <div className="home-hero__actions hero-enter hero-enter--4">
+              <InternalLink href="/mission" navigate={navigate} className="primary-action">
+                Read our mission <Arrow />
+              </InternalLink>
+              <InternalLink href="/governance" navigate={navigate} className="quiet-action">
+                How trust is designed
+              </InternalLink>
+            </div>
+          </div>
+          <div className="home-hero__principles page-shell hero-enter hero-enter--5" aria-label="Founding principles">
+            <span>Web3 first</span>
+            <span>Agent operated</span>
+            <span>Human accountable</span>
+          </div>
+        </section>
+
+        <section className="position-section" aria-labelledby="position-title">
+          <div className="page-shell position-grid">
+            <p className="section-index" data-reveal>01 / Our position</p>
+            <div data-reveal>
+              <h2 id="position-title">Intelligence is becoming public power.</h2>
+              <p className="position-lead">
+                It should serve human flourishing, preserve human agency, and remain answerable to the society it transforms.
+              </p>
+            </div>
+            <div className="value-line" data-reveal>
+              <div><strong>Benefit</strong><span>Direct capability toward public good.</span></div>
+              <div><strong>Agency</strong><span>Protect humanity’s ability to choose.</span></div>
+              <div><strong>Proof</strong><span>Make power, money and outcomes inspectable.</span></div>
+            </div>
+          </div>
+        </section>
+
+        <section className="work-section" aria-labelledby="work-title">
+          <div className="work-visual" aria-hidden="true" data-reveal>
+            <DeferredImage src={stanford} width={972} height={1619} />
+            <span>Knowledge bears duty</span>
+          </div>
+          <div className="work-content" data-reveal>
+            <p className="section-index">02 / What we do</p>
+            <h2 id="work-title">We begin with public learning.</h2>
+            <ol className="work-list">
+              {programs.map((program) => (
+                <li key={program.number}>
+                  <span>{program.number}</span>
+                  <div><strong>{program.title}</strong><p>{program.short}</p></div>
+                </li>
+              ))}
+            </ol>
+            <TextLink href="/mission#programs" navigate={navigate}>Explore the first programs</TextLink>
+          </div>
+        </section>
+
+        <section className="stewardship-section" aria-labelledby="stewardship-title">
+          <div className="stewardship-art" aria-hidden="true">
+            <DeferredImage src={paloAlto} width={971} height={1619} />
+          </div>
+          <div className="page-shell stewardship-content">
+            <div className="stewardship-heading" data-reveal>
+              <p className="section-index section-index--light">03 / Stewardship</p>
+              <h2 id="stewardship-title">Every gift should have a public path.</h2>
+              <p>Money moves through controls—not a black box.</p>
+            </div>
+            <ol className="fund-path" data-reveal>
+              {fundPath.map((step, index) => (
+                <li key={step.label}>
+                  <span>0{index + 1}</span>
+                  <strong>{step.label}</strong>
+                  <p>{step.text}</p>
+                </li>
+              ))}
+            </ol>
+            <div className="accountability-line" data-reveal>
+              <p><strong>Human Board</strong> carries legal accountability.</p>
+              <p><strong>DAO</strong> participates through one collective vote.</p>
+              <p><strong>AI Agents</strong> execute within visible policy.</p>
+            </div>
+            <TextLink href="/governance" navigate={navigate} light>Inspect the governance model</TextLink>
+          </div>
+        </section>
+
+        <section className="giving-section" aria-labelledby="giving-title">
+          <div className="giving-art" aria-hidden="true" data-reveal>
+            <DeferredImage src={losAngeles} width={971} height={1619} />
+          </div>
+          <div className="giving-content" data-reveal>
+            <p className="section-index">04 / Giving</p>
+            <h2 id="giving-title">Giving opens only after trust is operational.</h2>
+            <p className="giving-lead">
+              The intended rails are native to both people and Agents: crypto, stablecoins and conventional payments—accepted only after legal, custody and accounting controls are ready.
+            </p>
+            <div className="giving-status">
+              <span>Current status</span>
+              <strong>Not yet accepting donations</strong>
+            </div>
+            <p className="asset-summary">BTC · ETH · BNB · approved stablecoins · reviewed assets · fiat rails</p>
+            <TextLink href="/giving" navigate={navigate}>See how giving will work</TextLink>
+          </div>
+        </section>
+
+        <section className="closing-section" aria-labelledby="closing-title">
+          <div className="page-shell" data-reveal>
+            <p className="eyebrow">Our long view</p>
+            <h2 id="closing-title">Beneficence should become a native capability of autonomous systems.</h2>
+            <InternalLink href="/mission" navigate={navigate} className="closing-link">
+              The future we are building <Arrow />
+            </InternalLink>
+          </div>
+        </section>
+      </main>
+    </>
+  )
+}
+
+function DetailHero({
+  eyebrow,
+  title,
+  lead,
+  image,
+  imagePosition,
+}: {
+  eyebrow: string
+  title: string
+  lead: string
+  image: string
+  imagePosition?: string
+}) {
+  return (
+    <section className="detail-hero">
+      <div className="detail-hero__image" aria-hidden="true">
+        <img src={image} alt="" width="971" height="1619" style={{ objectPosition: imagePosition }} />
+      </div>
+      <div className="page-shell detail-hero__content">
+        <p className="eyebrow hero-enter hero-enter--1">{eyebrow}</p>
+        <h1>{title}</h1>
+        <p className="hero-enter hero-enter--3">{lead}</p>
+      </div>
+    </section>
+  )
+}
+
+function MissionPage({ navigate }: { navigate: Navigate }) {
+  return (
+    <main id="main-content">
+      <DetailHero
+        eyebrow="Mission and public work"
+        title="Build benefit. Prevent catastrophe."
+        lead="Beneficence Protocol exists to make AI Agents more useful to humanity—and increasingly capable systems less able to destroy what humanity values."
+        image={santaClara}
+        imagePosition="50% 58%"
+      />
+
+      <section className="detail-section">
+        <div className="page-shell two-theses">
+          <article data-reveal>
+            <span>Constructive</span>
+            <h2>Help Agents create public good.</h2>
+            <p>Widen access to knowledge, support responsible research and build practical paths for AI to serve people and communities.</p>
+          </article>
+          <article data-reveal>
+            <span>Protective</span>
+            <h2>Keep the worst outcomes from becoming irreversible.</h2>
+            <p>Protect human life, agency, institutions and society’s ability to govern its own future in an AGI/ASI era.</p>
+          </article>
+        </div>
+      </section>
+
+      <section className="program-detail-section" id="programs" aria-labelledby="program-detail-title">
+        <div className="page-shell">
+          <div className="detail-heading" data-reveal>
+            <p className="section-index">The first public work</p>
+            <h2 id="program-detail-title">Four programs. One public purpose.</h2>
+          </div>
+          <div className="program-detail-list">
+            {programs.map((program) => (
+              <article key={program.number} data-reveal>
+                <span>{program.number}</span>
+                <h3>{program.title}</h3>
+                <p>{program.detail}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="use-of-funds-section" aria-labelledby="use-of-funds-title">
+        <div className="page-shell use-of-funds-grid">
+          <div data-reveal>
+            <p className="section-index section-index--light">Use of funds</p>
+            <h2 id="use-of-funds-title">Programs first. Infrastructure in service of programs.</h2>
+          </div>
+          <ul data-reveal>
+            <li>Education, curriculum and public research</li>
+            <li>Events, access, translation and community support</li>
+            <li>Open-source and public-benefit technology</li>
+            <li>Qualified people and operating AI systems</li>
+            <li>Legal, accounting, security and compliance</li>
+          </ul>
+          <TextLink href="/governance" navigate={navigate} light>See how funds are governed</TextLink>
+        </div>
+      </section>
+    </main>
+  )
+}
+
+function GovernancePage({ navigate }: { navigate: Navigate }) {
+  return (
+    <main id="main-content">
+      <DetailHero
+        eyebrow="Governance and stewardship"
+        title="Power should leave a record."
+        lead="The organization is designed for Agent operation without anonymous authority: legal responsibility stays visible, community governance has a defined place and every material action should be inspectable."
+        image={paloAlto}
+        imagePosition="50% 62%"
+      />
+
+      <section className="actors-section" aria-labelledby="actors-title">
+        <div className="page-shell">
+          <div className="detail-heading" data-reveal>
+            <p className="section-index">Responsibility map</p>
+            <h2 id="actors-title">Distributed intelligence. Located accountability.</h2>
+          </div>
+          <div className="actor-list">
+            {governanceActors.map((actor, index) => (
+              <article key={actor.label} data-reveal>
+                <span>0{index + 1}</span>
+                <p>{actor.role}</p>
+                <h3>{actor.label}</h3>
+                <strong>{actor.text}</strong>
+              </article>
+            ))}
+          </div>
+          <div className="vote-note" data-reveal>
+            <strong>Working vote architecture</strong>
+            <p>Each natural-person director has one vote. The authenticated DAO community produces one collective governance vote with equal policy weight, subject to nonprofit law and nondelegable fiduciary duties.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="fund-detail-section" aria-labelledby="fund-detail-title">
+        <div className="page-shell">
+          <div className="detail-heading detail-heading--light" data-reveal>
+            <p className="section-index section-index--light">The public path</p>
+            <h2 id="fund-detail-title">From accepted gift to visible outcome.</h2>
+          </div>
+          <ol className="fund-path fund-path--detail" data-reveal>
+            {fundPath.map((step, index) => (
+              <li key={step.label}>
+                <span>0{index + 1}</span>
+                <strong>{step.label}</strong>
+                <p>{step.text}</p>
+              </li>
+            ))}
+          </ol>
+          <p className="fund-boundary" data-reveal>
+            Charitable assets remain Foundation property. They do not become donor property, Token-holder property or a private protocol treasury.
+          </p>
+        </div>
+      </section>
+
+      <section className="disclosure-section" aria-labelledby="disclosure-title">
+        <div className="page-shell">
+          <div className="detail-heading" data-reveal>
+            <p className="section-index">Publication cadence</p>
+            <h2 id="disclosure-title">Trust is a reporting system.</h2>
+          </div>
+          <dl className="cadence-list">
+            {disclosureCadence.map(([term, description]) => (
+              <div key={term} data-reveal><dt>{term}</dt><dd>{description}</dd></div>
+            ))}
+          </dl>
+          <TextLink href="/giving" navigate={navigate}>Review the future donation model</TextLink>
+        </div>
+      </section>
+    </main>
+  )
+}
+
+function GivingPage({ navigate }: { navigate: Navigate }) {
+  return (
+    <main id="main-content">
+      <DetailHero
+        eyebrow="Future giving architecture"
+        title="Native to the Agent economy. Bound to charitable law."
+        lead="Beneficence intends to accept both conventional and digital-asset gifts through verified channels, with every asset screened, recorded and governed as charitable property."
+        image={losAngeles}
+        imagePosition="50% 58%"
+      />
+
+      <section className="current-status-section">
+        <div className="page-shell current-status-grid" data-reveal>
+          <span>Current status</span>
+          <h2>Donation channels are not yet active.</h2>
+          <p>No wallet, address or payment link is official until it appears on this canonical site after the fundraising activation gate.</p>
+        </div>
+      </section>
+
+      <section className="gift-model-section" aria-labelledby="gift-model-title">
+        <div className="page-shell">
+          <div className="detail-heading" data-reveal>
+            <p className="section-index">Intended rails</p>
+            <h2 id="gift-model-title">Broad access. Asset-by-asset control.</h2>
+          </div>
+          <div className="gift-groups">
+            <article data-reveal><span>Core digital assets</span><h3>BTC · ETH · BNB</h3><p>Accepted only on specifically approved networks and through published Foundation-controlled addresses.</p></article>
+            <article data-reveal><span>Stable and conventional</span><h3>Approved stablecoins · ACH · cards · wires</h3><p>Lower-cost routes should be recommended when fees would consume a disproportionate share of a gift.</p></article>
+            <article data-reveal><span>Reviewed assets</span><h3>Exchange-issued tokens · Meme Coins · other assets</h3><p>Individual review for liquidity, custody, contract, compliance, accounting and liquidation risk.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section className="receipt-section" aria-labelledby="receipt-title">
+        <div className="page-shell receipt-grid">
+          <div data-reveal>
+            <p className="section-index section-index--light">Accounting rule</p>
+            <h2 id="receipt-title">A gift and its later investment result are not the same thing.</h2>
+          </div>
+          <div className="receipt-steps" data-reveal>
+            <p><span>At receipt</span>Record quantity, chain, timestamp and defensible fair value.</p>
+            <p><span>After receipt</span>Report appreciation or loss separately from donation revenue.</p>
+            <p><span>For the donor</span>Describe donated property; do not promise or assign the donor’s tax value.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="activation-section" aria-labelledby="activation-title">
+        <div className="page-shell">
+          <div className="detail-heading" data-reveal>
+            <p className="section-index">Before giving opens</p>
+            <h2 id="activation-title">Formation before solicitation.</h2>
+          </div>
+          <ol className="activation-list">
+            <li data-reveal><span>01</span><strong>Legal entity and Board</strong></li>
+            <li data-reveal><span>02</span><strong>Custody and signer controls</strong></li>
+            <li data-reveal><span>03</span><strong>Gift acceptance and screening</strong></li>
+            <li data-reveal><span>04</span><strong>Accounting and receipts</strong></li>
+            <li data-reveal><span>05</span><strong>Public addresses and reporting</strong></li>
+          </ol>
+          <TextLink href="/governance" navigate={navigate}>See the stewardship model</TextLink>
+        </div>
+      </section>
+    </main>
+  )
+}
+
+function NotFoundPage({ navigate }: { navigate: Navigate }) {
+  return (
+    <main id="main-content" className="not-found page-shell">
+      <p className="eyebrow">404</p>
+      <h1>This page is not part of the public record.</h1>
+      <TextLink href="/" navigate={navigate}>Return home</TextLink>
+    </main>
+  )
+}
+
+function normalizePath(pathname: string) {
+  const normalized = pathname.replace(/\/+$/, '')
+  return normalized || '/'
+}
+
+function resetScrollPosition() {
+  const root = document.documentElement
+  const previousBehavior = root.style.scrollBehavior
+  root.style.scrollBehavior = 'auto'
+  window.scrollTo(0, 0)
+  window.requestAnimationFrame(() => {
+    root.style.scrollBehavior = previousBehavior
+  })
+}
+
+function App() {
+  const [route, setRoute] = useState(() => normalizePath(window.location.pathname))
+
+  const navigate: Navigate = (href) => {
+    const url = new URL(href, window.location.origin)
+    window.history.pushState({}, '', `${url.pathname}${url.hash}`)
+    setRoute(normalizePath(url.pathname))
+    window.requestAnimationFrame(() => {
+      const target = url.hash ? document.querySelector(url.hash) : null
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      else resetScrollPosition()
+    })
+  }
+
+  useEffect(() => {
+    window.history.scrollRestoration = 'manual'
+    const handlePopState = () => {
+      setRoute(normalizePath(window.location.pathname))
+    }
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [])
+
+  useEffect(() => {
+    if (!window.location.hash) resetScrollPosition()
+  }, [route])
 
   useEffect(() => {
     document.documentElement.classList.add('motion-ready')
@@ -184,459 +698,35 @@ function App() {
           }
         })
       },
-      { threshold: 0.14, rootMargin: '0px 0px -7% 0px' },
+      { threshold: 0.12, rootMargin: '0px 0px -6% 0px' },
     )
-
     elements.forEach((element) => observer.observe(element))
     return () => observer.disconnect()
-  }, [])
+  }, [route])
 
   useEffect(() => {
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setMenuOpen(false)
+    const titles: Record<string, string> = {
+      '/': 'Beneficence Protocol Foundation — Keep the Agent Age Human',
+      '/mission': 'Mission and Programs — Beneficence Protocol Foundation',
+      '/governance': 'Governance and Stewardship — Beneficence Protocol Foundation',
+      '/giving': 'Future Giving Architecture — Beneficence Protocol Foundation',
     }
-    window.addEventListener('keydown', closeOnEscape)
-    return () => window.removeEventListener('keydown', closeOnEscape)
-  }, [])
+    document.title = titles[route] ?? 'Beneficence Protocol Foundation'
+  }, [route])
 
-  const closeMenu = () => setMenuOpen(false)
+  let page: React.ReactNode
+  if (route === '/') page = <HomePage navigate={navigate} />
+  else if (route === '/mission') page = <MissionPage navigate={navigate} />
+  else if (route === '/governance') page = <GovernancePage navigate={navigate} />
+  else if (route === '/giving') page = <GivingPage navigate={navigate} />
+  else page = <NotFoundPage navigate={navigate} />
 
   return (
     <div className="site-shell">
-      <a className="skip-link" href="#main-content">
-        Skip to main content
-      </a>
-
-      <header className="site-header">
-        <div className="status-strip" aria-label="Organization status">
-          <span className="status-strip__signal" aria-hidden="true" />
-          <span>Foundation in formation</span>
-          <span className="status-strip__divider" aria-hidden="true" />
-          <span>Public pre-launch</span>
-          <span className="status-strip__divider" aria-hidden="true" />
-          <strong>Donations are not yet open</strong>
-        </div>
-
-        <div className="nav-shell">
-          <a className="wordmark" href="#top" onClick={closeMenu} aria-label="Beneficence Protocol Foundation, home">
-            <FoundationMark />
-            <span>
-              Beneficence Protocol
-              <small>Foundation</small>
-            </span>
-          </a>
-
-          <button
-            className="menu-toggle"
-            type="button"
-            aria-expanded={menuOpen}
-            aria-controls="primary-navigation"
-            aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}
-            onClick={() => setMenuOpen((open) => !open)}
-          >
-            <span />
-            <span />
-          </button>
-
-          <nav
-            id="primary-navigation"
-            className={`primary-navigation ${menuOpen ? 'is-open' : ''}`}
-            aria-label="Primary navigation"
-          >
-            {navItems.map((item) => (
-              <a key={item.href} href={item.href} onClick={closeMenu}>
-                {item.label}
-              </a>
-            ))}
-            <a className="nav-action" href="#formation" onClick={closeMenu}>
-              Formation log <Arrow />
-            </a>
-          </nav>
-        </div>
-      </header>
-
-      <main id="main-content">
-        <section className="hero" id="top" aria-labelledby="hero-title">
-          <div className="hero__copy">
-            <p className="eyebrow hero__eyebrow">A public institution for the Agent age</p>
-            <h1 id="hero-title">
-              AI Agents should enlarge human possibility—
-              <em>not erase it.</em>
-            </h1>
-            <p className="hero__mission">
-              Beneficence Protocol Foundation advances AI Agents that benefit society, while building the institutions and safeguards needed to prevent AGI and ASI from devastating human life, agency, and social order.
-            </p>
-            <div className="hero__actions">
-              <a className="text-action text-action--strong" href="#purpose">
-                Explore the mission <Arrow direction="down" />
-              </a>
-              <a className="text-action" href="#governance">
-                See how responsibility is located <Arrow />
-              </a>
-            </div>
-            <ul className="principle-line" aria-label="Founding principles">
-              <li>Web3 first</li>
-              <li>Agent operated</li>
-              <li>Human accountable</li>
-            </ul>
-          </div>
-
-          <figure className="hero__art">
-            <div className="hero__image-frame">
-              <img
-                src={sanFrancisco}
-                width="971"
-                height="1619"
-                fetchPriority="high"
-                alt="A paper-collage interpretation of the Golden Gate Bridge, with the bridge photograph crossing a torn edge into orange and charcoal lines."
-              />
-            </div>
-            <figcaption>
-              <span>Scene 01 / San Francisco</span>
-              <span>Connection as a public promise</span>
-            </figcaption>
-            <span className="formation-stamp" aria-hidden="true">
-              Pre-formation<br />Archive 01
-            </span>
-          </figure>
-        </section>
-
-        <section className="purpose-section" id="purpose" aria-labelledby="purpose-title">
-          <div className="section-shell">
-            <p className="eyebrow eyebrow--light" data-reveal>
-              Why we exist
-            </p>
-            <div className="purpose-statement" data-reveal>
-              <h2 id="purpose-title">
-                Capability is arriving faster than the institutions meant to guide it.
-              </h2>
-              <p>
-                The future of AI cannot be left to capability alone. It needs public-interest organizations able to shape incentives, widen access to knowledge, test new forms of governance, and defend humanity’s ability to choose its own future.
-              </p>
-            </div>
-
-            <ol className="imperatives">
-              <li data-reveal style={{ '--i': 0 } as React.CSSProperties}>
-                <span>01</span>
-                <h3>Advance</h3>
-                <p>Help beneficial Agents create measurable value for people and communities.</p>
-              </li>
-              <li data-reveal style={{ '--i': 1 } as React.CSSProperties}>
-                <span>02</span>
-                <h3>Prevent</h3>
-                <p>Reduce catastrophic and irreversible harm from increasingly capable systems.</p>
-              </li>
-              <li data-reveal style={{ '--i': 2 } as React.CSSProperties}>
-                <span>03</span>
-                <h3>Demonstrate</h3>
-                <p>Build an Agent-operated institution without dissolving human accountability.</p>
-              </li>
-            </ol>
-          </div>
-        </section>
-
-        <section className="programs-section" id="programs" aria-labelledby="programs-title">
-          <div className="programs-heading section-shell">
-            <div data-reveal>
-              <p className="eyebrow">The first public work</p>
-              <h2 id="programs-title">Begin with public learning.</h2>
-            </div>
-            <p className="section-intro" data-reveal>
-              Before infrastructure becomes a protocol, it must become a culture: people who can ask better questions, share practical knowledge, and organize around the public consequences of autonomous systems.
-            </p>
-          </div>
-
-          <div className="program-list section-shell">
-            {programs.map((program, index) => (
-              <article
-                className="program-row"
-                key={program.number}
-                data-reveal
-                style={{ '--i': index } as React.CSSProperties}
-              >
-                <span className="program-row__number">{program.number}</span>
-                <h3>{program.title}</h3>
-                <div>
-                  <p>{program.summary}</p>
-                  <span className="program-row__activity">{program.activity}</span>
-                </div>
-              </article>
-            ))}
-          </div>
-
-          <div className="program-note section-shell" data-reveal>
-            <span>Use of funds</span>
-            <p>
-              Education, research, publications, open-source work, events, accessibility, qualified people and Agents, and the legal, accounting, security, and technical infrastructure required to deliver these programs responsibly.
-            </p>
-          </div>
-        </section>
-
-        <section className="scene-archive" aria-labelledby="places-title">
-          <div className="scene-archive__heading section-shell" data-reveal>
-            <div>
-              <p className="eyebrow">A public future has a geography</p>
-              <h2 id="places-title">Five scenes. One civic horizon.</h2>
-            </div>
-            <p>
-              The first community footprint stretches across California’s research, technology, cultural, and civic landscapes. Each place is treated as evidence—not decoration.
-            </p>
-          </div>
-
-          <div
-            className="scene-rail"
-            role="region"
-            tabIndex={0}
-            aria-label="California scene archive. Scroll horizontally to view five scene artworks."
-          >
-            {scenes.map((scene, index) => (
-              <figure className="scene-figure" key={scene.city} data-reveal>
-                <div className="scene-figure__image">
-                  <img
-                    src={scene.image}
-                    width={index === 2 ? '972' : '971'}
-                    height="1619"
-                    loading={index === 0 ? 'eager' : 'lazy'}
-                    decoding="async"
-                    alt={scene.alt}
-                  />
-                </div>
-                <figcaption>
-                  <span>{String(index + 1).padStart(2, '0')}</span>
-                  <strong>{scene.city}</strong>
-                  <small>{scene.note}</small>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-        </section>
-
-        <section className="governance-section" id="governance" aria-labelledby="governance-title">
-          <div className="governance-heading section-shell">
-            <div data-reveal>
-              <p className="eyebrow">Governance as public infrastructure</p>
-              <h2 id="governance-title">Distributed intelligence. Located responsibility.</h2>
-            </div>
-            <p data-reveal>
-              Automation by default is a constitutional principle—not a promise to remove people from accountability. Work moves to Agents; authority is made explicit; legal responsibility remains visible.
-            </p>
-          </div>
-
-          <div className="governance-actors section-shell">
-            {governanceActors.map((actor, index) => (
-              <article
-                className={`governance-actor governance-actor--${index + 1}`}
-                key={actor.label}
-                data-reveal
-                style={{ '--i': index } as React.CSSProperties}
-              >
-                <div className="governance-actor__index">0{index + 1}</div>
-                <p>{actor.role}</p>
-                <h3>{actor.label}</h3>
-                <span>{actor.details}</span>
-              </article>
-            ))}
-          </div>
-
-          <div className="vote-architecture section-shell" data-reveal>
-            <div className="vote-architecture__formula" aria-label="Working governance vote architecture">
-              <span>Each director</span>
-              <strong>1 vote</strong>
-              <i aria-hidden="true">+</i>
-              <span>DAO community</span>
-              <strong className="accent-value">1 collective vote</strong>
-            </div>
-            <div className="vote-architecture__note">
-              <span>Working legal translation</span>
-              <p>
-                Wyoming directors must be natural persons. The DAO therefore participates through an equal-weight collective governance vote and binding delegation where law permits; formal Board acts remain with the accountable human directors.
-              </p>
-            </div>
-          </div>
-
-          <div className="decision-loop section-shell" data-reveal>
-            <span>Mission decision loop</span>
-            <ol>
-              <li>Propose</li>
-              <li>Evaluate</li>
-              <li>Vote</li>
-              <li>Execute</li>
-              <li>Record</li>
-            </ol>
-          </div>
-        </section>
-
-        <section className="transparency-section" id="transparency" aria-labelledby="transparency-title">
-          <div className="section-shell">
-            <div className="transparency-heading">
-              <div data-reveal>
-                <p className="eyebrow eyebrow--light">Trust must be inspectable</p>
-                <h2 id="transparency-title">No black box—financial or algorithmic.</h2>
-              </div>
-              <p data-reveal>
-                Governance, funds, Agent activity, human intervention, and real-world outcomes should form one public record. Transparency is part of the operating system, not a report added at the end.
-              </p>
-            </div>
-
-            <div className="status-ledger" data-reveal>
-              <div className="status-ledger__heading">
-                <span>Public status ledger</span>
-                <span>Last defined / August 2026</span>
-              </div>
-              <dl>
-                <div>
-                  <dt>Legal entity</dt>
-                  <dd>In formation</dd>
-                </div>
-                <div>
-                  <dt>Federal tax status</dt>
-                  <dd>Not yet recognized</dd>
-                </div>
-                <div>
-                  <dt>Donation channels</dt>
-                  <dd>Not yet active</dd>
-                </div>
-                <div>
-                  <dt>Official wallets</dt>
-                  <dd>Not yet published</dd>
-                </div>
-                <div>
-                  <dt>Initial token</dt>
-                  <dd>None</dd>
-                </div>
-                <div>
-                  <dt>Governance design</dt>
-                  <dd>Tokenless DAO + human Board</dd>
-                </div>
-              </dl>
-              <p className="status-ledger__warning">
-                Anti-scam notice: no address is an official donation address until it is published on this canonical site after fundraising activation.
-              </p>
-            </div>
-
-            <div className="cadence-grid">
-              {cadence.map((item, index) => (
-                <article key={item.frequency} data-reveal style={{ '--i': index } as React.CSSProperties}>
-                  <span>{item.frequency}</span>
-                  <h3>{item.title}</h3>
-                  <p>{item.details}</p>
-                </article>
-              ))}
-            </div>
-
-            <div className="asset-line" data-reveal>
-              <div>
-                <span>Designed for native giving</span>
-                <p>BTC · ETH · BNB · approved stablecoins · selected exchange-issued assets · reviewed Meme Coins</p>
-              </div>
-              <p>
-                Asset support is an operating intention, not a current solicitation. Every asset and network will be individually listed and risk-reviewed before acceptance.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section className="formation-section" id="formation" aria-labelledby="formation-title">
-          <div className="formation-heading section-shell">
-            <div data-reveal>
-              <p className="eyebrow">Formation in public</p>
-              <h2 id="formation-title">Earn the right to ask for trust.</h2>
-            </div>
-            <p data-reveal>
-              The website can begin as an open window into the institution. Fundraising begins only after the entity, governance, custody, accounting, donor terms, and compliance controls are real.
-            </p>
-          </div>
-
-          <ol className="formation-steps section-shell">
-            {formationSteps.map((step, index) => (
-              <li key={step.title} data-reveal style={{ '--i': index } as React.CSSProperties}>
-                <div className="formation-steps__marker">
-                  <span>{String(index + 1).padStart(2, '0')}</span>
-                </div>
-                <div>
-                  <span className="formation-steps__state">{step.state}</span>
-                  <h3>{step.title}</h3>
-                  <p>{step.details}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        <section className="closing-statement" aria-labelledby="closing-title">
-          <div className="section-shell" data-reveal>
-            <p className="eyebrow">A founding proposition</p>
-            <h2 id="closing-title">
-              Beneficence should become a native capability of autonomous systems.
-            </h2>
-            <p>
-              An Agent economy will learn to earn, buy, sell, save, and invest. It must also learn to give—and to remain answerable to the human future it helps create.
-            </p>
-            <a className="text-action text-action--dark" href="#top">
-              Return to the proposition <Arrow direction="down" />
-            </a>
-          </div>
-        </section>
-      </main>
-
-      <footer className="site-footer">
-        <div className="site-footer__main section-shell">
-          <a className="wordmark wordmark--footer" href="#top" aria-label="Beneficence Protocol Foundation, return home">
-            <FoundationMark />
-            <span>
-              Beneficence Protocol
-              <small>Foundation</small>
-            </span>
-          </a>
-          <div>
-            <p>Web3 first. Agent operated. Human accountable.</p>
-            <p>Community channels and professional contacts will be published as legal formation is completed.</p>
-          </div>
-        </div>
-
-        <div className="site-footer__legal section-shell">
-          <p>
-            Beneficence Protocol Foundation is currently in formation. It is not yet recognized by the IRS as a §501(c)(3) organization, and donations are not currently accepted through this website.
-          </p>
-          <p>© 2026 Beneficence Protocol Foundation. Working public pre-launch.</p>
-        </div>
-
-        <details className="image-credits section-shell">
-          <summary>Source photography and image notes</summary>
-          <div>
-            <p>
-              Scene artworks were derived from truthful location photographs using a paper-collage abstraction process. The artworks are not documentary photographs.
-            </p>
-            <ul>
-              <li>
-                <a href="https://commons.wikimedia.org/wiki/File:Golden_Gate_Bridge,_SF.jpg" target="_blank" rel="noreferrer">
-                  Golden Gate Bridge, SF — Bernard Gagnon / Wikimedia Commons
-                </a>
-              </li>
-              <li>
-                <a href="https://commons.wikimedia.org/wiki/File:Mission_Santa_Clara.jpg" target="_blank" rel="noreferrer">
-                  Mission Santa Clara — JaGa / Wikimedia Commons
-                </a>
-              </li>
-              <li>
-                <a href="https://commons.wikimedia.org/wiki/File:Hoover_Tower_west_face.JPG" target="_blank" rel="noreferrer">
-                  Hoover Tower — © BrokenSphere / Wikimedia Commons, CC BY-SA
-                </a>
-              </li>
-              <li>
-                <a href="https://commons.wikimedia.org/wiki/File:Palo_Alto_Baylands_January_2013_001.jpg" target="_blank" rel="noreferrer">
-                  Palo Alto Baylands — King of Hearts / Wikimedia Commons, CC BY-SA 3.0
-                </a>
-              </li>
-              <li>
-                <a href="https://commons.wikimedia.org/wiki/File:Griffith_Observatory.jpg" target="_blank" rel="noreferrer">
-                  Griffith Observatory — Serouj / Wikimedia Commons, public domain
-                </a>
-              </li>
-            </ul>
-          </div>
-        </details>
-      </footer>
+      <a className="skip-link" href="#main-content">Skip to main content</a>
+      <SiteHeader navigate={navigate} />
+      {page}
+      <ImageCreditFooter navigate={navigate} />
     </div>
   )
 }
