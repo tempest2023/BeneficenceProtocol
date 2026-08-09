@@ -1454,6 +1454,48 @@ Transactions, grants, licenses and shared services between the Foundation and th
 
 # 26. Proposed Launch Sequence
 
+## Launch TODO — Required Owner Inputs
+
+This is the consolidated handoff list for the official website launch. Items remain unchecked until the final information, evidence or production URL has been supplied and verified in the deployed website.
+
+### Institutional identity and legal status
+
+- [ ] Provide the Foundation's exact registered legal name, formation jurisdiction, registration number and principal public mailing address.
+- [ ] Provide the EIN and the IRS determination letter, including its effective date, before publishing any §501(c)(3) recognition or tax-deductibility claim.
+- [ ] If donations will launch through a fiscal sponsor instead, provide the sponsor's legal name, agreement, approved public description, fees, restrictions and official donation URL.
+- [ ] Provide the names, Foundation roles, short professional biographies and approved public profiles of the initial directors and officers.
+
+### Official contact and identity channels
+
+- [ ] Provide monitored Foundation-controlled email addresses for general inquiries, donor support, privacy requests, security reports and legal notices.
+- [ ] Confirm the production domain and provide proof of registrar, DNS and hosting control.
+- [ ] Provide the official verified social and community account URLs that may be linked from the website.
+- [ ] Provide the final social-sharing image and approve the canonical URL, Open Graph URL and public metadata for every route.
+
+### Donation channels and asset registry
+
+- [ ] Provide every production donation URL for card, ACH, wire, DAF or other conventional payment channels.
+- [ ] Provide every official wallet address with its network, asset, token contract, checksum, custody owner, effective date and independent verification record.
+- [ ] Approve the exact launch registry of accepted assets and networks, including stablecoins, exchange-issued tokens, Meme Coins, confirmation requirements, minimums and fee guidance.
+- [ ] Provide the public wallet-verification and address-rotation procedure, signed change log and incident-reporting instructions.
+- [ ] Complete and verify the production donation flow, acknowledgment or receipt flow, donor-support path and refund or mistaken-transfer process.
+
+### Public policies and donor terms
+
+- [ ] Approve and publish the Terms of Use.
+- [ ] Approve and publish the Privacy Policy, including the actual hosting, analytics, payment, email and community providers used at launch.
+- [ ] Approve and publish the Accessibility Statement.
+- [ ] Confirm whether a cookie or analytics notice is required for the final production stack and publish it if applicable.
+- [ ] Approve and publish the Donation Terms and Board-approved Gift Acceptance Policy.
+
+### Governance and public accountability evidence
+
+- [ ] Provide the adopted Articles, Bylaws, conflict-of-interest policy, Gift Acceptance Policy and other governance documents approved for public release.
+- [ ] Provide the official treasury addresses, block-explorer links and custody disclosures approved for publication.
+- [ ] Provide the destinations for live, monthly, quarterly and annual treasury, program, governance, financial and impact reports.
+- [ ] Provide the initial twelve-month budget or Board-approved public use-of-funds allocation ranges.
+- [ ] Complete a final evidence review confirming that every institutional, governance, donation and reporting claim on the production website links to a real policy, record, channel or accountable contact.
+
 ## Current Website and Fundraising Readiness Assessment
 
 The current document is sufficiently developed to begin:

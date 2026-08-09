@@ -50,7 +50,7 @@ const governanceActors = [
   {
     label: 'Human Board',
     role: 'Legally accountable',
-    text: 'Fiduciary duties, formation, people, major direction and Agent oversight.',
+    text: 'Fiduciary duties, legal standing, people, major direction and Agent oversight.',
   },
   {
     label: 'DAO',
@@ -238,10 +238,7 @@ function ImageCreditFooter({ navigate }: { navigate: Navigate }) {
         </nav>
       </div>
       <div className="footer-legal page-shell">
-        <p>
-          Beneficence Protocol Foundation is in formation. It is not yet recognized by the IRS as a §501(c)(3)
-          organization, and this website does not currently accept donations.
-        </p>
+        <p>Advancing beneficial AI, public knowledge and accountable Agent infrastructure.</p>
         <p>© 2026 Beneficence Protocol Foundation</p>
       </div>
       <details className="image-credits page-shell">
@@ -324,7 +321,7 @@ function HomePage({ navigate }: { navigate: Navigate }) {
           </div>
           <div className="work-content" data-reveal>
             <p className="section-index">02 / What we do</p>
-            <h2 id="work-title">We begin with public learning.</h2>
+            <h2 id="work-title">Public learning turns capability into shared power.</h2>
             <ol className="work-list">
               {programs.map((program) => (
                 <li key={program.number}>
@@ -333,7 +330,7 @@ function HomePage({ navigate }: { navigate: Navigate }) {
                 </li>
               ))}
             </ol>
-            <TextLink href="/mission#programs" navigate={navigate}>Explore the first programs</TextLink>
+            <TextLink href="/mission#programs" navigate={navigate}>Explore our programs</TextLink>
           </div>
         </section>
 
@@ -344,7 +341,7 @@ function HomePage({ navigate }: { navigate: Navigate }) {
           <div className="page-shell stewardship-content">
             <div className="stewardship-heading" data-reveal>
               <p className="section-index section-index--light">03 / Stewardship</p>
-              <h2 id="stewardship-title">Every gift should have a public path.</h2>
+              <h2 id="stewardship-title">Every gift has a public path.</h2>
               <p>Money moves through controls—not a black box.</p>
             </div>
             <ol className="fund-path" data-reveal>
@@ -371,16 +368,16 @@ function HomePage({ navigate }: { navigate: Navigate }) {
           </div>
           <div className="giving-content" data-reveal>
             <p className="section-index">04 / Giving</p>
-            <h2 id="giving-title">Giving opens only after trust is operational.</h2>
+            <h2 id="giving-title">Giving is built on operational trust.</h2>
             <p className="giving-lead">
-              The intended rails are native to both people and Agents: crypto, stablecoins and conventional payments—accepted only after legal, custody and accounting controls are ready.
+              Our giving rails serve both people and Agents: crypto, stablecoins and conventional payments governed by legal, custody, screening and accounting controls.
             </p>
-            <div className="giving-status">
-              <span>Current status</span>
-              <strong>Not yet accepting donations</strong>
+            <div className="giving-standard">
+              <span>Giving standard</span>
+              <strong>Verified channels. Accountable custody.</strong>
             </div>
             <p className="asset-summary">BTC · ETH · BNB · approved stablecoins · reviewed assets · fiat rails</p>
-            <TextLink href="/giving" navigate={navigate}>See how giving will work</TextLink>
+            <TextLink href="/giving" navigate={navigate}>Review our giving standards</TextLink>
           </div>
         </section>
 
@@ -454,7 +451,7 @@ function MissionPage({ navigate }: { navigate: Navigate }) {
       <section className="program-detail-section" id="programs" aria-labelledby="program-detail-title">
         <div className="page-shell">
           <div className="detail-heading" data-reveal>
-            <p className="section-index">The first public work</p>
+            <p className="section-index">Public programs</p>
             <h2 id="program-detail-title">Four programs. One public purpose.</h2>
           </div>
           <div className="program-detail-list">
@@ -517,7 +514,7 @@ function GovernancePage({ navigate }: { navigate: Navigate }) {
             ))}
           </div>
           <div className="vote-note" data-reveal>
-            <strong>Working vote architecture</strong>
+            <strong>Governance vote architecture</strong>
             <p>Each natural-person director has one vote. The authenticated DAO community produces one collective governance vote with equal policy weight, subject to nonprofit law and nondelegable fiduciary duties.</p>
           </div>
         </div>
@@ -555,7 +552,7 @@ function GovernancePage({ navigate }: { navigate: Navigate }) {
               <div key={term} data-reveal><dt>{term}</dt><dd>{description}</dd></div>
             ))}
           </dl>
-          <TextLink href="/giving" navigate={navigate}>Review the future donation model</TextLink>
+          <TextLink href="/giving" navigate={navigate}>Review the giving model</TextLink>
         </div>
       </section>
     </main>
@@ -566,30 +563,30 @@ function GivingPage({ navigate }: { navigate: Navigate }) {
   return (
     <main id="main-content">
       <DetailHero
-        eyebrow="Future giving architecture"
+        eyebrow="Giving architecture"
         title="Native to the Agent economy. Bound to charitable law."
-        lead="Beneficence intends to accept both conventional and digital-asset gifts through verified channels, with every asset screened, recorded and governed as charitable property."
+        lead="Beneficence supports conventional and digital-asset gifts through verified channels. Every accepted asset is screened, recorded and governed as charitable property."
         image={losAngeles}
         imagePosition="50% 58%"
       />
 
-      <section className="current-status-section">
-        <div className="page-shell current-status-grid" data-reveal>
-          <span>Current status</span>
-          <h2>Donation channels are not yet active.</h2>
-          <p>No wallet, address or payment link is official until it appears on this canonical site after the fundraising activation gate.</p>
+      <section className="official-channel-section">
+        <div className="page-shell official-channel-grid" data-reveal>
+          <span>Official-channel policy</span>
+          <h2>Give only through verified Foundation channels.</h2>
+          <p>Every official wallet address and payment method is published on this canonical site with its network, asset, custody and receipt information.</p>
         </div>
       </section>
 
       <section className="gift-model-section" aria-labelledby="gift-model-title">
         <div className="page-shell">
           <div className="detail-heading" data-reveal>
-            <p className="section-index">Intended rails</p>
+            <p className="section-index">Giving rails</p>
             <h2 id="gift-model-title">Broad access. Asset-by-asset control.</h2>
           </div>
           <div className="gift-groups">
             <article data-reveal><span>Core digital assets</span><h3>BTC · ETH · BNB</h3><p>Accepted only on specifically approved networks and through published Foundation-controlled addresses.</p></article>
-            <article data-reveal><span>Stable and conventional</span><h3>Approved stablecoins · ACH · cards · wires</h3><p>Lower-cost routes should be recommended when fees would consume a disproportionate share of a gift.</p></article>
+            <article data-reveal><span>Stable and conventional</span><h3>Approved stablecoins · ACH · cards · wires</h3><p>We recommend lower-cost routes when fees would consume a disproportionate share of a gift.</p></article>
             <article data-reveal><span>Reviewed assets</span><h3>Exchange-issued tokens · Meme Coins · other assets</h3><p>Individual review for liquidity, custody, contract, compliance, accounting and liquidation risk.</p></article>
           </div>
         </div>
@@ -609,14 +606,14 @@ function GivingPage({ navigate }: { navigate: Navigate }) {
         </div>
       </section>
 
-      <section className="activation-section" aria-labelledby="activation-title">
+      <section className="giving-controls-section" aria-labelledby="giving-controls-title">
         <div className="page-shell">
           <div className="detail-heading" data-reveal>
-            <p className="section-index">Before giving opens</p>
-            <h2 id="activation-title">Formation before solicitation.</h2>
+            <p className="section-index">Operational controls</p>
+            <h2 id="giving-controls-title">Five controls govern every gift.</h2>
           </div>
-          <ol className="activation-list">
-            <li data-reveal><span>01</span><strong>Legal entity and Board</strong></li>
+          <ol className="giving-controls-list">
+            <li data-reveal><span>01</span><strong>Legal authority and Board oversight</strong></li>
             <li data-reveal><span>02</span><strong>Custody and signer controls</strong></li>
             <li data-reveal><span>03</span><strong>Gift acceptance and screening</strong></li>
             <li data-reveal><span>04</span><strong>Accounting and receipts</strong></li>
@@ -704,7 +701,7 @@ function App() {
       '/': 'Beneficence Protocol Foundation — Keep the Agent Age Human',
       '/mission': 'Mission and Programs — Beneficence Protocol Foundation',
       '/governance': 'Governance and Stewardship — Beneficence Protocol Foundation',
-      '/giving': 'Future Giving Architecture — Beneficence Protocol Foundation',
+      '/giving': 'Giving Architecture — Beneficence Protocol Foundation',
     }
     document.title = titles[route] ?? 'Beneficence Protocol Foundation'
   }, [route])
