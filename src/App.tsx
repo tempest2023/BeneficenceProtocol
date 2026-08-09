@@ -165,11 +165,6 @@ function SiteHeader({ navigate }: { navigate: Navigate }) {
 
   return (
     <header className="site-header">
-      <div className="status-strip" aria-label="Organization status">
-        <span className="status-dot" aria-hidden="true" />
-        <span>Public pre-launch</span>
-        <strong>Donations are not yet open</strong>
-      </div>
       <div className="nav-shell">
         <InternalLink
           href="/"

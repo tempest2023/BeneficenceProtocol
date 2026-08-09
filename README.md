@@ -1,34 +1,97 @@
-# React + TypeScript + Vite
+# Beneficence Protocol Foundation
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+> Giving infrastructure for the agent economy.
 
-Currently, two official plugins are available:
+Beneficence Protocol Foundation is a public-benefit initiative exploring how AI Agents can create measurable social value while remaining transparent, governable, and accountable to people. This repository contains the Foundation's public pre-launch website.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The site introduces the mission, initial public programs, governance model, stewardship principles, and intended donation architecture. The underlying organizational blueprint is documented in [PROJECT.md](./PROJECT.md).
 
-## React Compiler
+> [!IMPORTANT]
+> The Foundation is currently in formation. It is not yet recognized by the IRS as a §501(c)(3) organization, and donations are not being accepted. No wallet address or payment link is official unless it is published on the canonical website after the fundraising activation gate.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## Website
 
-Note: This will impact Vite dev & build performances.
+The website is a responsive single-page React application with four public routes:
 
-## Expanding the Oxlint configuration
+| Route | Purpose |
+| --- | --- |
+| `/` | Foundation overview, principles, programs, and current status |
+| `/mission` | Public mission, initial programs, and intended use of funds |
+| `/governance` | Human, DAO, and AI Agent responsibilities; fund stewardship and reporting |
+| `/giving` | Planned donation rails, asset controls, accounting, and activation requirements |
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+The experience includes accessible navigation, reduced-motion support, responsive layouts, deferred image loading, route-specific document titles, and print styles. Client-side routes use the browser History API; `vercel.json` provides the production fallback to `index.html`.
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+## Technology
+
+- React 19 and TypeScript
+- Vite 8 with the React Compiler
+- Oxlint
+- Plain CSS with locally hosted Manrope and Newsreader fonts
+- Vercel deployment configuration
+
+## Local development
+
+Node.js 24 is recommended to match the configured Vercel runtime.
+
+```bash
+git clone git@github.com:tempest2023/BeneficenceProtocol.git
+cd BeneficenceProtocol
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Vite will print the local development URL, typically `http://localhost:5173`.
+
+## Commands
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the Vite development server |
+| `npm run build` | Type-check and create a production build in `dist/` |
+| `npm run lint` | Run Oxlint across the project |
+| `npm run preview` | Serve the production build locally |
+
+Before submitting changes, run:
+
+```bash
+npm run lint
+npm run build
+```
+
+## Project structure
+
+```text
+.
+├── public/                 # Static metadata, favicon, and crawler rules
+├── src/
+│   ├── assets/
+│   │   ├── fonts/          # Locally hosted web fonts
+│   │   ├── scenes/         # Optimized artwork used by the website
+│   │   └── sources/        # Source images for the scene artwork
+│   ├── App.tsx             # Pages, routing, navigation, and UI behavior
+│   ├── App.css             # Page and component styles
+│   ├── index.css           # Global tokens, fonts, accessibility, and print styles
+│   └── main.tsx            # React entry point
+├── PROJECT.md              # Founding constitution and operating blueprint
+├── vercel.json             # SPA route fallback for Vercel
+└── vite.config.ts          # Vite and React Compiler configuration
+```
+
+## Content and status source of truth
+
+Public website claims should remain consistent with [PROJECT.md](./PROJECT.md), especially the current legal status, fundraising gates, charitable programs, asset-acceptance policy, and governance boundaries. When the blueprint and website differ, resolve the policy decision in the blueprint before publishing revised public copy.
+
+## Deployment
+
+The project is configured for Vercel. A production deployment should use:
+
+- Build command: `npm run build`
+- Output directory: `dist`
+- Node.js runtime: `24.x`
+
+The catch-all rewrite in `vercel.json` is required so direct visits to `/mission`, `/governance`, and `/giving` load the React application correctly.
+
+## Image attribution
+
+The site uses source-preserving paper-collage interpretations based on openly licensed or public-domain photographs. Detailed creator, license, and source links are published in the website footer. Keep those credits intact when replacing or redistributing the artwork.

@@ -1523,6 +1523,8 @@ Location images must not be presented as a standalone destination gallery or as 
 
 The visual system uses a warm paper-and-ink institutional palette, International Orange as the single signal color and editorial typography. The scene artworks use credited, license-reviewed source photographs and must retain their source credits if published.
 
+Display typography must remain editorial without becoming poster-scale at the expense of comprehension. On desktop, headline sizes must be constrained by both viewport width and viewport height, and vertical spacing must compact in shorter browser windows. The Home hero must keep its mission statement, primary actions and founding principles visible within a common laptop viewport; image-led Landing Page sections should use cropped atmospheric imagery rather than allow a source image's intrinsic aspect ratio to determine section height.
+
 Website v1.1 has been implemented responsively for desktop and mobile, with keyboard navigation, visible focus states, reduced-motion behavior, semantic sections and appropriate alternative-text treatment. These implementation measures do not replace a final accessibility review on the production domain.
 
 The deployed technical preview is **not yet cleared for a promoted public informational launch** because the following Stage A items remain unresolved:
