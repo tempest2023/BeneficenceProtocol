@@ -609,7 +609,7 @@
   line-height: 1.55;
 }
 
-.giving-status {
+.giving-standard {
   display: grid;
   gap: 0.25rem;
   margin-top: 2rem;
@@ -618,7 +618,7 @@
   border-bottom: 1px solid var(--ink);
 }
 
-.giving-status span {
+.giving-standard span {
   color: var(--accent-dark);
   font-size: 0.75rem;
   font-weight: 750;
@@ -626,7 +626,7 @@
   text-transform: uppercase;
 }
 
-.giving-status strong {
+.giving-standard strong {
   font-family: var(--font-display);
   font-size: 1.6rem;
   font-weight: 430;
@@ -726,7 +726,7 @@
 .actors-section,
 .disclosure-section,
 .gift-model-section,
-.activation-section {
+.giving-controls-section {
   padding-block: clamp(5rem, 13vw, 9rem);
 }
 
@@ -803,7 +803,7 @@
 
 .program-detail-list article > span,
 .actor-list article > span,
-.activation-list li > span {
+.giving-controls-list li > span {
   color: var(--accent-dark);
   font-size: 0.75rem;
   font-weight: 750;
@@ -948,25 +948,25 @@
   line-height: 1.65;
 }
 
-.current-status-section {
+.official-channel-section {
   padding-block: 2rem;
   color: var(--paper-light);
   background: var(--accent-dark);
 }
 
-.current-status-grid {
+.official-channel-grid {
   display: grid;
   gap: 0.75rem;
 }
 
-.current-status-grid > span {
+.official-channel-grid > span {
   font-size: 0.75rem;
   font-weight: 750;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
-.current-status-grid h2 {
+.official-channel-grid h2 {
   margin: 0;
   font-family: var(--font-display);
   font-size: clamp(2rem, 8vw, 3.4rem);
@@ -974,7 +974,7 @@
   letter-spacing: -0.035em;
 }
 
-.current-status-grid p {
+.official-channel-grid p {
   max-width: 39rem;
   margin: 0;
   font-size: 0.82rem;
@@ -1008,14 +1008,14 @@
   line-height: 1.65;
 }
 
-.activation-list {
+.giving-controls-list {
   margin: 4rem 0 3rem;
   padding: 0;
   border-top: 1px solid var(--ink);
   list-style: none;
 }
 
-.activation-list li {
+.giving-controls-list li {
   display: grid;
   gap: 1rem;
   grid-template-columns: 2rem 1fr;
@@ -1023,7 +1023,7 @@
   border-bottom: 1px solid var(--line);
 }
 
-.activation-list strong {
+.giving-controls-list strong {
   font-family: var(--font-display);
   font-size: clamp(1.45rem, 6vw, 2.2rem);
   font-weight: 430;
@@ -1164,6 +1164,126 @@
   }
 }
 
+@media (max-width: 63.99rem) {
+  .home-hero,
+  .work-section,
+  .stewardship-section,
+  .giving-section,
+  .detail-hero {
+    isolation: isolate;
+  }
+
+  .home-hero__art,
+  .work-visual,
+  .stewardship-art,
+  .giving-art,
+  .detail-hero__image {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    transform: none;
+  }
+
+  .home-hero__art {
+    opacity: 0.8;
+  }
+
+  .home-hero__art img,
+  .work-visual img,
+  .stewardship-art img,
+  .giving-art img,
+  .detail-hero__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .home-hero__art img {
+    object-position: 50% 54%;
+  }
+
+  .home-hero::after,
+  .work-section::after,
+  .stewardship-section::after,
+  .giving-section::after,
+  .detail-hero::after {
+    position: absolute;
+    inset: 0;
+    content: '';
+    pointer-events: none;
+  }
+
+  .home-hero::after {
+    z-index: 1;
+    background:
+      linear-gradient(180deg, oklch(94.5% 0.022 83 / 0.84) 0%, oklch(94.5% 0.022 83 / 0.66) 64%, oklch(94.5% 0.022 83 / 0.38) 100%),
+      linear-gradient(90deg, oklch(94.5% 0.022 83 / 0.64) 0%, oklch(94.5% 0.022 83 / 0.18) 100%);
+  }
+
+  .work-section,
+  .giving-section {
+    position: relative;
+    display: block;
+    overflow: hidden;
+  }
+
+  .work-section::after,
+  .giving-section::after {
+    z-index: 1;
+  }
+
+  .work-section::after {
+    background: linear-gradient(180deg, oklch(97.5% 0.014 83 / 0.91), oklch(97.5% 0.014 83 / 0.78) 55%, oklch(97.5% 0.014 83 / 0.9));
+  }
+
+  .giving-section::after {
+    background: linear-gradient(180deg, oklch(89.5% 0.033 78 / 0.91), oklch(89.5% 0.033 78 / 0.76) 55%, oklch(89.5% 0.033 78 / 0.9));
+  }
+
+  .work-visual span {
+    display: none;
+  }
+
+  .work-content,
+  .giving-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .stewardship-art {
+    opacity: 0.6;
+  }
+
+  .stewardship-art img {
+    object-position: 100% 62%;
+    transform: scale(1.3);
+    transform-origin: center right;
+  }
+
+  .stewardship-section::after {
+    z-index: 0;
+    background: linear-gradient(180deg, oklch(20% 0.018 53 / 0.7), oklch(20% 0.018 53 / 0.5) 48%, oklch(20% 0.018 53 / 0.78));
+  }
+
+  .detail-hero__image {
+    opacity: 0.62;
+  }
+
+  .detail-hero__image img {
+    object-fit: cover;
+  }
+
+  .detail-hero::after {
+    z-index: 0;
+    background:
+      linear-gradient(180deg, oklch(94.5% 0.022 83 / 0.9), oklch(94.5% 0.022 83 / 0.7) 58%, oklch(94.5% 0.022 83 / 0.88)),
+      linear-gradient(90deg, oklch(94.5% 0.022 83 / 0.72), transparent);
+  }
+}
+
 @media (min-width: 40rem) {
   .home-hero__actions {
     align-items: center;
@@ -1200,7 +1320,7 @@
     grid-template-columns: minmax(8rem, 0.35fr) minmax(13rem, 0.7fr) 1fr;
   }
 
-  .current-status-grid {
+  .official-channel-grid {
     align-items: center;
     gap: 1.5rem;
     grid-template-columns: 8rem minmax(15rem, 0.7fr) 1fr;
@@ -1426,7 +1546,7 @@
   .actors-section,
   .disclosure-section,
   .gift-model-section,
-  .activation-section,
+  .giving-controls-section,
   .program-detail-section,
   .use-of-funds-section,
   .fund-detail-section,
@@ -1612,7 +1732,7 @@
   }
 
   .giving-lead,
-  .giving-status {
+  .giving-standard {
     margin-top: 1.25rem;
   }
 

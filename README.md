@@ -2,12 +2,9 @@
 
 > Giving infrastructure for the agent economy.
 
-Beneficence Protocol Foundation is a public-benefit initiative exploring how AI Agents can create measurable social value while remaining transparent, governable, and accountable to people. This repository contains the Foundation's public pre-launch website.
+Beneficence Protocol Foundation is a public-benefit institution advancing AI Agents that create measurable social value while remaining transparent, governable and accountable to people. This repository contains the Foundation's official website.
 
-The site introduces the mission, initial public programs, governance model, stewardship principles, and intended donation architecture. The underlying organizational blueprint is documented in [PROJECT.md](./PROJECT.md).
-
-> [!IMPORTANT]
-> The Foundation is currently in formation. It is not yet recognized by the IRS as a §501(c)(3) organization, and donations are not being accepted. No wallet address or payment link is official unless it is published on the canonical website after the fundraising activation gate.
+The site presents the mission, public programs, governance model, stewardship principles and giving architecture. The underlying organizational blueprint is documented in [PROJECT.md](./PROJECT.md).
 
 ## Website
 
@@ -15,10 +12,10 @@ The website is a responsive single-page React application with four public route
 
 | Route | Purpose |
 | --- | --- |
-| `/` | Foundation overview, principles, programs, and current status |
-| `/mission` | Public mission, initial programs, and intended use of funds |
+| `/` | Foundation overview, principles, programs, and stewardship model |
+| `/mission` | Public mission, programs, and use of funds |
 | `/governance` | Human, DAO, and AI Agent responsibilities; fund stewardship and reporting |
-| `/giving` | Planned donation rails, asset controls, accounting, and activation requirements |
+| `/giving` | Giving rails, asset controls, accounting, and operational safeguards |
 
 The experience includes accessible navigation, reduced-motion support, responsive layouts, deferred image loading, route-specific document titles, and print styles. Client-side routes use the browser History API; `vercel.json` provides the production fallback to `index.html`.
 
@@ -78,9 +75,9 @@ npm run build
 └── vite.config.ts          # Vite and React Compiler configuration
 ```
 
-## Content and status source of truth
+## Content source of truth
 
-Public website claims should remain consistent with [PROJECT.md](./PROJECT.md), especially the current legal status, fundraising gates, charitable programs, asset-acceptance policy, and governance boundaries. When the blueprint and website differ, resolve the policy decision in the blueprint before publishing revised public copy.
+Public website claims should remain consistent with [PROJECT.md](./PROJECT.md), especially the charitable programs, asset-acceptance policy and governance boundaries. When the blueprint and website differ, resolve the policy decision in the blueprint before publishing revised public copy.
 
 ## Deployment
 
