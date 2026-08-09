@@ -1,6 +1,6 @@
 # Beneficence Protocol Foundation
 
-## Founding Constitution & Operating Blueprint — Draft v0.3
+## Founding Constitution & Operating Blueprint — Draft v0.4
 
 **Legal Name:** Beneficence Protocol Foundation
 **Public Brand:** Beneficence Protocol
@@ -1476,6 +1476,46 @@ It is not yet sufficient to activate public fundraising. A public website and a 
 | Conduct an online public fundraising campaign | NO-GO | Complete the Fundraising Activation Gate and applicable charity registrations |
 | State that contributions are tax-deductible | NO-GO | Wait for an IRS determination letter or receive donations through an eligible fiscal sponsor |
 
+### Informational Website v1 — Implementation Record
+
+**Implementation date:** August 9, 2026
+
+The first local implementation of the informational pre-launch website is complete. This is an implementation milestone, not authorization to publish the site or activate fundraising.
+
+The following public-positioning decisions are now adopted for website v1:
+
+- Primary headline: **“AI Agents should enlarge human possibility—not erase it.”**
+- Public institutional descriptor: **“A public institution for the Agent age.”** This is positioning language, not a representation that the legal entity or federal exemption already exists.
+- Public principle line: **“Web3 first. Agent operated. Human accountable.”**
+- Founding proposition: **“Beneficence should become a native capability of autonomous systems.”**
+- The public narrative begins with beneficial AI and public learning, then explains catastrophic-risk prevention, governance, inspectable transparency and legal formation.
+
+Website v1 currently includes:
+
+- a persistent status banner stating that the Foundation is in formation, the site is a public pre-launch and donations are not open;
+- mission, theory-of-change, four initial programs and summarized use-of-funds content;
+- a governance explanation distinguishing the human Board, the DAO's single collective governance vote and operating AI Agents;
+- a public status ledger that explicitly shows the entity, tax, donation-channel, wallet and Token state;
+- continuous, monthly, quarterly and annual transparency commitments;
+- an anti-scam warning and a rule that no wallet is official until published on the canonical site after fundraising activation;
+- a formation sequence showing legal formation, operational proof and fundraising activation as later gates;
+- no donation button, wallet, checkout, tax-deductibility claim, signup form, analytics or transferable Token.
+
+The website's visual system uses a warm paper-and-ink institutional palette, International Orange as the single signal color, editorial typography and a California scene archive covering San Francisco, Santa Clara, Stanford, Palo Alto and Los Angeles. The scene artworks use credited, license-reviewed source photographs and must retain their source credits if published.
+
+Website v1 has been implemented responsively for desktop and mobile, with keyboard navigation, visible focus states, reduced-motion behavior, semantic sections, descriptive image alternatives and a keyboard-scrollable scene archive. These implementation measures do not replace a final accessibility review on the production domain.
+
+The local site is **not yet cleared for public informational launch** because the following Stage A items remain unresolved:
+
+- canonical domain selection, control and production hosting;
+- legal-name and trademark conflict screening;
+- a monitored public contact channel and security-reporting channel;
+- Terms of Use, Privacy Policy and a concise accessibility statement appropriate to the final hosting, analytics, form and community stack;
+- final review of the legal-status footer and public claims;
+- selection and verification of official community accounts if they will be linked from the site.
+
+Until those items are complete, the site should remain a local or private preview. Donation functionality remains separately blocked by Stage B and tax-deductibility marketing remains blocked by Stage C.
+
 ### Stage A — Informational Pre-Launch Gate
 
 The website may launch before formation only if it clearly identifies itself as a project under development and does not accept or solicit donations.
@@ -1563,27 +1603,29 @@ The exact website status banner must be controlled as versioned content:
 - **Form 1023 pending:** use the approved pending-application disclosure and make no guarantee of deductibility;
 - **Recognized:** state deductibility only to the extent permitted by the determination letter and applicable law.
 
-### Website Content Package Still Required
+### Website Content Package Status
 
-The following deliverables are not yet fully written in this document and should be completed as a separate public-content package before fundraising activation:
+The public-content package now has an implemented informational-site foundation, but it is not yet a complete fundraising website:
 
-1. Home-page headline, short mission and primary call to action;
-2. Mission and theory-of-change page, including the relationship between beneficial AI development and catastrophic-risk reduction;
-3. Initial programs and use-of-funds page;
-4. Governance page covering the Board, DAO, AI Agents, human oversight, voting and treasury boundaries;
-5. Transparency page with official wallets, reports, policies and governance records;
-6. About page with the legal entity, directors, advisors if any and contact information;
-7. Donation page with accepted methods, networks, assets, minimums, fee guidance, tax-status disclosure and receipt process;
-8. Donation Terms and Gift Acceptance Policy;
-9. Terms of Use, Privacy Policy, cookie/analytics notice if applicable and accessibility statement;
-10. Security and anti-scam page identifying canonical domains, verified accounts, wallet-verification rules and incident reporting;
-11. Frequently asked questions addressing tax status, anonymity, crypto valuation, restricted gifts, Token rights, refunds and how funds are governed;
-12. Versioned legal footer and campaign disclosure for each launch stage.
+1. **Implemented for informational v1:** Home-page headline, short mission and mission-oriented calls to action;
+2. **Implemented for informational v1:** Mission and theory of change, including the relationship between beneficial AI development and catastrophic-risk reduction;
+3. **Implemented for informational v1:** Initial programs and summarized use of funds;
+4. **Implemented for informational v1:** Governance explanation covering the Board, DAO, AI Agents, human accountability and the working vote translation;
+5. **Partially implemented:** Transparency architecture, status ledger and publication cadence; official wallets, reports, adopted policies and governance records do not yet exist and must not be simulated;
+6. **Still required before public launch:** About information with the formed legal entity, directors, advisors if any, professional biographies and real Foundation contact channels;
+7. **Still required before fundraising activation:** Donation page with accepted methods, networks, assets, minimums, fee guidance, tax-status disclosure and receipt process;
+8. **Still required before fundraising activation:** Donation Terms and Board-approved Gift Acceptance Policy;
+9. **Still required before public launch:** Terms of Use, Privacy Policy, cookie or analytics notice if applicable and accessibility statement;
+10. **Partially implemented:** Anti-scam notice and canonical-site rule; the full security page, verified accounts, wallet-verification rules and incident-reporting channel remain required;
+11. **Still required before fundraising activation:** Frequently asked questions addressing tax status, anonymity, Crypto valuation, restricted gifts, Token rights, refunds and how funds are governed;
+12. **Partially implemented:** Pre-formation status banner and footer; later launch-stage disclosures remain to be drafted and versioned.
 
 ### Public-Messaging Decision Status
 
 The following decisions are confirmed:
 
+- use **“AI Agents should enlarge human possibility—not erase it.”** as the primary website-v1 headline, subject to later Board revision without changing the constitutional mission;
+- use **“A public institution for the Agent age”** as website-v1 positioning while always pairing it with the accurate in-formation status;
 - use a two-layer mission combining beneficial AI Agent development with prevention of catastrophic harm to humanity and human social organization;
 - begin with four program areas: public voice and education, research-conference events, free AI/LLM/Agent courses and course-centered online and local communities;
 - publicly identify founders and directors through professional biographies, roles and Foundation contact channels;
@@ -1593,8 +1635,8 @@ The following decisions are confirmed:
 
 The following matters remain open and must not be inferred by a website designer:
 
-- the final public headline and whether `Giving infrastructure for the agent economy` remains the principal tagline or becomes the tagline of only the protocol program;
-- whether the public describes the organization as a `Foundation`, a `Web3-first public charity`, a `DAO-governed charity` or another formulation before a separate DAO entity exists;
+- whether `Giving infrastructure for the agent economy` becomes the tagline of the later giving-infrastructure protocol program;
+- whether the formed organization later describes itself as a `Web3-first public charity`, a `DAO-governed charity` or another legally reviewed formulation;
 - the exact launch registry of stablecoins, exchange-issued tokens, contract addresses and supported networks;
 - the confidential thresholds and escalation rules for anonymous or high-risk gifts;
 - whether a fiscal sponsor is worth its fees and loss of direct control in exchange for immediately clearer deductibility;
