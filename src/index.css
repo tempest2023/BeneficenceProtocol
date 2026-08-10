@@ -34,6 +34,12 @@
   --duration-fast: 140ms;
   --duration-state: 260ms;
   --duration-enter: 560ms;
+  --space-xs: 0.75rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: clamp(3rem, 6vw, 5rem);
+  --space-section: clamp(4.5rem, 9vw, 7.5rem);
   color: var(--ink);
   background: var(--paper);
   font-family: var(--font-body);

@@ -1543,6 +1543,19 @@ Website v1.1 uses a progressive-disclosure structure:
 - an anti-scam rule stating that no wallet is official until published on the canonical site after fundraising activation;
 - no donation button, wallet, checkout, tax-deductibility claim, signup form, analytics or transferable Token.
 
+### Website v1.2 — Information Architecture and Editorial Detail Pages
+
+**Implementation date:** August 9, 2026
+
+Website v1.2 establishes a clear distinction between the institutional Landing Page and editorial detail pages:
+
+- the Landing Page contains the complete public overview of the mission, four programs, governance and stewardship model, and giving architecture;
+- the primary navigation is `Home`, `Mission`, `Programs`, `Governance` and `Giving`;
+- `/mission`, `/programs`, `/governance` and `/giving` are independent long-form editorial pages rather than repeated Landing Page layouts;
+- `/programs` is a first-class route with detailed explanations of all four program areas and the public use-of-funds model;
+- every editorial detail page uses the same compact article header, top spacing, typography, image treatment and reading-column grid;
+- the previous viewport-height detail hero has been retired so headings begin near the top of the page without unproductive blank space.
+
 ### Landing Page Editorial Rule
 
 The Landing Page is not a public copy of this operating blueprint. Its single purpose is to let a first-time visitor quickly understand:
@@ -1671,25 +1684,25 @@ The exact website status banner must be controlled as versioned content:
 
 The public-content package now has an implemented informational-site foundation, but it is not yet a complete fundraising website:
 
-1. **Implemented for informational v1.1:** Concise Landing Page headline, mission, values, public-work summary, charitable-fund path, giving status and mission-oriented calls to action;
-2. **Implemented on `/mission`:** Mission and theory of change, including the relationship between beneficial AI development and catastrophic-risk reduction;
-3. **Implemented on `/mission`:** Initial programs and summarized use of funds;
-4. **Implemented on `/governance`:** Governance explanation covering the Board, DAO, AI Agents, human accountability, the working vote translation and charitable-fund boundaries;
+1. **Implemented for website v1.2:** Landing Page headline plus complete Mission, Programs, Governance and Giving overviews with links to editorial detail pages;
+2. **Implemented on `/mission`:** Long-form mission and theory of change, including the relationship between beneficial AI development and catastrophic-risk reduction;
+3. **Implemented on `/programs`:** Detailed descriptions of the four public programs and summarized use of funds;
+4. **Implemented on `/governance`:** Long-form governance explanation covering the Board, DAO, AI Agents, human accountability, vote translation and charitable-fund boundaries;
 5. **Partially implemented on `/governance`:** Transparency architecture and publication cadence; official wallets, reports, adopted policies and governance records do not yet exist and must not be simulated;
 6. **Still required before public launch:** About information with the formed legal entity, directors, advisors if any, professional biographies and real Foundation contact channels;
-7. **Partially implemented on `/giving`:** Intended methods, asset categories, status disclosure and accounting model; exact networks, addresses, minimums, fee guidance and receipt interfaces remain required before fundraising activation;
+7. **Partially implemented on `/giving`:** Editorial explanation of giving methods, asset categories, controls and accounting; exact networks, addresses, minimums, fee guidance and receipt interfaces remain required before fundraising activation;
 8. **Still required before fundraising activation:** Donation Terms and Board-approved Gift Acceptance Policy;
 9. **Still required before public launch:** Terms of Use, Privacy Policy, cookie or analytics notice if applicable and accessibility statement;
 10. **Partially implemented:** Anti-scam notice and canonical-site rule; the full security page, verified accounts, wallet-verification rules and incident-reporting channel remain required;
 11. **Still required before fundraising activation:** Frequently asked questions addressing tax status, anonymity, Crypto valuation, restricted gifts, Token rights, refunds and how funds are governed;
-12. **Partially implemented:** Pre-formation status banner and footer; later launch-stage disclosures remain to be drafted and versioned.
+12. **Implemented for institutional presentation:** Public pages use operational standards rather than pre-launch status notices; any future legal-status, IRS-recognition or tax-deductibility statement remains version-controlled and evidence-dependent.
 
 ### Public-Messaging Decision Status
 
 The following decisions are confirmed:
 
 - use **“AI Agents should enlarge human possibility—not erase it.”** as the primary website-v1 headline, subject to later Board revision without changing the constitutional mission;
-- use **“A public institution for the Agent age”** as website-v1 positioning while always pairing it with the accurate in-formation status;
+- use **“A public institution for the Agent age”** as the institutional positioning; publish legal-status, IRS-recognition or tax-deductibility claims only when supported by verified evidence;
 - use a two-layer mission combining beneficial AI Agent development with prevention of catastrophic harm to humanity and human social organization;
 - begin with four program areas: public voice and education, research-conference events, free AI/LLM/Agent courses and course-centered online and local communities;
 - publicly identify founders and directors through professional biographies, roles and Foundation contact channels;

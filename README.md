@@ -8,12 +8,13 @@ The site presents the mission, public programs, governance model, stewardship pr
 
 ## Website
 
-The website is a responsive single-page React application with four public routes:
+The website is a responsive single-page React application with five public routes:
 
 | Route | Purpose |
 | --- | --- |
 | `/` | Foundation overview, principles, programs, and stewardship model |
-| `/mission` | Public mission, programs, and use of funds |
+| `/mission` | Editorial explanation of the constructive and protective mission |
+| `/programs` | Detailed public-program descriptions and use of funds |
 | `/governance` | Human, DAO, and AI Agent responsibilities; fund stewardship and reporting |
 | `/giving` | Giving rails, asset controls, accounting, and operational safeguards |
 
