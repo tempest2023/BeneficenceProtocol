@@ -139,12 +139,14 @@ function InternalLink({
   className,
   children,
   onNavigate,
+  isCurrent = false,
 }: {
   href: string
   navigate: Navigate
   className?: string
   children: React.ReactNode
   onNavigate?: () => void
+  isCurrent?: boolean
 }) {
   const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
@@ -154,13 +156,13 @@ function InternalLink({
   }
 
   return (
-    <a href={href} className={className} onClick={handleClick}>
+    <a href={href} className={className} aria-current={isCurrent ? 'page' : undefined} onClick={handleClick}>
       {children}
     </a>
   )
 }
 
-function SiteHeader({ navigate }: { navigate: Navigate }) {
+function SiteHeader({ navigate, currentRoute }: { navigate: Navigate; currentRoute: string }) {
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
@@ -204,22 +206,47 @@ function SiteHeader({ navigate }: { navigate: Navigate }) {
           className={`primary-navigation ${menuOpen ? 'is-open' : ''}`}
           aria-label="Primary navigation"
         >
-          <InternalLink href="/" navigate={navigate} onNavigate={() => setMenuOpen(false)}>
+          <InternalLink
+            href="/"
+            navigate={navigate}
+            className={currentRoute === '/' ? 'is-active' : undefined}
+            isCurrent={currentRoute === '/'}
+            onNavigate={() => setMenuOpen(false)}
+          >
             Home
           </InternalLink>
-          <InternalLink href="/mission" navigate={navigate} onNavigate={() => setMenuOpen(false)}>
+          <InternalLink
+            href="/mission"
+            navigate={navigate}
+            className={currentRoute === '/mission' ? 'is-active' : undefined}
+            isCurrent={currentRoute === '/mission'}
+            onNavigate={() => setMenuOpen(false)}
+          >
             Mission
           </InternalLink>
-          <InternalLink href="/programs" navigate={navigate} onNavigate={() => setMenuOpen(false)}>
+          <InternalLink
+            href="/programs"
+            navigate={navigate}
+            className={currentRoute === '/programs' ? 'is-active' : undefined}
+            isCurrent={currentRoute === '/programs'}
+            onNavigate={() => setMenuOpen(false)}
+          >
             Programs
           </InternalLink>
-          <InternalLink href="/governance" navigate={navigate} onNavigate={() => setMenuOpen(false)}>
+          <InternalLink
+            href="/governance"
+            navigate={navigate}
+            className={currentRoute === '/governance' ? 'is-active' : undefined}
+            isCurrent={currentRoute === '/governance'}
+            onNavigate={() => setMenuOpen(false)}
+          >
             Governance
           </InternalLink>
           <InternalLink
             href="/giving"
             navigate={navigate}
-            className="nav-action"
+            className={`nav-action ${currentRoute === '/giving' ? 'is-active' : ''}`}
+            isCurrent={currentRoute === '/giving'}
             onNavigate={() => setMenuOpen(false)}
           >
             Giving <Arrow />
@@ -781,7 +808,7 @@ function App() {
   return (
     <div className="site-shell">
       <a className="skip-link" href="#main-content">Skip to main content</a>
-      <SiteHeader navigate={navigate} />
+      <SiteHeader navigate={navigate} currentRoute={route} />
       {page}
       <ImageCreditFooter navigate={navigate} />
     </div>
