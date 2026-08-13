@@ -1,7 +1,8 @@
 name: Technical contribution
 description: Propose a bounded technical or open-source improvement.
 title: "[Technical contribution] "
-labels: ["community", "technical"]
+labels: ["enhancement"]
+assignees: []
 body:
   - type: markdown
     attributes:

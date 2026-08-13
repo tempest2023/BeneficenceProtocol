@@ -56,7 +56,7 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 7.5rem;
+  scroll-padding-top: 8.5rem;
   background: var(--paper);
 }
 
@@ -136,6 +136,7 @@ img {
   }
 
   .site-header,
+  .community-navigation,
   .home-hero__actions,
   .closing-section,
   .image-credits {

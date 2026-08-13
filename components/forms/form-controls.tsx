@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { useFormStatus } from 'react-dom'
 import { COUNTRIES, US_STATES } from '@/lib/community/constants'
@@ -28,17 +27,17 @@ export function FormStatus({ state }: { state: ActionState }) {
   )
 }
 
-export function SubmitButton({ children }: { children: React.ReactNode }) {
+export function SubmitButton({ children, disabled = false }: { children: React.ReactNode; disabled?: boolean }) {
   const { pending } = useFormStatus()
-  return <button className="primary-action submit-button" type="submit" disabled={pending} aria-disabled={pending}>{pending ? 'Submitting…' : children}</button>
+  const unavailable = pending || disabled
+  return <button className="primary-action submit-button" type="submit" disabled={unavailable} aria-disabled={unavailable}>{pending ? 'Submitting…' : children}</button>
 }
 
-export function FormsClosed() {
+export function FormsClosed({ title = 'This form is not open yet.' }: { title?: string }) {
   return (
-    <div className="forms-closed" role="status">
-      <strong>Registration is being prepared.</strong>
-      <p>Forms will open after privacy, email, scheduling, database, and administrative safeguards are configured. Public resources and events do not require registration.</p>
-      <Link href="/community/code-of-conduct">Read the Code of Conduct</Link>
+    <div className="forms-closed" id="form-availability" role="status">
+      <strong>{title}</strong>
+      <p>You can review the fields below. Please check back soon to submit.</p>
     </div>
   )
 }

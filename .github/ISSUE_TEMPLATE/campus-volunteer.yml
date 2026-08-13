@@ -1,7 +1,8 @@
 name: Campus volunteer
 description: Suggest a public campus learning or community activity.
 title: "[Campus volunteer] "
-labels: ["community", "campus"]
+labels: ["enhancement"]
+assignees: []
 body:
   - type: markdown
     attributes:

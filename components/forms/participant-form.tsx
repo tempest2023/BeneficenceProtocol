@@ -10,10 +10,12 @@ import { FieldError, FormStatus, FormsClosed, LocationFields, SubmitButton } fro
 export function ParticipantForm({ enabled }: { enabled: boolean }) {
   const [state, action] = useActionState(registerParticipant, initialActionState)
   const [industry, setIndustry] = useState('')
-  if (!enabled) return <FormsClosed />
   return (
-    <form className="community-form" action={action} noValidate>
+    <form className="community-form" action={action} noValidate onSubmit={enabled ? undefined : (event) => event.preventDefault()}>
       <FormStatus state={state} />
+      {!enabled ? <FormsClosed title="Community registration is not open yet." /> : null}
+      <fieldset className="form-content" aria-describedby={!enabled ? 'form-availability' : undefined}>
+      <legend className="visually-hidden">Community registration fields</legend>
       <div className="field-grid">
         <label className="field-group"><span className="field-label">Email <span aria-hidden="true">*</span></span><input type="email" name="email" autoComplete="email" maxLength={320} required aria-describedby="email-error" /><FieldError state={state} name="email" /></label>
         <label className="field-group"><span className="field-label">Name <span className="required-note">Optional</span></span><input type="text" name="name" autoComplete="name" maxLength={120} aria-describedby="name-hint name-error" /><span className="field-hint" id="name-hint">An approved pseudonym is welcome.</span><FieldError state={state} name="name" /></label>
@@ -25,8 +27,9 @@ export function ParticipantForm({ enabled }: { enabled: boolean }) {
         <label className="choice"><input type="checkbox" name="communications_consent" required /><span>I agree to receive community and activity messages. I can unsubscribe at any time.</span></label>
         <label className="choice"><input type="checkbox" name="privacy_consent" required /><span>I have read the <Link href="/privacy" target="_blank">Privacy Policy</Link> and consent to this registration being processed.</span></label>
       </div><FieldError state={state} name="communications_consent" /><FieldError state={state} name="privacy_consent" /></fieldset>
-      <p className="field-hint">Registration takes effect immediately and does not create legal membership, employment, governance, ownership, Token, agency, or tax rights.</p>
-      <div className="form-actions"><SubmitButton>Register for community updates</SubmitButton></div>
+      <p className="field-hint">Registration is free and does not create legal membership or employment.</p>
+      <div className="form-actions"><SubmitButton disabled={!enabled}>Register for community updates</SubmitButton></div>
+      </fieldset>
     </form>
   )
 }

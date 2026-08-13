@@ -1,7 +1,8 @@
 name: Event proposal
 description: Propose a public online, local, campus, or conference-adjacent activity.
 title: "[Event proposal] "
-labels: ["community", "event-proposal"]
+labels: ["enhancement"]
+assignees: []
 body:
   - type: markdown
     attributes:

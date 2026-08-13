@@ -9,10 +9,12 @@ import { FieldError, FormStatus, FormsClosed, SubmitButton } from '@/components/
 
 export function ResourceSubmissionForm({ enabled }: { enabled: boolean }) {
   const [state, action] = useActionState(submitResource, initialActionState)
-  if (!enabled) return <FormsClosed />
   return (
-    <form className="community-form" action={action} noValidate>
+    <form className="community-form" action={action} noValidate onSubmit={enabled ? undefined : (event) => event.preventDefault()}>
       <FormStatus state={state} />
+      {!enabled ? <FormsClosed title="Resource submissions are not open yet." /> : null}
+      <fieldset className="form-content" aria-describedby={!enabled ? 'form-availability' : undefined}>
+      <legend className="visually-hidden">Learning resource submission fields</legend>
       <div className="field-grid">
         <label><span className="field-label">Contact email <span aria-hidden="true">*</span></span><input type="email" name="contact_email" autoComplete="email" maxLength={320} required /><FieldError state={state} name="contact_email" /></label>
         <label><span className="field-label">Your name <span className="required-note">Optional</span></span><input type="text" name="submitter_name" autoComplete="name" maxLength={120} /><FieldError state={state} name="submitter_name" /></label>
@@ -25,7 +27,8 @@ export function ResourceSubmissionForm({ enabled }: { enabled: boolean }) {
         <label className="field-group--full"><span className="field-label">How is this relevant to AI Agent learning or technical discussion? <span aria-hidden="true">*</span></span><textarea name="ai_agent_relevance" maxLength={1500} required /><FieldError state={state} name="ai_agent_relevance" /></label>
       </div>
       <fieldset><legend>Confirmations <span aria-hidden="true">*</span></legend><div className="choice-list"><label className="choice"><input type="checkbox" name="access_confirmation" required /><span>I confirm this resource is free and publicly accessible.</span></label><label className="choice"><input type="checkbox" name="copyright_confirmation" required /><span>I have a reasonable basis to share this link and believe the submission does not infringe copyright.</span></label><label className="choice"><input type="checkbox" name="privacy_consent" required /><span>I have read the <Link href="/privacy" target="_blank">Privacy Policy</Link>.</span></label></div><FieldError state={state} name="access_confirmation" /><FieldError state={state} name="copyright_confirmation" /><FieldError state={state} name="privacy_consent" /></fieldset>
-      <div className="form-actions"><SubmitButton>Submit resource for review</SubmitButton></div>
+      <div className="form-actions"><SubmitButton disabled={!enabled}>Submit resource for review</SubmitButton></div>
+      </fieldset>
     </form>
   )
 }

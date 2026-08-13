@@ -21,6 +21,14 @@ describe('public community forms', () => {
     expect(screen.queryByText(/monthly|hours per month/i)).not.toBeInTheDocument()
   })
 
+  it('shows the complete Contributor form with submission disabled when applications are closed', () => {
+    render(<ContributorForm enabled={false} />)
+    expect(screen.getByText('Contributor applications are not open yet.')).toBeInTheDocument()
+    expect(screen.getByLabelText('Personal website')).toBeEnabled()
+    expect(screen.getByLabelText('GitHub')).toBeEnabled()
+    expect(screen.getByRole('button', { name: 'Submit Contributor application' })).toBeDisabled()
+  })
+
   it('switches between U.S. state and international country without requesting an address', () => {
     const { container } = render(<ParticipantForm enabled />)
     expect(screen.getByRole('combobox', { name: /^State/ })).toBeInTheDocument()

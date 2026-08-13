@@ -33,6 +33,50 @@
   border-bottom: 1px solid var(--line);
 }
 
+.community-navigation {
+  overflow: hidden;
+  background: var(--paper-light);
+  border-top: 1px solid var(--line);
+}
+
+.community-navigation__inner {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.community-navigation a {
+  position: relative;
+  display: inline-flex;
+  min-height: 3rem;
+  flex: 0 0 auto;
+  align-items: center;
+  padding-inline: 0.8rem;
+  color: var(--ink-faint);
+  font-size: 0.78rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.community-navigation a:first-child {
+  margin-left: -0.8rem;
+}
+
+.community-navigation a.is-active {
+  color: var(--ink);
+  font-weight: 750;
+}
+
+.community-navigation a.is-active::after {
+  position: absolute;
+  right: 0.8rem;
+  bottom: 0;
+  left: 0.8rem;
+  height: 2px;
+  background: var(--accent);
+  content: '';
+}
+
 .nav-shell {
   position: relative;
   display: flex;
