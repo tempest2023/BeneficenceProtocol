@@ -15,9 +15,9 @@ const links = [
 
 const communityLinks = [
   ['/community', 'Overview'],
-  ['/community#program', 'Community program'],
+  ['/community#program', 'Program'],
   ['/community#people', 'People'],
-  ['/community#register', 'Stay connected'],
+  ['/community#register', 'Connect'],
   ['/community/contribute', 'Contribute'],
 ] as const
 

@@ -94,7 +94,7 @@ test('Contributor application sets a low-pressure, non-interview expectation', a
 test('Community pages use the header submenu without an in-page duplicate', async ({ page }) => {
   await page.goto('/community/contribute/apply')
   const communityNav = page.getByRole('navigation', { name: 'Community navigation' })
-  for (const name of ['Overview', 'Community program', 'People', 'Stay connected', 'Contribute']) {
+  for (const name of ['Overview', 'Program', 'People', 'Connect', 'Contribute']) {
     await expect(communityNav.getByRole('link', { name, exact: true })).toBeVisible()
   }
   for (const name of ['Apply', 'Submit resource', 'Code of Conduct']) {
@@ -110,9 +110,9 @@ test('Community section links update selection and leave headings below the stic
   const stickyHeader = page.locator('.site-header')
 
   for (const item of [
-    { name: 'Community program', hash: '#program', heading: 'Learn and gather in public.' },
+    { name: 'Program', hash: '#program', heading: 'Learn and gather in public.' },
     { name: 'People', hash: '#people', heading: 'People behind the work.' },
-    { name: 'Stay connected', hash: '#register', heading: 'Register for community updates.' },
+    { name: 'Connect', hash: '#register', heading: 'Register for community updates.' },
   ]) {
     const link = communityNav.getByRole('link', { name: item.name, exact: true })
     await link.click()
