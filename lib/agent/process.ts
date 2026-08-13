@@ -2,7 +2,7 @@ import 'server-only'
 import OpenAI from 'openai'
 import { zodTextFormat } from 'openai/helpers/zod'
 import { applicationAgentSchema, qualifiesForAutomaticRejection, resourceAgentSchema } from '@/lib/agent/schemas'
-import { requireServiceClient } from '@/lib/supabase/service'
+import { requireSecretClient } from '@/lib/supabase/secret'
 import { safetyIdentifier } from '@/lib/security'
 import { sendAutomaticRejection } from '@/lib/email'
 
@@ -71,7 +71,7 @@ export async function analyzeResource(submission: Record<string, unknown>, exact
 }
 
 async function processApplication(recordId: string, jobId: string) {
-  const client = requireServiceClient()
+  const client = requireSecretClient()
   const { data: application, error } = await client.from('contributor_applications').select('*').eq('id', recordId).single()
   if (error || !application) throw new Error(error?.message ?? 'Application not found.')
   if (application.status !== 'submitted' && application.status !== 'agent_processing') return
@@ -104,7 +104,7 @@ async function processApplication(recordId: string, jobId: string) {
 }
 
 async function processResource(recordId: string, jobId: string) {
-  const client = requireServiceClient()
+  const client = requireSecretClient()
   const { data: submission, error } = await client.from('resource_submissions').select('*').eq('id', recordId).single()
   if (error || !submission) throw new Error(error?.message ?? 'Resource submission not found.')
   const [{ count: resourceCount }, { count: submissionCount }] = await Promise.all([
@@ -129,7 +129,7 @@ async function processResource(recordId: string, jobId: string) {
 }
 
 export async function processAgentJob(jobId: string) {
-  const client = requireServiceClient()
+  const client = requireSecretClient()
   const { data: claimed, error } = await client.rpc('claim_agent_job', { p_job_id: jobId })
   if (error || !claimed?.[0]) return { processed: false }
   const job = claimed[0]

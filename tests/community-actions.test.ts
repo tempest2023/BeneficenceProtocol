@@ -4,8 +4,8 @@ vi.mock('next/headers', () => ({
   headers: async () => new Headers({ 'x-forwarded-for': '203.0.113.10' }),
 }))
 
-vi.mock('@/lib/supabase/service', () => ({
-  requireServiceClient: () => { throw new Error('Backend unavailable.') },
+vi.mock('@/lib/supabase/secret', () => ({
+  requireSecretClient: () => { throw new Error('Backend unavailable.') },
 }))
 
 vi.mock('@/lib/email', () => ({

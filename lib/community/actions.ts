@@ -4,7 +4,7 @@ import { after } from 'next/server'
 import { publicEnv } from '@/lib/env'
 import { contributorSchema, formDataRecord, participantSchema, resourceSubmissionSchema, zodErrors } from '@/lib/community/schemas'
 import type { ActionState } from '@/lib/community/types'
-import { requireServiceClient } from '@/lib/supabase/service'
+import { requireSecretClient } from '@/lib/supabase/secret'
 import { createVerificationToken, hashedRateIdentifier, normalizeEmail, requestIpAddress } from '@/lib/security'
 import { sendContributorVerification, sendParticipantConfirmation } from '@/lib/email'
 
@@ -26,7 +26,7 @@ function dayWindow() {
 }
 
 async function consumeLimit(form: string, start: Date, limit: number, alternate?: { type: 'email_hash'; value: string }) {
-  const client = requireServiceClient()
+  const client = requireSecretClient()
   const identifier = alternate ?? { type: 'ip' as const, value: await requestIpAddress() }
   const expires = new Date(start); expires.setUTCDate(expires.getUTCDate() + 7)
   const { data, error } = await client.rpc('consume_form_rate_limit', {
@@ -42,7 +42,7 @@ export async function registerParticipant(_previous: ActionState, formData: Form
   if (!result.success) return { status: 'error', message: 'Review the highlighted fields.', fieldErrors: zodErrors(result.error) }
   try {
     await consumeLimit('community_registration', hourWindow(), 10)
-    const client = requireServiceClient()
+    const client = requireSecretClient()
     const data = result.data
     const { data: created, error } = await client.rpc('register_community_participant', {
       p_email: normalizeEmail(data.email), p_name: data.name ?? null, p_industry: data.industry,
@@ -68,7 +68,7 @@ export async function submitContributorApplication(_previous: ActionState, formD
   if (!result.success) return { status: 'error', message: 'Review the highlighted fields.', fieldErrors: zodErrors(result.error) }
   try {
     await consumeLimit('contributor_application', dayWindow(), 5)
-    const client = requireServiceClient()
+    const client = requireSecretClient()
     const { token, hash } = createVerificationToken()
     const expires = new Date(Date.now() + 24 * 60 * 60 * 1000)
     const data = result.data
@@ -102,7 +102,7 @@ export async function submitResource(_previous: ActionState, formData: FormData)
     await consumeLimit('resource_submission_ip', start, 10)
     const data = result.data
     await consumeLimit('resource_submission_email', start, 3, { type: 'email_hash', value: hashedRateIdentifier('resource-email', normalizeEmail(data.contact_email)) })
-    const client = requireServiceClient()
+    const client = requireSecretClient()
     const { error } = await client.rpc('create_resource_submission', {
       p_contact_email: normalizeEmail(data.contact_email), p_submitter_name: data.submitter_name ?? null,
       p_title: data.title, p_public_url: data.public_url, p_format: data.format, p_language: data.language,

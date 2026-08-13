@@ -1,7 +1,7 @@
 import 'server-only'
 import { unstable_noStore as noStore } from 'next/cache'
 import { getPublicClient } from '@/lib/supabase/public'
-import { getServiceClient } from '@/lib/supabase/service'
+import { getSecretClient } from '@/lib/supabase/secret'
 import type { MemberMetrics, PublicEvent, PublicPerson, PublicResource } from '@/lib/community/types'
 
 const emptyMetrics: MemberMetrics = { allTime: 0, thisMonth: 0, bySource: {} }
@@ -58,7 +58,7 @@ export async function getPublicSiteSettings(keys: string[]): Promise<Record<stri
   const allowed = new Set(['github_repository_url', 'github_event_url', 'github_campus_url', 'github_technical_url'])
   const requested = keys.filter((key) => allowed.has(key))
   if (!requested.length) return {}
-  const client = getServiceClient()
+  const client = getSecretClient()
   if (!client) return {}
   const { data, error } = await client.from('site_settings').select('setting_key,setting_value').in('setting_key', requested)
   if (error) return {}

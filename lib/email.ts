@@ -1,6 +1,6 @@
 import 'server-only'
 import { Resend } from 'resend'
-import { getServiceClient } from '@/lib/supabase/service'
+import { getSecretClient } from '@/lib/supabase/secret'
 import {
   applicationReceivedTemplate,
   automaticRejectionTemplate,
@@ -24,7 +24,7 @@ export async function sendTransactionalEmail(message: Message) {
   const from = process.env.RESEND_FROM_EMAIL
   if (!apiKey || !from) throw new Error('Transactional email is not configured.')
   const resend = new Resend(apiKey)
-  const client = getServiceClient()
+  const client = getSecretClient()
   let deliveryLogged = false
   try {
     const { data, error } = await resend.emails.send({ from, to: message.to, subject: message.subject, html: message.html })
