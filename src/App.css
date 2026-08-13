@@ -276,10 +276,10 @@
   max-width: 8.7ch;
   margin: 1.5rem 0 0;
   font-family: var(--font-display);
-  font-size: clamp(3.7rem, 15.5vw, 7.25rem);
-  font-weight: 430;
-  letter-spacing: -0.062em;
-  line-height: 0.87;
+  font-size: var(--type-page-title-size);
+  font-weight: var(--type-page-title-weight);
+  letter-spacing: var(--type-page-title-tracking);
+  line-height: var(--type-page-title-leading);
   text-wrap: balance;
 }
 
@@ -297,8 +297,8 @@
   margin: clamp(2rem, 6vw, 3.25rem) 0 0;
   color: var(--ink-soft);
   font-family: var(--font-display);
-  font-size: clamp(1.15rem, 4.6vw, 1.45rem);
-  line-height: 1.52;
+  font-size: var(--type-page-lead-size);
+  line-height: var(--type-page-lead-leading);
 }
 
 .home-hero__actions {
@@ -369,10 +369,10 @@
   max-width: 10ch;
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(3.25rem, 13vw, 7.25rem);
-  font-weight: 410;
-  letter-spacing: -0.055em;
-  line-height: 0.9;
+  font-size: var(--type-section-title-size);
+  font-weight: var(--type-section-title-weight);
+  letter-spacing: var(--type-section-title-tracking);
+  line-height: var(--type-section-title-leading);
 }
 
 .position-lead {
@@ -460,10 +460,10 @@
   max-width: 9ch;
   margin: 1.3rem 0 0;
   font-family: var(--font-display);
-  font-size: clamp(3.2rem, 12vw, 6.5rem);
-  font-weight: 420;
-  letter-spacing: -0.055em;
-  line-height: 0.92;
+  font-size: var(--type-section-title-size);
+  font-weight: var(--type-section-title-weight);
+  letter-spacing: var(--type-section-title-tracking);
+  line-height: var(--type-section-title-leading);
 }
 
 .work-list {
@@ -557,10 +557,10 @@
   max-width: 10ch;
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(3.2rem, 12.5vw, 7rem);
-  font-weight: 410;
-  letter-spacing: -0.055em;
-  line-height: 0.91;
+  font-size: var(--type-section-title-size);
+  font-weight: var(--type-section-title-weight);
+  letter-spacing: var(--type-section-title-tracking);
+  line-height: var(--type-section-title-leading);
 }
 
 .stewardship-heading > p:last-child {
@@ -709,10 +709,10 @@
   max-width: 12ch;
   margin: 1.2rem 0 0;
   font-family: var(--font-display);
-  font-size: clamp(3rem, 12vw, 6.75rem);
-  font-weight: 420;
-  letter-spacing: -0.055em;
-  line-height: 0.92;
+  font-size: var(--type-section-title-size);
+  font-weight: var(--type-section-title-weight);
+  letter-spacing: var(--type-section-title-tracking);
+  line-height: var(--type-section-title-leading);
 }
 
 .closing-link {
@@ -757,10 +757,10 @@
   max-width: 12ch;
   margin: 1rem 0 0;
   font-family: var(--font-display);
-  font-size: clamp(2.7rem, 10vw, 5.25rem);
-  font-weight: 420;
-  letter-spacing: -0.05em;
-  line-height: 0.95;
+  font-size: var(--type-section-title-size);
+  font-weight: var(--type-section-title-weight);
+  letter-spacing: var(--type-section-title-tracking);
+  line-height: var(--type-section-title-leading);
 }
 
 .two-theses p {
@@ -784,10 +784,10 @@
   max-width: 11ch;
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(3rem, 11vw, 6.5rem);
-  font-weight: 420;
-  letter-spacing: -0.055em;
-  line-height: 0.92;
+  font-size: var(--type-section-title-size);
+  font-weight: var(--type-section-title-weight);
+  letter-spacing: var(--type-section-title-tracking);
+  line-height: var(--type-section-title-leading);
 }
 
 .detail-heading--light h2 {
@@ -855,10 +855,10 @@
   max-width: 11ch;
   margin: 1rem 0 0;
   font-family: var(--font-display);
-  font-size: clamp(3rem, 11vw, 6.25rem);
-  font-weight: 420;
-  letter-spacing: -0.055em;
-  line-height: 0.92;
+  font-size: var(--type-section-title-size);
+  font-weight: var(--type-section-title-weight);
+  letter-spacing: var(--type-section-title-tracking);
+  line-height: var(--type-section-title-leading);
 }
 
 .use-of-funds-grid ul {
@@ -976,9 +976,10 @@
 .official-channel-grid h2 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(2rem, 8vw, 3.4rem);
-  font-weight: 430;
-  letter-spacing: -0.035em;
+  font-size: var(--type-section-title-size);
+  font-weight: var(--type-section-title-weight);
+  letter-spacing: var(--type-section-title-tracking);
+  line-height: var(--type-section-title-leading);
 }
 
 .official-channel-grid p {
@@ -1057,10 +1058,10 @@
   max-width: 11ch;
   margin: var(--space-sm) 0 0;
   font-family: var(--font-display);
-  font-size: clamp(3.5rem, 13vw, 6.75rem);
-  font-weight: 420;
-  letter-spacing: -0.06em;
-  line-height: 0.9;
+  font-size: var(--type-page-title-size);
+  font-weight: var(--type-page-title-weight);
+  letter-spacing: var(--type-page-title-tracking);
+  line-height: var(--type-page-title-leading);
   text-wrap: balance;
 }
 
@@ -1069,8 +1070,8 @@
   margin: var(--space-lg) 0 0;
   color: var(--ink-soft);
   font-family: var(--font-display);
-  font-size: clamp(1.2rem, 4.5vw, 1.55rem);
-  line-height: 1.5;
+  font-size: var(--type-page-lead-size);
+  line-height: var(--type-page-lead-leading);
 }
 
 .article-hero__figure {
@@ -1166,10 +1167,10 @@
   max-width: 13ch;
   margin: var(--space-sm) 0 var(--space-md);
   font-family: var(--font-display);
-  font-size: clamp(2.55rem, 8vw, 4.5rem);
-  font-weight: 420;
-  letter-spacing: -0.05em;
-  line-height: 0.96;
+  font-size: var(--type-section-title-size);
+  font-weight: var(--type-section-title-weight);
+  letter-spacing: var(--type-section-title-tracking);
+  line-height: var(--type-section-title-leading);
   text-wrap: balance;
 }
 
@@ -1357,10 +1358,10 @@
   max-width: 12ch;
   margin: 1rem 0 3rem;
   font-family: var(--font-display);
-  font-size: clamp(3.5rem, 12vw, 7rem);
-  font-weight: 420;
-  letter-spacing: -0.055em;
-  line-height: 0.92;
+  font-size: var(--type-page-title-size);
+  font-weight: var(--type-page-title-weight);
+  letter-spacing: var(--type-page-title-tracking);
+  line-height: var(--type-page-title-leading);
 }
 
 .site-footer {
@@ -1727,7 +1728,6 @@
 
   .home-hero h1 {
     max-width: 10.8ch;
-    font-size: clamp(4.25rem, min(6.2vw, 9.8svh), 6.5rem);
   }
 
   .home-hero__mission {
@@ -1748,23 +1748,6 @@
   .stewardship-section,
   .closing-section {
     padding-block: clamp(4.5rem, 8svh, 6.5rem);
-  }
-
-  .position-grid h2 {
-    font-size: clamp(4rem, min(5vw, 8svh), 5.75rem);
-  }
-
-  .work-content h2,
-  .giving-content h2 {
-    font-size: clamp(3.75rem, min(4.6vw, 7.6svh), 5.25rem);
-  }
-
-  .stewardship-heading h2 {
-    font-size: clamp(4rem, min(4.8vw, 7.8svh), 5.6rem);
-  }
-
-  .closing-section h2 {
-    font-size: clamp(3.75rem, min(4.7vw, 7.6svh), 5.4rem);
   }
 
   .position-grid .value-line {
@@ -1879,19 +1862,6 @@
     padding-block: clamp(4.5rem, 8svh, 6.5rem);
   }
 
-  .two-theses h2 {
-    font-size: clamp(3.25rem, min(4vw, 6.7svh), 4.5rem);
-  }
-
-  .detail-heading h2 {
-    font-size: clamp(3.75rem, min(4.7vw, 7.5svh), 5.25rem);
-  }
-
-  .use-of-funds-grid h2,
-  .receipt-grid h2 {
-    font-size: clamp(3.5rem, min(4.5vw, 7.2svh), 5rem);
-  }
-
   .two-theses {
     gap: 0;
     grid-template-columns: 1fr 1fr;
@@ -1933,10 +1903,6 @@
     padding-block: clamp(3.5rem, 6.5svh, 5rem);
   }
 
-  .article-hero h1 {
-    font-size: clamp(4.5rem, min(6vw, 8.5svh), 6.4rem);
-  }
-
   .article-hero__figure img {
     height: clamp(25rem, 61svh, 34rem);
   }
@@ -1969,15 +1935,11 @@
   .home-hero h1 {
     max-width: 12ch;
     margin-top: 0.7rem;
-    font-size: clamp(3.4rem, 8.5svh, 4.35rem);
-    line-height: 0.89;
   }
 
   .home-hero__mission {
     max-width: 34rem;
     margin-top: 0.9rem;
-    font-size: 1rem;
-    line-height: 1.4;
   }
 
   .home-hero__actions {
@@ -2010,12 +1972,6 @@
     gap: 2rem 4rem;
   }
 
-  .position-grid h2,
-  .stewardship-heading h2,
-  .closing-section h2 {
-    font-size: clamp(3.4rem, 7.5svh, 4.25rem);
-  }
-
   .position-lead {
     margin-top: 1rem;
     font-size: 1.15rem;
@@ -2028,11 +1984,6 @@
   .work-content,
   .giving-content {
     padding-block: 2.75rem;
-  }
-
-  .work-content h2,
-  .giving-content h2 {
-    font-size: clamp(3.25rem, 7svh, 4rem);
   }
 
   .work-list {
@@ -2099,13 +2050,8 @@
     padding-block: 2.75rem;
   }
 
-  .article-hero h1 {
-    font-size: clamp(3.75rem, 8svh, 4.75rem);
-  }
-
   .article-hero__lead {
     margin-top: 1.25rem;
-    font-size: 1.1rem;
   }
 
   .article-hero__figure img {
@@ -2148,10 +2094,6 @@
     height: 2.15rem;
   }
 
-  .home-hero h1,
-  .article-hero h1 {
-    font-size: 3.4rem;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

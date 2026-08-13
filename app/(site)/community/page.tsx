@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import paloAlto from '@/src/assets/scenes/palo-alto.webp'
+import communityConvergence from '@/src/assets/scenes/community-convergence.webp'
 import { Arrow } from '@/components/icons'
 import { CommunitySection } from '@/components/community-shell'
 import { ParticipantForm } from '@/components/forms/participant-form'
@@ -35,7 +35,7 @@ export default async function CommunityPage() {
           <p className="community-hero__lead">Learn about AI Agents, meet thoughtful peers, and contribute to work that serves the public.</p>
           <div className="community-hero__actions"><Link href="#register" className="primary-action">Register for updates <Arrow /></Link><Link href="/community/contribute" className="quiet-action">Ways to contribute</Link></div>
         </div>
-        <figure className="community-hero__figure"><img src={paloAlto.src} alt="" width="971" height="1619" /><figcaption>Shared systems / Palo Alto Baylands</figcaption></figure>
+        <figure className="community-hero__figure"><img src={communityConvergence.src} alt="" width="1619" height="971" fetchPriority="high" /><figcaption>Paths converge / Community study</figcaption></figure>
       </div>
     </header>
 

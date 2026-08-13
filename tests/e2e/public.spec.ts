@@ -9,6 +9,44 @@ test('preserves the institutional Mission-first home and adds Community', async 
   await expect(page.getByText('Donation intake is not active.')).toBeVisible()
 })
 
+test('Landing, Mission, and Community share page-title and lead typography', async ({ page }) => {
+  const routes = [
+    { path: '/', title: '.home-hero h1', lead: '.home-hero__mission', sectionTitle: '.position-grid h2', body: '.community-heading > div > p' },
+    { path: '/mission', title: '.article-hero h1', lead: '.article-hero__lead', sectionTitle: '.article-copy h2', body: '.article-copy section > p:not(.article-kicker)' },
+    { path: '/community', title: '.community-hero h1', lead: '.community-hero__lead', sectionTitle: '.community-heading h2', body: '.community-role-list p' },
+  ]
+
+  for (const viewport of [{ width: 1440, height: 640 }, { width: 390, height: 844 }]) {
+    await page.setViewportSize(viewport)
+    const samples = []
+    for (const route of routes) {
+      await page.goto(route.path)
+      await Promise.all([
+        page.locator(route.title).waitFor(),
+        page.locator(route.lead).waitFor(),
+        page.locator(route.sectionTitle).first().waitFor(),
+        page.locator(route.body).first().waitFor(),
+      ])
+      samples.push(await page.evaluate(({ titleSelector, leadSelector, sectionTitleSelector, bodySelector }) => {
+        const title = getComputedStyle(document.querySelector(titleSelector)!)
+        const lead = getComputedStyle(document.querySelector(leadSelector)!)
+        const sectionTitle = getComputedStyle(document.querySelector(sectionTitleSelector)!)
+        const body = getComputedStyle(document.querySelector(bodySelector)!)
+        return {
+          title: [title.fontSize, title.fontFamily, title.fontWeight, title.lineHeight, title.letterSpacing],
+          lead: [lead.fontSize, lead.fontFamily, lead.fontWeight, lead.lineHeight],
+          sectionTitle: [sectionTitle.fontSize, sectionTitle.fontFamily, sectionTitle.fontWeight, sectionTitle.lineHeight, sectionTitle.letterSpacing],
+          body: [body.fontSize, body.fontFamily, body.fontWeight],
+        }
+      }, { titleSelector: route.title, leadSelector: route.lead, sectionTitleSelector: route.sectionTitle, bodySelector: route.body }))
+    }
+
+    expect(samples[1]).toEqual(samples[0])
+    expect(samples[2]).toEqual(samples[0])
+    if (viewport.height === 640) expect(parseFloat(samples[0].title[0])).toBeCloseTo(54.4, 1)
+  }
+})
+
 test('Community consolidates Learn, Gather, and People without exposing an empty count', async ({ page }) => {
   await page.goto('/community')
   await expect(page.getByRole('heading', { level: 1, name: 'A community of many active participants.' })).toBeVisible()
@@ -17,6 +55,18 @@ test('Community consolidates Learn, Gather, and People without exposing an empty
   await expect(page.getByText('Profiles are being prepared.')).toBeVisible()
   await expect(page.locator('.member-measure')).toHaveCount(0)
   await expect(page.locator('.community-hero__figure img')).toBeVisible()
+})
+
+test('Community uses a dedicated landscape illustration instead of the Governance image', async ({ page }) => {
+  await page.goto('/community')
+  const communityImage = page.locator('.community-hero__figure img')
+  await expect(communityImage).toHaveAttribute('src', /community-convergence/)
+  const communitySource = await communityImage.getAttribute('src')
+  const dimensions = await communityImage.evaluate((image: HTMLImageElement) => ({ width: image.naturalWidth, height: image.naturalHeight }))
+  expect(dimensions.width / dimensions.height).toBeCloseTo(5 / 3, 1)
+
+  await page.goto('/governance')
+  await expect(page.locator('.article-hero__figure img')).not.toHaveAttribute('src', communitySource!)
 })
 
 test('retired empty pages preserve their URLs as Community section redirects', async ({ page }) => {

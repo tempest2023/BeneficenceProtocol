@@ -28,6 +28,18 @@
   --focus: oklch(56% 0.21 34);
   --font-display: 'Newsreader Local', Georgia, 'Times New Roman', serif;
   --font-body: 'Manrope Local', 'Avenir Next', 'Segoe UI', sans-serif;
+  --type-body-size: 1rem;
+  --type-body-leading: 1.6;
+  --type-page-title-size: clamp(2.8rem, 12vw, 3.4rem);
+  --type-page-title-weight: 420;
+  --type-page-title-tracking: -0.055em;
+  --type-page-title-leading: 0.9;
+  --type-page-lead-size: clamp(1.125rem, 4.5vw, 1.3rem);
+  --type-page-lead-leading: 1.5;
+  --type-section-title-size: clamp(2.15rem, 9vw, 3.4rem);
+  --type-section-title-weight: 420;
+  --type-section-title-tracking: -0.045em;
+  --type-section-title-leading: 1;
   --page: min(100% - 1.5rem, 84rem);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
@@ -67,8 +79,8 @@ body {
   overflow-x: hidden;
   background: var(--paper);
   color: var(--ink);
-  font-size: 1rem;
-  line-height: 1.6;
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-leading);
 }
 
 body,
@@ -156,5 +168,13 @@ img {
 @media (min-width: 48rem) {
   :root {
     --page: min(100% - 3rem, 84rem);
+  }
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --type-page-title-size: clamp(3.4rem, min(6vw, 8.5svh), 6.4rem);
+    --type-page-lead-size: clamp(1.125rem, min(1.5vw, 3svh), 1.45rem);
+    --type-section-title-size: clamp(2.7rem, min(4.25vw, 6.8svh), 4.5rem);
   }
 }
