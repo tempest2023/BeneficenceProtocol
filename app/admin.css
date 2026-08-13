@@ -18,6 +18,15 @@
 .admin-form label { display: grid; gap: .4rem; font-size: .8rem; font-weight: 700; }
 .admin-form button, .admin-button { width: fit-content; padding: .7rem 1rem; border: 1px solid #2b2722; background: #2b2722; color: #fffdf8; font: inherit; font-weight: 700; cursor: pointer; }
 .admin-button--quiet { background: transparent; color: #2b2722; }
+.admin-button:not(:disabled):hover { background: #3a342d; }
+.admin-button--quiet:not(:disabled):hover { background: #ebe6dc; }
+.admin-button:focus-visible { outline: 3px solid #c64f24; outline-offset: 3px; }
+.admin-button:disabled { cursor: wait; opacity: .58; }
+.admin-agent-control { display: grid; gap: .65rem; max-width: 27rem; margin-top: .85rem; padding-top: .85rem; border-top: 1px solid #e0dad0; }
+.admin-agent-control__note { margin: 0; color: #655f56; font-size: .76rem; line-height: 1.45; }
+.admin-action-feedback { margin: 0; font-size: .76rem; font-weight: 700; }
+.admin-action-feedback--success { color: #315b3e; }
+.admin-action-feedback--error { color: #913c2c; }
 .admin-table-wrap { overflow-x: auto; border: 1px solid #d0c9be; background: #fffdf8; }
 .admin-table { width: 100%; border-collapse: collapse; font-size: .84rem; }
 .admin-table th, .admin-table td { padding: .8rem; border-bottom: 1px solid #e0dad0; text-align: start; vertical-align: top; overflow-wrap: anywhere; }

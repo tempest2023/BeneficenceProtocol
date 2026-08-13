@@ -1,12 +1,137 @@
-import { createContributor, inviteApplicant, resendContributorVerification, restoreApplication, retryAgentJob, setApplicationStatus } from '@/app/admin/actions'
+import {
+  createContributor,
+  inviteApplicant,
+  resendContributorVerification,
+  restoreApplication,
+  setApplicationStatus,
+} from '@/app/admin/actions'
+import { AdminAgentReviewControl } from '@/components/admin-agent-review-control'
 import { requireAdmin } from '@/lib/admin/auth'
+
+export const maxDuration = 120
 
 export default async function ApplicationsPage() {
   const { service } = await requireAdmin()
   const [{ data: applications }, { data: jobs }] = await Promise.all([
-    service.from('contributor_applications').select('*').order('created_at',{ ascending:false }).limit(100),
-    service.from('agent_jobs').select('*').eq('job_type','contributor_application').order('created_at',{ ascending:false }).limit(100),
+    service.from('contributor_applications').select('*').order('created_at', { ascending: false }).limit(100),
+    service.from('agent_jobs').select('*').eq('job_type', 'contributor_application').order('created_at', { ascending: false }).limit(100),
   ])
-  const jobByRecord = new Map((jobs ?? []).map((job) => [job.record_id,job]))
-  return <main className="admin-main"><header className="admin-heading"><div><p className="eyebrow">Applications</p><h1>Contributor review</h1><p>Email-pending applications are counted but do not enter normal review. Agent failure never removes the record or blocks manual handling.</p></div></header><div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Applicant</th><th>Intent</th><th>Agent output</th><th>Status and recovery</th></tr></thead><tbody>{applications?.map((application) => { const job = jobByRecord.get(application.id); const links = [['Website',application.personal_website],['GitHub',application.github_url],['Scholar',application.scholar_url],['LinkedIn',application.linkedin_url]].filter((item): item is [string,string] => Boolean(item[1])); return <tr key={application.id}><td><strong>{application.name}</strong><br /><a href={`mailto:${application.email}`}>{application.email}</a><br /><small>{[application.city_region,application.us_state,application.country].filter(Boolean).join(', ')}</small><br /><small>{application.industry ? `Industry: ${application.industry}${application.industry_other ? ` — ${application.industry_other}` : ''}` : 'Industry not supplied'}</small><br /><small>Profile preference: {application.profile_willingness?.replaceAll('_',' ') ?? 'not supplied'}</small>{links.length ? <ul>{links.map(([label,href]) => <li key={label}><a href={href} target="_blank" rel="noreferrer">{label} ↗</a></li>)}</ul> : null}<small>Submitted {new Intl.DateTimeFormat('en-US',{ dateStyle:'medium',timeStyle:'short' }).format(new Date(application.created_at))}</small></td><td><strong>Why</strong><ul>{application.participation_reasons.map((item:string) => <li key={item}>{item}</li>)}</ul>{application.participation_reason_other ? <p>{application.participation_reason_other}</p> : null}<strong>Contribute</strong><ul>{application.contribution_areas.map((item:string) => <li key={item}>{item}</li>)}</ul>{application.contribution_area_other ? <p>{application.contribution_area_other}</p> : null}</td><td>{application.agent_output ? <pre className="audit-json">{JSON.stringify(application.agent_output,null,2)}</pre> : <p>Not available.</p>}{job ? <><p><span className="status-badge">Job {job.status}</span> · {job.attempts}/3 attempts</p>{job.last_error ? <p>{job.last_error}</p> : null}{job.status === 'failed' || job.status === 'retry' ? <form action={retryAgentJob}><input type="hidden" name="id" value={job.id} /><button className="admin-button admin-button--quiet">Retry now</button></form> : null}</> : null}</td><td><p><span className="status-badge">{application.status}</span></p>{application.status === 'email_pending' ? <form action={resendContributorVerification}><input type="hidden" name="id" value={application.id} /><button>Send a new 24-hour verification link</button></form> : null}{application.status === 'auto_rejected' ? <form action={restoreApplication}><input type="hidden" name="id" value={application.id} /><button>Restore to human review</button></form> : null}{['reviewing','submitted'].includes(application.status) ? <form action={inviteApplicant}><input type="hidden" name="id" value={application.id} /><button>Send 1v1 invitation</button></form> : null}{application.status !== 'email_pending' ? <form className="admin-form" action={setApplicationStatus}><input type="hidden" name="id" value={application.id} /><label>Update status<select name="status" defaultValue={application.status === 'auto_rejected' || application.status === 'agent_processing' || application.status === 'invitation_sent' ? 'reviewing' : application.status}><option value="reviewing">Reviewing</option><option value="meeting_scheduled">Meeting scheduled</option><option value="conversation_complete">Conversation complete</option><option value="closed">Closed</option></select></label><label>Post-meeting notes<textarea name="meeting_notes" defaultValue={application.meeting_notes ?? ''} /></label><label>Host decision<input name="host_decision" defaultValue={application.host_decision ?? ''} /></label><button>Save status</button></form> : null}{application.status === 'conversation_complete' ? <form action={createContributor}><input type="hidden" name="application_id" value={application.id} /><button>Create Contributor record</button></form> : null}</td></tr> })}</tbody></table>{!applications?.length ? <p className="admin-empty">No Contributor applications have been received.</p> : null}</div></main>
+  const jobByRecord = new Map((jobs ?? []).map((job) => [job.record_id, job]))
+
+  return (
+    <main className="admin-main">
+      <header className="admin-heading">
+        <div>
+          <p className="eyebrow">Applications</p>
+          <h1>Contributor review</h1>
+          <p>
+            Verified applications wait for an administrator to start Agent review. Email-pending applications are counted but cannot be sent to the Agent, and every application remains available for human handling.
+          </p>
+        </div>
+      </header>
+      <div className="admin-table-wrap">
+        <table className="admin-table">
+          <thead>
+            <tr><th>Applicant</th><th>Intent</th><th>Agent review</th><th>Status and recovery</th></tr>
+          </thead>
+          <tbody>
+            {applications?.map((application) => {
+              const job = jobByRecord.get(application.id)
+              const links = [
+                ['Website', application.personal_website],
+                ['GitHub', application.github_url],
+                ['Scholar', application.scholar_url],
+                ['LinkedIn', application.linkedin_url],
+              ].filter((item): item is [string, string] => Boolean(item[1]))
+              const canStartAgent = Boolean(
+                job
+                && ['pending', 'retry', 'failed'].includes(job.status)
+                && application.email_verified_at
+                && ['submitted', 'agent_processing'].includes(application.status),
+              )
+
+              return (
+                <tr key={application.id}>
+                  <td>
+                    <strong>{application.name}</strong><br />
+                    <a href={`mailto:${application.email}`}>{application.email}</a><br />
+                    <small>{[application.city_region, application.us_state, application.country].filter(Boolean).join(', ')}</small><br />
+                    <small>{application.industry ? `Industry: ${application.industry}${application.industry_other ? ` — ${application.industry_other}` : ''}` : 'Industry not supplied'}</small><br />
+                    <small>Profile preference: {application.profile_willingness?.replaceAll('_', ' ') ?? 'not supplied'}</small>
+                    {links.length ? <ul>{links.map(([label, href]) => <li key={label}><a href={href} target="_blank" rel="noreferrer">{label} ↗</a></li>)}</ul> : null}
+                    <small>Submitted {new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(application.created_at))}</small>
+                  </td>
+                  <td>
+                    <strong>Why</strong>
+                    <ul>{application.participation_reasons.map((item: string) => <li key={item}>{item}</li>)}</ul>
+                    {application.participation_reason_other ? <p>{application.participation_reason_other}</p> : null}
+                    <strong>Contribute</strong>
+                    <ul>{application.contribution_areas.map((item: string) => <li key={item}>{item}</li>)}</ul>
+                    {application.contribution_area_other ? <p>{application.contribution_area_other}</p> : null}
+                  </td>
+                  <td>
+                    {application.agent_output
+                      ? <pre className="audit-json">{JSON.stringify(application.agent_output, null, 2)}</pre>
+                      : <p>{application.email_verified_at ? 'Not run. Administrator approval is required.' : 'Waiting for email verification.'}</p>}
+                    {job ? (
+                      <>
+                        <p><span className="status-badge">Job {job.status}</span> · {job.attempts} {job.attempts === 1 ? 'attempt' : 'attempts'}</p>
+                        {job.last_error ? <p>{job.last_error}</p> : null}
+                        {canStartAgent ? <AdminAgentReviewControl jobId={job.id} jobStatus={job.status} reviewKind="application" /> : null}
+                      </>
+                    ) : null}
+                  </td>
+                  <td>
+                    <p><span className="status-badge">{application.status}</span></p>
+                    {application.status === 'email_pending' ? (
+                      <form action={resendContributorVerification}>
+                        <input type="hidden" name="id" value={application.id} />
+                        <button>Send a new 24-hour verification link</button>
+                      </form>
+                    ) : null}
+                    {application.status === 'auto_rejected' ? (
+                      <form action={restoreApplication}>
+                        <input type="hidden" name="id" value={application.id} />
+                        <button>Restore to human review</button>
+                      </form>
+                    ) : null}
+                    {['reviewing', 'submitted'].includes(application.status) ? (
+                      <form action={inviteApplicant}>
+                        <input type="hidden" name="id" value={application.id} />
+                        <button>Send 1v1 invitation</button>
+                      </form>
+                    ) : null}
+                    {application.status !== 'email_pending' ? (
+                      <form className="admin-form" action={setApplicationStatus}>
+                        <input type="hidden" name="id" value={application.id} />
+                        <label>
+                          Update status
+                          <select name="status" defaultValue={application.status === 'auto_rejected' || application.status === 'agent_processing' || application.status === 'invitation_sent' ? 'reviewing' : application.status}>
+                            <option value="reviewing">Reviewing</option>
+                            <option value="meeting_scheduled">Meeting scheduled</option>
+                            <option value="conversation_complete">Conversation complete</option>
+                            <option value="closed">Closed</option>
+                          </select>
+                        </label>
+                        <label>Post-meeting notes<textarea name="meeting_notes" defaultValue={application.meeting_notes ?? ''} /></label>
+                        <label>Host decision<input name="host_decision" defaultValue={application.host_decision ?? ''} /></label>
+                        <button>Save status</button>
+                      </form>
+                    ) : null}
+                    {application.status === 'conversation_complete' ? (
+                      <form action={createContributor}>
+                        <input type="hidden" name="application_id" value={application.id} />
+                        <button>Create Contributor record</button>
+                      </form>
+                    ) : null}
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+        {!applications?.length ? <p className="admin-empty">No Contributor applications have been received.</p> : null}
+      </div>
+    </main>
+  )
 }

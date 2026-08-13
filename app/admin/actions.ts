@@ -355,10 +355,93 @@ export async function saveSetting(formData: FormData) {
   revalidatePath('/admin/settings')
 }
 
-export async function retryAgentJob(formData: FormData) {
-  const { service } = await requireAdmin(); const id = value(formData, 'id')
-  const { error } = await service.from('agent_jobs').update({ status: 'retry', available_at: new Date().toISOString(), last_error: null, updated_at: new Date().toISOString() }).eq('id', id).in('status', ['failed','retry']); if (error) throw error
-  await audit('agent_job.retry_requested', 'agent_job', id)
-  const { processAgentJob } = await import('@/lib/agent/process'); await processAgentJob(id)
-  revalidatePath('/admin/applications'); revalidatePath('/admin/resources')
+export type AgentReviewActionState = {
+  status: 'idle' | 'success' | 'error'
+  message: string
+}
+
+export async function startAgentReview(
+  _previous: AgentReviewActionState,
+  formData: FormData,
+): Promise<AgentReviewActionState> {
+  const { user, service } = await requireAdmin()
+  const id = value(formData, 'id')
+  if (!id) return { status: 'error', message: 'The Agent job could not be identified. Refresh the page and try again.' }
+
+  const { data: job, error: jobError } = await service
+    .from('agent_jobs')
+    .select('id,job_type,record_id,status')
+    .eq('id', id)
+    .maybeSingle()
+
+  if (jobError || !job) return { status: 'error', message: 'The Agent job could not be found. Refresh the page and try again.' }
+  if (!['contributor_application', 'resource_submission'].includes(job.job_type)) {
+    return { status: 'error', message: 'This job type does not support Agent review.' }
+  }
+  if (!['pending', 'retry', 'failed'].includes(job.status)) {
+    return { status: 'error', message: 'This Agent job is not waiting for a manual review.' }
+  }
+
+  if (job.job_type === 'contributor_application') {
+    const { data: application, error } = await service
+      .from('contributor_applications')
+      .select('email_verified_at,status')
+      .eq('id', job.record_id)
+      .maybeSingle()
+    if (error || !application) return { status: 'error', message: 'The Contributor application could not be found.' }
+    if (!application.email_verified_at) return { status: 'error', message: 'Verify the applicant’s email before starting Agent review.' }
+    if (!['submitted', 'agent_processing'].includes(application.status)) {
+      return { status: 'error', message: 'This application has moved beyond the stage where Agent review can start.' }
+    }
+  } else {
+    const { data: submission, error } = await service
+      .from('resource_submissions')
+      .select('status')
+      .eq('id', job.record_id)
+      .maybeSingle()
+    if (error || !submission) return { status: 'error', message: 'The resource submission could not be found.' }
+    if (!['pending', 'in_review'].includes(submission.status)) {
+      return { status: 'error', message: 'This resource has moved beyond the stage where Agent review can start.' }
+    }
+  }
+
+  const now = new Date().toISOString()
+  const { error: updateError } = await service
+    .from('agent_jobs')
+    .update({ status: job.status === 'pending' ? 'pending' : 'retry', available_at: now, last_error: null, updated_at: now })
+    .eq('id', id)
+    .in('status', ['pending', 'retry', 'failed'])
+
+  if (updateError) return { status: 'error', message: 'The Agent job could not be prepared. Refresh the page and try again.' }
+
+  const { error: auditError } = await service.from('admin_audit_log').insert({
+    actor_type: 'admin',
+    actor_id: user.id,
+    action: 'agent_job.review_started',
+    entity_type: job.job_type,
+    entity_id: job.record_id,
+    details: { agent_job_id: job.id, previous_status: job.status },
+  })
+  if (auditError) return { status: 'error', message: 'The review could not be recorded in the audit log, so the Agent was not started.' }
+
+  const { processAgentJob } = await import('@/lib/agent/process')
+  const outcome = await processAgentJob(id)
+  revalidatePath('/admin')
+  revalidatePath(job.job_type === 'contributor_application' ? '/admin/applications' : '/admin/resources')
+
+  if (!outcome.processed) {
+    return {
+      status: 'error',
+      message: outcome.error
+        ? 'Agent review did not complete. The job remains available for an administrator to retry.'
+        : 'Another process changed this Agent job. Refresh the page to see its current status.',
+    }
+  }
+
+  return {
+    status: 'success',
+    message: job.job_type === 'contributor_application'
+      ? 'Application Agent review completed.'
+      : 'Resource Agent review completed.',
+  }
 }

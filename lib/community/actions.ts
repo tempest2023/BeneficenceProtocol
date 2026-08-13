@@ -105,17 +105,15 @@ export async function submitResource(_previous: ActionState, formData: FormData)
     const data = result.data
     await consumeLimit('resource_submission_email', start, 3, protectedRateKey('resource-email', normalizeEmail(data.contact_email)))
     const client = requireServiceClient()
-    const { data: created, error } = await client.rpc('create_resource_submission', {
+    const { error } = await client.rpc('create_resource_submission', {
       p_contact_email: normalizeEmail(data.contact_email), p_submitter_name: data.submitter_name ?? null,
       p_title: data.title, p_public_url: data.public_url, p_format: data.format, p_language: data.language,
       p_description: data.description, p_ai_agent_relevance: data.ai_agent_relevance,
       p_author_publisher: data.author_publisher, p_access_confirmation: true,
       p_copyright_confirmation: true, p_privacy_consent: true,
     })
-    const jobId = created?.[0]?.job_id as string | undefined
     if (error) return { status: 'error', message: databaseMessage(error) }
-    if (jobId) after(async () => { const { processAgentJob } = await import('@/lib/agent/process'); await processAgentJob(jobId) })
-    return { status: 'success', message: 'Thank you. Your resource is queued for administrative review; submission does not create Contributor status.' }
+    return { status: 'success', message: 'Thank you. Your resource is queued for administrative review. An administrator decides whether to run an Agent review; submission does not create Contributor status.' }
   } catch (error) {
     return { status: 'error', message: databaseMessage(error as Error) }
   }
