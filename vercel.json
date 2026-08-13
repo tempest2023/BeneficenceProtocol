@@ -1,8 +1,7 @@
 {
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [
+    { "path": "/api/cron/agent-jobs", "schedule": "*/10 * * * *" },
+    { "path": "/api/cron/retention", "schedule": "17 3 * * *" }
   ]
 }

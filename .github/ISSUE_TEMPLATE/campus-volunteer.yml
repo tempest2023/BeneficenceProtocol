@@ -1,0 +1,35 @@
+name: Campus volunteer
+description: Suggest a public campus learning or community activity.
+title: "[Campus volunteer] "
+labels: ["community", "campus"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This issue is public. Name the campus only if you are comfortable doing so. Do not post private contact details, student records, home or event addresses, access codes, or confidential institutional information.
+  - type: input
+    id: campus
+    attributes:
+      label: Campus or general region
+      description: You may keep this general and discuss specifics privately later.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like to organize or support?
+    validations:
+      required: true
+  - type: textarea
+    id: audience
+    attributes:
+      label: Who would benefit?
+    validations:
+      required: true
+  - type: checkboxes
+    id: conduct
+    attributes:
+      label: Public and safety acknowledgement
+      options:
+        - label: I have not included private contact or address information and I will follow the Community Code of Conduct.
+          required: true

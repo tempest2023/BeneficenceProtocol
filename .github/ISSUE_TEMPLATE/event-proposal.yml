@@ -1,0 +1,44 @@
+name: Event proposal
+description: Propose a public online, local, campus, or conference-adjacent activity.
+title: "[Event proposal] "
+labels: ["community", "event-proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        GitHub issues are public. Do not include private contact information, street addresses, confidential plans, or attendee data. A proposal does not authorize use of Beneficence or conference names as an official relationship.
+  - type: input
+    id: concept
+    attributes:
+      label: Event concept
+      description: A short, public title or concept.
+    validations:
+      required: true
+  - type: dropdown
+    id: format
+    attributes:
+      label: Format
+      options: [Online, In person, Hybrid, Not decided]
+    validations:
+      required: true
+  - type: textarea
+    id: public_value
+    attributes:
+      label: Public value
+      description: What will participants learn, discuss, or create?
+    validations:
+      required: true
+  - type: textarea
+    id: outline
+    attributes:
+      label: Proposed outline
+      description: Share a high-level schedule without private logistics.
+    validations:
+      required: true
+  - type: checkboxes
+    id: conduct
+    attributes:
+      label: Public and safety acknowledgement
+      options:
+        - label: I have not included private contact or address information and I will follow the Community Code of Conduct.
+          required: true

@@ -110,7 +110,8 @@ img {
   outline-offset: 4px;
 }
 
-#root {
+.site-shell,
+.admin-shell {
   min-height: 100vh;
 }
 
