@@ -218,9 +218,13 @@
   border-bottom: 1px solid var(--line);
 }
 
-.community-program-list > article > div:first-child > p:last-child {
+.community-program-list > article > div:first-child > h3 + p {
   max-width: 32rem;
   margin-top: .8rem;
+}
+
+.community-program-action {
+  margin-top: 1.5rem;
 }
 
 .article-kicker,

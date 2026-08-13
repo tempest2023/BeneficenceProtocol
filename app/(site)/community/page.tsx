@@ -26,6 +26,7 @@ export default async function CommunityPage() {
   ])
   const upcomingEvents = events.filter((event) => (firstStart(event)?.getTime() ?? 0) >= Date.now() && event.attendance_status !== 'closed')
   const audience = publicCommunityAudience(metrics.allTime)
+  const eventProposalUrl = contributionIssueLinks[0].href
 
   return <main id="main-content" className="community-shell">
     <header className="community-hero" aria-labelledby="community-title">
@@ -53,11 +54,11 @@ export default async function CommunityPage() {
     <CommunitySection eyebrow="02 / Community program" title="Learn and gather in public." lead="Free learning and public events, brought together as one community program." id="program" tone="soft">
       <div className="community-program-list">
         <article>
-          <div><p className="article-kicker">Learn</p><h3>Free AI Agent learning.</h3><p>Courses, research briefings, paper discussions, and practical references.</p></div>
+          <div><p className="article-kicker">Learn</p><h3>Free AI Agent learning.</h3><p>Courses, research briefings, paper discussions, and practical references.</p><Link href="/community/contribute/resources/submit" className="primary-action community-program-action">Submit a learning resource <Arrow /></Link></div>
           {resources.length ? <div className="resource-list">{resources.map((resource) => <article className="resource-card" key={resource.id}><span className="resource-card__meta">{resource.resource_type} · {resource.language}{resource.difficulty ? ` · ${resource.difficulty}` : ''}</span><h4>{resource.title}</h4><p>{resource.summary}</p><a href={resource.public_url} target="_blank" rel="noreferrer">Open resource <span aria-hidden="true">↗</span></a></article>)}</div> : null}
         </article>
         <article>
-          <div><p className="article-kicker">Gather</p><h3>Online and local events.</h3><p>Discussions, campus activities, community gatherings, and conference events.</p></div>
+          <div><p className="article-kicker">Gather</p><h3>Online and local events.</h3><p>Discussions, campus activities, community gatherings, and conference events.</p><a href={eventProposalUrl} className="primary-action community-program-action" target="_blank" rel="noreferrer">Propose an event on GitHub <span aria-hidden="true">↗</span></a></div>
           {upcomingEvents.length ? <div className="event-list">{upcomingEvents.map((event) => { const start = firstStart(event); return <article className="event-card" key={event.id}><span className="event-card__meta">{event.format.replace('_', ' ')} · {event.attendance_status}</span><h4>{event.title}</h4><p>{event.summary}</p>{start ? <p className="field-hint">{new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeStyle: 'short', timeZone: event.timezone }).format(start)}</p> : null}<Link href={`/community/gather/${event.slug}`}>Event details</Link></article> })}</div> : null}
         </article>
       </div>

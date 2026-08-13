@@ -53,6 +53,8 @@ test('Community consolidates Learn, Gather, and People without exposing an empty
   await expect(page.getByText(/being prepared|being planned|not open yet|check back soon/i)).toHaveCount(0)
   await expect(page.getByRole('heading', { name: 'Free AI Agent learning.' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Online and local events.' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Submit a learning resource' })).toHaveAttribute('href', '/community/contribute/resources/submit')
+  await expect(page.getByRole('link', { name: 'Propose an event on GitHub' })).toHaveAttribute('href', /template=event-proposal\.yml/)
   await expect(page.getByRole('heading', { name: 'People behind the work.' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Choose how you want to contribute.' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Join ongoing work.' })).toBeVisible()
