@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Arrow, FoundationMark } from '@/components/icons'
 
 const links = [
@@ -15,26 +15,55 @@ const links = [
 
 const communityLinks = [
   ['/community', 'Overview'],
-  ['/community#learn', 'Learn'],
-  ['/community#gather', 'Gather'],
+  ['/community#program', 'Community program'],
   ['/community#people', 'People'],
+  ['/community#register', 'Stay connected'],
   ['/community/contribute', 'Contribute'],
 ] as const
 
 export function SiteHeader() {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [communityHash, setCommunityHash] = useState('')
+  const communityNavigationRef = useRef<HTMLElement>(null)
   const inCommunity = pathname === '/community' || pathname.startsWith('/community/')
   const activeCommunityHref = pathname.startsWith('/community/contribute')
     ? '/community/contribute'
     : pathname.startsWith('/community/gather/')
-      ? '/community#gather'
+      ? '/community#program'
       : pathname === '/community'
-        ? '/community'
+        ? communityHash === '#program' || communityHash === '#learn' || communityHash === '#gather'
+          ? '/community#program'
+          : communityHash === '#people'
+            ? '/community#people'
+            : communityHash === '#register'
+              ? '/community#register'
+              : '/community'
         : null
 
   useEffect(() => {
     setMenuOpen(false)
+  }, [pathname])
+
+  useEffect(() => {
+    const syncCommunityHash = () => setCommunityHash(window.location.hash)
+    const syncCommunityLink = (event: MouseEvent) => {
+      if (!(event.target instanceof Element)) return
+      const link = event.target.closest<HTMLAnchorElement>('a[href]')
+      if (!link) return
+      const destination = new URL(link.href)
+      if (destination.pathname === '/community') setCommunityHash(destination.hash)
+    }
+
+    syncCommunityHash()
+    window.addEventListener('hashchange', syncCommunityHash)
+    window.addEventListener('popstate', syncCommunityHash)
+    document.addEventListener('click', syncCommunityLink)
+    return () => {
+      window.removeEventListener('hashchange', syncCommunityHash)
+      window.removeEventListener('popstate', syncCommunityHash)
+      document.removeEventListener('click', syncCommunityLink)
+    }
   }, [pathname])
 
   useEffect(() => {
@@ -44,6 +73,28 @@ export function SiteHeader() {
     window.addEventListener('keydown', closeOnEscape)
     return () => window.removeEventListener('keydown', closeOnEscape)
   }, [])
+
+  useEffect(() => {
+    if (pathname === '/community' && communityHash) {
+      const targetId = communityHash === '#learn' || communityHash === '#gather'
+        ? 'program'
+        : communityHash.slice(1)
+      window.requestAnimationFrame(() => document.getElementById(targetId)?.scrollIntoView({ block: 'start' }))
+    }
+
+    const navigation = communityNavigationRef.current
+    const activeLink = navigation?.querySelector<HTMLElement>('a.is-active')
+    if (!navigation || !activeLink) return
+    window.requestAnimationFrame(() => {
+      const navigationBounds = navigation.getBoundingClientRect()
+      const linkBounds = activeLink.getBoundingClientRect()
+      if (linkBounds.left < navigationBounds.left || linkBounds.right > navigationBounds.right) {
+        navigation.scrollTo({
+          left: navigation.scrollLeft + linkBounds.left - navigationBounds.left - (navigationBounds.width - linkBounds.width) / 2,
+        })
+      }
+    })
+  }, [activeCommunityHref, communityHash, pathname])
 
   return (
     <header className="site-header">
@@ -75,11 +126,11 @@ export function SiteHeader() {
         </nav>
       </div>
       {inCommunity ? (
-        <nav className="community-navigation" aria-label="Community navigation">
+        <nav ref={communityNavigationRef} className="community-navigation" aria-label="Community navigation">
           <div className="page-shell community-navigation__inner">
             {communityLinks.map(([href, label]) => {
               const current = activeCommunityHref === href
-              return <Link key={href} href={href} className={current ? 'is-active' : undefined} aria-current={current ? 'page' : undefined}>{label}</Link>
+              return <Link key={href} href={href} className={current ? 'is-active' : undefined} aria-current={current ? (href.includes('#') ? 'location' : 'page') : undefined}>{label}</Link>
             })}
           </div>
         </nav>

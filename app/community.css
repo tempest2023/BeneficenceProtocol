@@ -85,7 +85,6 @@
 .community-section {
   padding-block: var(--space-section);
   border-bottom: 1px solid var(--line);
-  scroll-margin-top: 8rem;
 }
 
 .community-section--ink {
@@ -163,7 +162,6 @@
 
 .community-role-list h3,
 .community-program-list h3,
-.current-work-list h3,
 .contribution-list h3,
 .profile-card h2 {
   margin: 0;
@@ -176,7 +174,6 @@
 
 .community-role-list p,
 .community-program-list p,
-.current-work-list p,
 .contribution-list p,
 .profile-card p {
   margin: 0;
@@ -214,7 +211,6 @@
   gap: clamp(2rem, 5vw, 5rem);
   padding-block: clamp(2.5rem, 6vw, 4.5rem);
   border-top: 1px solid var(--line);
-  scroll-margin-top: 8rem;
 }
 
 .community-program-list > article:last-child {
@@ -227,7 +223,6 @@
 }
 
 .article-kicker,
-.current-work-list span,
 .resource-card__meta,
 .event-card__meta {
   display: block;
@@ -281,17 +276,6 @@
   font-size: .8rem;
   font-weight: 750;
   text-underline-offset: .25em;
-}
-
-.current-work-list {
-  border-top: 1px solid var(--ink);
-}
-
-.current-work-list article {
-  display: grid;
-  gap: .75rem;
-  padding-block: 1.5rem;
-  border-bottom: 1px solid var(--line);
 }
 
 .profile-grid {
@@ -740,11 +724,6 @@
 @media (min-width: 48rem) {
   .community-role-list > li {
     grid-template-columns: 2.5rem minmax(12rem, .65fr) minmax(0, 1.35fr);
-    align-items: start;
-  }
-
-  .current-work-list article {
-    grid-template-columns: 8rem minmax(12rem, .7fr) minmax(0, 1fr);
     align-items: start;
   }
 

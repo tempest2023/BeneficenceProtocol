@@ -34,8 +34,14 @@
 }
 
 .community-navigation {
+  overflow-x: auto;
   background: var(--paper);
   border-top: 1px solid var(--line);
+  scrollbar-width: none;
+}
+
+.community-navigation::-webkit-scrollbar {
+  display: none;
 }
 
 .community-navigation__inner {
