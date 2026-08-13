@@ -4,15 +4,31 @@ test('preserves the institutional Mission-first home and adds Community', async 
   await page.goto('/')
   await expect(page.getByRole('heading', { level: 1 })).toContainText('AI Agents should enlarge human possibility')
   await expect(page.getByLabel('Primary navigation').getByRole('link', { name: 'Community', exact: true })).toBeVisible()
-  await expect(page.getByText('Community members — all time')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'A public network of many active participants.' })).toBeVisible()
+  await expect(page.getByText('Community members — all time')).toHaveCount(0)
   await expect(page.getByText('Donation intake is not active.')).toBeVisible()
 })
 
-test('Learn and Gather provide useful honest empty states', async ({ page }) => {
+test('Community consolidates Learn, Gather, and People without exposing an empty count', async ({ page }) => {
+  await page.goto('/community')
+  await expect(page.getByRole('heading', { level: 1, name: 'A community of many active participants.' })).toBeVisible()
+  await expect(page.getByText('Learning resources are being prepared.')).toBeVisible()
+  await expect(page.getByText('Events are being planned.')).toBeVisible()
+  await expect(page.getByText('Profiles are being prepared.')).toBeVisible()
+  await expect(page.locator('.member-measure')).toHaveCount(0)
+  await expect(page.locator('.community-hero__figure img')).toBeVisible()
+})
+
+test('retired empty pages preserve their URLs as Community section redirects', async ({ page }) => {
   await page.goto('/community/learn')
-  await expect(page.getByRole('heading', { name: 'Learning resources are being prepared.' })).toBeVisible()
+  await expect(page).toHaveURL(/\/community#learn$/)
+  await expect(page.getByText('Learning resources are being prepared.')).toBeVisible()
   await page.goto('/community/gather')
-  await expect(page.getByRole('heading', { name: 'Events are being planned.' })).toBeVisible()
+  await expect(page).toHaveURL(/\/community#gather$/)
+  await expect(page.getByText('Events are being planned.')).toBeVisible()
+  await page.goto('/community/people')
+  await expect(page).toHaveURL(/\/community#people$/)
+  await expect(page.getByText('Profiles are being prepared.')).toBeVisible()
 })
 
 test('Contributor application sets a low-pressure, non-interview expectation', async ({ page }) => {
@@ -28,11 +44,13 @@ test('Contributor application sets a low-pressure, non-interview expectation', a
 test('Community pages use the header submenu without an in-page duplicate', async ({ page }) => {
   await page.goto('/community/contribute/apply')
   const communityNav = page.getByRole('navigation', { name: 'Community navigation' })
-  for (const name of ['Overview', 'People', 'Learn', 'Gather', 'Contribute', 'Apply', 'Submit resource', 'Code of Conduct']) {
+  for (const name of ['Overview', 'Learn', 'Gather', 'People', 'Contribute']) {
     await expect(communityNav.getByRole('link', { name, exact: true })).toBeVisible()
   }
-  await expect(communityNav.getByRole('link', { name: 'Apply', exact: true })).toHaveAttribute('aria-current', 'page')
-  await expect(communityNav.getByRole('link', { name: 'Apply', exact: true })).toBeInViewport()
+  for (const name of ['Apply', 'Submit resource', 'Code of Conduct']) {
+    await expect(communityNav.getByRole('link', { name, exact: true })).toHaveCount(0)
+  }
+  await expect(communityNav.getByRole('link', { name: 'Contribute', exact: true })).toHaveAttribute('aria-current', 'page')
   await expect(page.locator('.community-subnav')).toHaveCount(0)
 })
 

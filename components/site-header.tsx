@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Arrow, FoundationMark } from '@/components/icons'
 
 const links = [
@@ -15,25 +15,23 @@ const links = [
 
 const communityLinks = [
   ['/community', 'Overview'],
-  ['/community/people', 'People'],
-  ['/community/learn', 'Learn'],
-  ['/community/gather', 'Gather'],
+  ['/community#learn', 'Learn'],
+  ['/community#gather', 'Gather'],
+  ['/community#people', 'People'],
   ['/community/contribute', 'Contribute'],
-  ['/community/contribute/apply', 'Apply'],
-  ['/community/contribute/resources/submit', 'Submit resource'],
-  ['/community/code-of-conduct', 'Code of Conduct'],
 ] as const
 
 export function SiteHeader() {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
-  const communityNavRef = useRef<HTMLDivElement>(null)
   const inCommunity = pathname === '/community' || pathname.startsWith('/community/')
-  const activeCommunityHref = inCommunity
-    ? [...communityLinks]
-        .filter(([href]) => pathname === href || (href !== '/community' && pathname.startsWith(`${href}/`)))
-        .sort(([a], [b]) => b.length - a.length)[0]?.[0] ?? '/community'
-    : null
+  const activeCommunityHref = pathname.startsWith('/community/contribute')
+    ? '/community/contribute'
+    : pathname.startsWith('/community/gather/')
+      ? '/community#gather'
+      : pathname === '/community'
+        ? '/community'
+        : null
 
   useEffect(() => {
     setMenuOpen(false)
@@ -46,16 +44,6 @@ export function SiteHeader() {
     window.addEventListener('keydown', closeOnEscape)
     return () => window.removeEventListener('keydown', closeOnEscape)
   }, [])
-
-  useEffect(() => {
-    const navigation = communityNavRef.current
-    const activeLink = navigation?.querySelector<HTMLElement>('.is-active')
-    if (!navigation || !activeLink) return
-    navigation.scrollTo({
-      left: Math.max(0, activeLink.offsetLeft - (navigation.clientWidth - activeLink.offsetWidth) / 2),
-      behavior: 'auto',
-    })
-  }, [pathname])
 
   return (
     <header className="site-header">
@@ -88,7 +76,7 @@ export function SiteHeader() {
       </div>
       {inCommunity ? (
         <nav className="community-navigation" aria-label="Community navigation">
-          <div ref={communityNavRef} className="page-shell community-navigation__inner">
+          <div className="page-shell community-navigation__inner">
             {communityLinks.map(([href, label]) => {
               const current = activeCommunityHref === href
               return <Link key={href} href={href} className={current ? 'is-active' : undefined} aria-current={current ? 'page' : undefined}>{label}</Link>

@@ -7,6 +7,7 @@ import losAngeles from '@/src/assets/scenes/los-angeles.webp'
 import { Arrow } from '@/components/icons'
 import { ArticleHero, TextLink } from '@/components/primitives'
 import { getPublicMemberMetrics, getPublicPeople } from '@/lib/community/data'
+import { publicCommunityAudience } from '@/lib/community/presentation'
 
 export const programs = [
   {
@@ -53,6 +54,7 @@ const disclosureCadence = [
 
 export async function InstitutionalHomePage() {
   const [metrics, people] = await Promise.all([getPublicMemberMetrics(), getPublicPeople({ featured: true })])
+  const audience = publicCommunityAudience(metrics.allTime)
   return (
     <main id="main-content">
       <section className="home-hero" aria-labelledby="home-title">
@@ -103,11 +105,7 @@ export async function InstitutionalHomePage() {
 
       <section className="community-section community-section--soft" aria-labelledby="home-community-title">
         <div className="page-shell">
-          <div className="community-heading"><p className="section-index">04 / Community</p><div><h2 id="home-community-title">A public network for learning and responsible action.</h2><p>Most resources and events are open to everyone. Registration helps us share relevant opportunities; deeper contribution is optional.</p></div></div>
-          <div className="member-measure">
-            <div><strong className="member-measure__number">{metrics.allTime.toLocaleString('en-US')}</strong><span className="member-measure__label">Community members — all time</span></div>
-            <div><p>Cumulative unique people recorded through community registration, contribution applications, resource submissions, public contributor activity, or organizational roles. This is a community-growth measure, not legal membership or current activity.</p><TextLink href="/community">Enter the community</TextLink></div>
-          </div>
+          <div className="community-heading"><p className="section-index">04 / Community</p><div><h2 id="home-community-title">A public network of {audience}.</h2><p>Learn about AI Agents, join public events, and contribute to work that serves the public.</p><TextLink href="/community">Enter the community</TextLink></div></div>
           {people.length ? <div className="profile-grid" style={{ marginTop: '4rem' }}>{people.map((person) => <article className="profile-card" key={person.id}>{person.photo_url ? <img className="profile-card__portrait" src={person.photo_url} alt={person.photo_alt ?? ''} /> : <div className="profile-card__placeholder" aria-hidden="true">{person.display_name.slice(0, 1)}</div>}<div><p className="profile-card__role">{person.role}</p><h2>{person.display_name}</h2><p className="profile-card__bio">{person.biography}</p></div></article>)}</div> : null}
         </div>
       </section>
