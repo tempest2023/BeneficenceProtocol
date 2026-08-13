@@ -81,6 +81,6 @@ Automatic rejection is limited to exact-evidence, high-confidence severe conduct
 
 ## Deployment operations
 
-Vercel cron routes retry durable Agent jobs every ten minutes and run retention cleanup daily. Both require `CRON_SECRET`. In the dashboard, administrators can retry failed jobs, resend verification, restore automated rejections, export formula-safe CSV, record Core Contributor nominations, and publish only consented profiles.
+Next.js `after()` starts Agent work immediately after a submission. A daily Vercel cron recovers durable jobs that remain pending or retryable, and a separate daily cron runs retention cleanup; both require `CRON_SECRET`. In the dashboard, administrators can retry failed jobs, resend verification, restore automated rejections, export formula-safe CSV, record Core Contributor nominations, and publish only consented profiles.
 
 Do not seed fabricated courses, events, people, projects, or member records. Public empty states are part of the intended first release.
