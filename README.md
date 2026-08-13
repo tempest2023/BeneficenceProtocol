@@ -38,29 +38,19 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Without external-service credentials, public content renders with truthful empty states and a zero all-time count. Community forms remain closed. This is intentional and lets development/build verification run without creating fake records.
+Without external-service credentials, public content renders with truthful empty states and a zero all-time count. Forms are always visible and enabled; a submission displays a service error if its required backend is unavailable.
 
 ## Database setup
 
-Apply [the community migration](./supabase/migrations/202608120001_community.sql) to the target Supabase project. It creates all entities, transactional registration/counting functions, retry functions, retention scrubbing, RLS policies, and the restricted `community-images` bucket.
+Apply the SQL migrations in [`supabase/migrations`](./supabase/migrations) in filename order. They create all entities, transactional registration/counting functions, retry functions, retention scrubbing, RLS policies, the restricted `community-images` bucket, raw-IP rate limiting, and Supabase Cron retention maintenance.
 
 The migration intentionally grants no anonymous form-table inserts. Validated Server Actions use the server-only service role, and anonymous access is limited to published resources, events, People profiles, event sessions, and the public aggregate metric.
 
-## Production feature gate
+## Runtime configuration
 
-Set `NEXT_PUBLIC_COMMUNITY_FORMS_ENABLED=true` only after every readiness input is present:
+Forms do not use a launch flag and are enabled by default. Supabase is required to accept submissions and to use the administrator dashboard. Resend is required for verification and transactional email, while OpenAI is required only when an administrator explicitly starts an Agent review.
 
-- Supabase URL, publishable key, service role, and applied migration
-- OpenAI API key
-- Resend API key and a verified sending subdomain
-- Administrator email allowlist
-- External scheduling URL and official GitHub repository URL
-- HMAC and cron secrets
-- Approved Privacy Policy, Code of Conduct, and monitored contact address
-- Approved People profiles with separate publication consent
-- `COMMUNITY_LAUNCH_APPROVED=true` after the organizational approval checklist is complete
-
-The server independently checks readiness; changing the public flag alone does not open a form. Community launch does not activate donations or fundraising.
+The scheduling URL and GitHub URLs are managed in `/admin/settings`, not environment variables. Supabase Cron runs retention maintenance inside the database, so no public cron route or cron secret is required. Community launch does not activate donations or fundraising.
 
 ## Commands
 
@@ -81,6 +71,6 @@ Automatic rejection is limited to exact-evidence, high-confidence severe conduct
 
 ## Deployment operations
 
-Submissions create durable Agent jobs without sending their content to OpenAI. After email verification where required, an administrator can explicitly start or retry an Agent review from the dashboard. Agent work never starts automatically from a public submission or a scheduled job. The daily Vercel cron is limited to retention cleanup and requires `CRON_SECRET`. In the dashboard, administrators can resend verification, restore automated rejections, export formula-safe CSV, record Core Contributor nominations, and publish only consented profiles.
+Submissions create durable Agent jobs without sending their content to OpenAI. After email verification where required, an administrator can explicitly start or retry an Agent review from the dashboard. Agent work never starts automatically from a public submission or a scheduled job. Daily retention maintenance runs within Supabase PostgreSQL. In the dashboard, administrators can resend verification, restore automated rejections, export formula-safe CSV, record Core Contributor nominations, and publish only consented profiles.
 
 Do not seed fabricated courses, events, people, projects, or member records. Public empty states are part of the intended first release.

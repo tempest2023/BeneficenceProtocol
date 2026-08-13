@@ -146,12 +146,3 @@ export async function processAgentJob(jobId: string) {
     return { processed: false, error: message }
   }
 }
-
-export async function processRetryableAgentJobs(limit = 10) {
-  const client = requireServiceClient()
-  const { data, error } = await client.rpc('list_retryable_agent_jobs', { p_limit: limit })
-  if (error) throw error
-  const outcomes = []
-  for (const job of data ?? []) outcomes.push(await processAgentJob(job.id))
-  return outcomes
-}

@@ -1,20 +1,12 @@
 'use server'
 
 import { after } from 'next/server'
-import { communityFormsOperational, publicEnv } from '@/lib/env'
+import { publicEnv } from '@/lib/env'
 import { contributorSchema, formDataRecord, participantSchema, resourceSubmissionSchema, zodErrors } from '@/lib/community/schemas'
 import type { ActionState } from '@/lib/community/types'
 import { requireServiceClient } from '@/lib/supabase/service'
-import { createVerificationToken, normalizeEmail, protectedRateKey, requestIpHash } from '@/lib/security'
+import { createVerificationToken, hashedRateIdentifier, normalizeEmail, requestIpAddress } from '@/lib/security'
 import { sendContributorVerification, sendParticipantConfirmation } from '@/lib/email'
-
-function unavailable(): ActionState {
-  return {
-    status: 'error',
-    presentation: 'dialog',
-    message: 'Please try again in a few minutes. Your information was not submitted.',
-  }
-}
 
 function databaseMessage(error: { message: string }) {
   if (error.message.includes('rate_limit_exceeded')) return 'We received too many submissions from this connection. Please try again later. Your information was not submitted.'
@@ -33,19 +25,19 @@ function dayWindow() {
   const date = new Date(); date.setUTCHours(0, 0, 0, 0); return date
 }
 
-async function consumeLimit(form: string, start: Date, limit: number, alternateKey?: string) {
+async function consumeLimit(form: string, start: Date, limit: number, alternate?: { type: 'email_hash'; value: string }) {
   const client = requireServiceClient()
-  const key = alternateKey ?? await requestIpHash(form, start.toISOString())
+  const identifier = alternate ?? { type: 'ip' as const, value: await requestIpAddress() }
   const expires = new Date(start); expires.setUTCDate(expires.getUTCDate() + 7)
   const { data, error } = await client.rpc('consume_form_rate_limit', {
-    p_rate_key: key, p_form_type: form, p_window_start: start.toISOString(), p_limit: limit, p_expires_at: expires.toISOString(),
+    p_rate_key: identifier.value, p_identifier_type: identifier.type, p_form_type: form,
+    p_window_start: start.toISOString(), p_limit: limit, p_expires_at: expires.toISOString(),
   })
   if (error) throw error
   if (!data) throw new Error('rate_limit_exceeded')
 }
 
 export async function registerParticipant(_previous: ActionState, formData: FormData): Promise<ActionState> {
-  if (!communityFormsOperational()) return unavailable()
   const result = participantSchema.safeParse(formDataRecord(formData))
   if (!result.success) return { status: 'error', message: 'Review the highlighted fields.', fieldErrors: zodErrors(result.error) }
   try {
@@ -69,7 +61,6 @@ export async function registerParticipant(_previous: ActionState, formData: Form
 }
 
 export async function submitContributorApplication(_previous: ActionState, formData: FormData): Promise<ActionState> {
-  if (!communityFormsOperational()) return unavailable()
   const record = formDataRecord(formData)
   record.participation_reasons = formData.getAll('participation_reasons')
   record.contribution_areas = formData.getAll('contribution_areas')
@@ -104,14 +95,13 @@ export async function submitContributorApplication(_previous: ActionState, formD
 }
 
 export async function submitResource(_previous: ActionState, formData: FormData): Promise<ActionState> {
-  if (!communityFormsOperational()) return unavailable()
   const result = resourceSubmissionSchema.safeParse(formDataRecord(formData))
   if (!result.success) return { status: 'error', message: 'Review the highlighted fields.', fieldErrors: zodErrors(result.error) }
   try {
     const start = dayWindow()
     await consumeLimit('resource_submission_ip', start, 10)
     const data = result.data
-    await consumeLimit('resource_submission_email', start, 3, protectedRateKey('resource-email', normalizeEmail(data.contact_email)))
+    await consumeLimit('resource_submission_email', start, 3, { type: 'email_hash', value: hashedRateIdentifier('resource-email', normalizeEmail(data.contact_email)) })
     const client = requireServiceClient()
     const { error } = await client.rpc('create_resource_submission', {
       p_contact_email: normalizeEmail(data.contact_email), p_submitter_name: data.submitter_name ?? null,

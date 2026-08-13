@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -38,13 +38,14 @@ describe('manual Agent review', () => {
     expect(formData?.get('id')).toBe('job-3')
   })
 
-  it('keeps public submissions and Vercel schedules from starting Agent work', () => {
+  it('keeps public submissions and scheduled routes from starting Agent work', () => {
     const communityActions = readFileSync('lib/community/actions.ts', 'utf8')
     const verificationRoute = readFileSync('app/api/contributor/verify/route.ts', 'utf8')
-    const vercelConfig = JSON.parse(readFileSync('vercel.json', 'utf8')) as { crons?: Array<{ path: string }> }
 
     expect(communityActions).not.toContain('processAgentJob')
     expect(verificationRoute).not.toContain('processAgentJob')
-    expect(vercelConfig.crons?.map((cron) => cron.path)).not.toContain('/api/cron/agent-jobs')
+    expect(existsSync('app/api/cron/agent-jobs/route.ts')).toBe(false)
+    expect(existsSync('app/api/cron/retention/route.ts')).toBe(false)
+    expect(existsSync('vercel.json')).toBe(false)
   })
 })

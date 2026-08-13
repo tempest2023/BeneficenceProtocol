@@ -1,4 +1,5 @@
-import { createHmac, createHash, randomBytes } from 'node:crypto'
+import { createHash, randomBytes } from 'node:crypto'
+import { isIP } from 'node:net'
 import { headers } from 'next/headers'
 
 export function normalizeEmail(email: string) {
@@ -34,25 +35,19 @@ export function hashToken(token: string) {
   return createHash('sha256').update(token).digest('hex')
 }
 
-export async function requestIpHash(form: string, windowKey: string) {
+export async function requestIpAddress() {
   const requestHeaders = await headers()
   const forwarded = requestHeaders.get('x-forwarded-for')?.split(',')[0]?.trim()
-  const ip = requestHeaders.get('x-real-ip') ?? forwarded ?? 'unknown'
-  const secret = process.env.IP_HASH_SECRET
-  if (!secret) throw new Error('Rate-limit protection is not configured.')
-  return createHmac('sha256', secret).update(`${form}:${windowKey}:${ip}`).digest('hex')
+  const candidate = forwarded ?? requestHeaders.get('x-real-ip')?.trim() ?? 'unknown'
+  return isIP(candidate) ? candidate : 'unknown'
 }
 
 export function safetyIdentifier(contactId: string) {
-  const secret = process.env.IP_HASH_SECRET
-  if (!secret) throw new Error('Safety identifier protection is not configured.')
-  return createHmac('sha256', secret).update(`openai:${contactId}`).digest('hex')
+  return createHash('sha256').update(`openai:${contactId}`).digest('hex')
 }
 
-export function protectedRateKey(scope: string, value: string) {
-  const secret = process.env.IP_HASH_SECRET
-  if (!secret) throw new Error('Rate-limit protection is not configured.')
-  return createHmac('sha256', secret).update(`${scope}:${value}`).digest('hex')
+export function hashedRateIdentifier(scope: string, value: string) {
+  return createHash('sha256').update(`${scope}:${value}`).digest('hex')
 }
 
 export function neutralizeCsvCell(value: unknown) {

@@ -134,7 +134,7 @@ export async function inviteApplicant(formData: FormData) {
   if (error || !application) throw error ?? new Error('Application not found.')
   if (!application.email_verified_at || !['submitted', 'reviewing'].includes(application.status)) throw new Error('Only a verified application in review can receive an invitation.')
   const { data: setting } = await service.from('site_settings').select('setting_value').eq('setting_key', 'scheduling_url').maybeSingle()
-  const schedulingUrl = setting?.setting_value || process.env.SCHEDULING_URL
+  const schedulingUrl = setting?.setting_value
   if (!schedulingUrl) throw new Error('A scheduling URL is required in Settings.')
   assertExternalUrl(schedulingUrl, true)
   await sendConversationInvitation(application.email, application.name, schedulingUrl, id)

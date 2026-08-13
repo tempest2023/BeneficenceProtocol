@@ -89,7 +89,7 @@ test('retired empty pages preserve their URLs as Community section redirects', a
   await expect(page.getByRole('heading', { name: 'People behind the work.' })).toBeVisible()
 })
 
-test('Community registration is compact and reports backend unavailability after submission', async ({ page }) => {
+test('Community registration is compact, enabled, and validates after submission', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/community#register')
 
@@ -104,10 +104,8 @@ test('Community registration is compact and reports backend unavailability after
   expect(formBox!.height).toBeLessThanOrEqual(650)
 
   await form.getByRole('button', { name: 'Register for community updates' }).click()
-  const dialog = page.getByRole('dialog')
-  await expect(dialog).toBeVisible()
-  await expect(dialog.getByRole('heading', { name: 'We couldn’t submit the form.' })).toBeVisible()
-  await expect(dialog).toContainText('Your information was not submitted.')
+  await expect(form.getByRole('alert')).toContainText('Review the highlighted fields.')
+  await expect(form.locator('#email-error')).toHaveText('Enter a valid email address.')
 })
 
 test('Contributor application sets a low-pressure, non-interview expectation', async ({ page }) => {

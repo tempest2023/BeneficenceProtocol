@@ -1,8 +1,16 @@
 begin;
 
 do $$
-declare total bigint; job_state text; verified record; application_job uuid; expired_application uuid; erasable_participant uuid; erasable_contact uuid;
+declare total bigint; job_state text; verified record; application_job uuid; expired_application uuid; erasable_participant uuid; erasable_contact uuid; rate_window timestamptz;
 begin
+  rate_window := date_trunc('hour', now());
+  if not public.consume_form_rate_limit('203.0.113.8','ip','community_registration',rate_window,2,now()+interval '7 days') then raise exception 'first IP rate-limit attempt was rejected'; end if;
+  if not exists(select 1 from public.form_rate_limits where rate_key='203.0.113.8' and identifier_type='ip') then raise exception 'raw IP rate-limit record was not stored'; end if;
+  insert into public.form_rate_limits(rate_key,identifier_type,form_type,window_start,attempt_count,expires_at)
+  values('198.51.100.9','ip','expired_test',rate_window,1,now()-interval '1 minute');
+  perform public.run_retention_maintenance();
+  if exists(select 1 from public.form_rate_limits where rate_key='198.51.100.9') then raise exception 'expired raw IP rate-limit record was not deleted'; end if;
+
   perform * from public.register_community_participant('same@example.org',null,'Student',null,'united_states','United States','CA','Oakland',true,true);
   perform * from public.register_community_participant('SAME@example.org','Updated','Education',null,'united_states','United States','CA','Berkeley',true,true);
   select count(*) into total from public.member_count_events;
