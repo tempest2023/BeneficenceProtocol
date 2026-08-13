@@ -46,11 +46,16 @@ describe('Contributor validation', () => {
 })
 
 describe('public resource validation', () => {
-  const valid = { contact_email: 'person@example.org', title: 'An Agent course', public_url: 'https://example.org/course', format: 'Course' as const, language: 'English', description: 'A free public course.', ai_agent_relevance: 'Discusses Agent architectures.', author_publisher: 'Example Institute', access_confirmation: 'on' as const, copyright_confirmation: 'on' as const, privacy_consent: 'on' as const }
+  const valid = { contact_email: 'person@example.org', title: 'An Agent course', public_url: 'https://example.org/course', format: 'Course' as const, language: 'English', description: 'A free public course about Agent architectures.', author_publisher: 'Example Institute', access_confirmation: 'on' as const, copyright_confirmation: 'on' as const, privacy_consent: 'on' as const }
   it('accepts a public URL and rejects local/private targets', () => {
     expect(resourceSubmissionSchema.safeParse(valid).success).toBe(true)
     expect(resourceSubmissionSchema.safeParse({ ...valid, public_url: 'http://127.0.0.1/private' }).success).toBe(false)
     expect(isPublicHttpUrl('https://example.org/public')).toBe(true)
     expect(isPublicHttpUrl('http://192.168.1.10/resource')).toBe(false)
+  })
+
+  it('accepts a 1,000-character description and rejects longer text', () => {
+    expect(resourceSubmissionSchema.safeParse({ ...valid, description: 'a'.repeat(1000) }).success).toBe(true)
+    expect(resourceSubmissionSchema.safeParse({ ...valid, description: 'a'.repeat(1001) }).success).toBe(false)
   })
 })

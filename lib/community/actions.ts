@@ -116,7 +116,9 @@ export async function submitResource(_previous: ActionState, formData: FormData)
     const { error } = await client.rpc('create_resource_submission', {
       p_contact_email: normalizeEmail(data.contact_email), p_submitter_name: data.submitter_name ?? null,
       p_title: data.title, p_public_url: data.public_url, p_format: data.format, p_language: data.language,
-      p_description: data.description, p_ai_agent_relevance: data.ai_agent_relevance,
+      p_description: data.description,
+      // Keep the deployed RPC signature compatible while the public form uses one combined description.
+      p_ai_agent_relevance: data.description,
       p_author_publisher: data.author_publisher, p_access_confirmation: true,
       p_copyright_confirmation: true, p_privacy_consent: true,
     })

@@ -166,6 +166,17 @@ test('public contribution path warns that GitHub is public', async ({ page }) =>
   await expect(page.getByRole('link', { name: /Technical contribution/ })).toBeVisible()
 })
 
+test('resource submission uses one concise material description', async ({ page }) => {
+  await page.goto('/community/contribute/resources/submit')
+  await expect(page.getByRole('combobox', { name: /Material type/ })).toHaveValue('')
+  await expect(page.getByRole('option', { name: 'Select a material type' })).toBeAttached()
+  await expect(page.getByRole('textbox', { name: /^Language/ })).toHaveAttribute('placeholder', 'e.g. English, 中文, Spanish')
+  const description = page.getByRole('textbox', { name: /^Description/ })
+  await expect(description).toHaveAttribute('maxlength', '1000')
+  await expect(description).toHaveAttribute('placeholder', /AI Agent learning or technical discussion/)
+  await expect(page.getByRole('textbox', { name: /How is this relevant/ })).toHaveCount(0)
+})
+
 test('all public routes expose a keyboard skip link', async ({ page }) => {
   await page.goto('/community')
   await page.getByRole('navigation', { name: 'Community navigation' }).waitFor()

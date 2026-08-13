@@ -47,8 +47,6 @@ export default async function ResourceReviewPage() {
                   </td>
                   <td>
                     <p>{submission.description}</p>
-                    <strong>AI Agent relevance</strong>
-                    <p>{submission.ai_agent_relevance}</p>
                     <small>Submitter remains private: {submission.contact_email}</small>
                   </td>
                   <td>
