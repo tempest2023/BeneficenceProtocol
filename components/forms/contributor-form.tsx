@@ -5,18 +5,17 @@ import { useActionState, useState } from 'react'
 import { submitContributorApplication } from '@/lib/community/actions'
 import { CONTRIBUTION_AREAS, INDUSTRIES, PARTICIPATION_REASONS } from '@/lib/community/constants'
 import { initialActionState } from '@/lib/community/types'
-import { FieldError, FormStatus, FormsClosed, LocationFields, SubmitButton } from '@/components/forms/form-controls'
+import { FieldError, FormStatus, LocationFields, SubmitButton } from '@/components/forms/form-controls'
 
-export function ContributorForm({ enabled }: { enabled: boolean }) {
+export function ContributorForm() {
   const [state, action] = useActionState(submitContributorApplication, initialActionState)
   const [otherReason, setOtherReason] = useState(false)
   const [otherContribution, setOtherContribution] = useState(false)
   const [industry, setIndustry] = useState('')
   return (
-    <form className="community-form" action={action} noValidate onSubmit={enabled ? undefined : (event) => event.preventDefault()}>
+    <form className="community-form" action={action} noValidate>
       <FormStatus state={state} />
-      {!enabled ? <FormsClosed title="Contributor applications are not open yet." /> : null}
-      <fieldset className="form-content" aria-describedby={!enabled ? 'form-availability' : undefined}>
+      <fieldset className="form-content">
         <legend className="visually-hidden">Contributor application fields</legend>
       <div className="field-grid">
         <label className="field-group"><span className="field-label">Name <span aria-hidden="true">*</span></span><input type="text" name="name" autoComplete="name" maxLength={120} required /><FieldError state={state} name="name" /></label>
@@ -41,7 +40,7 @@ export function ContributorForm({ enabled }: { enabled: boolean }) {
 
       <fieldset><legend>Agreements <span aria-hidden="true">*</span></legend><div className="choice-list"><label className="choice"><input type="checkbox" name="conduct_consent" required /><span>I agree to the <Link href="/community/code-of-conduct" target="_blank">Code of Conduct</Link>.</span></label><label className="choice"><input type="checkbox" name="privacy_consent" required /><span>I have read the <Link href="/privacy" target="_blank">Privacy Policy</Link> and consent to application processing.</span></label></div><FieldError state={state} name="conduct_consent" /><FieldError state={state} name="privacy_consent" /></fieldset>
       <p className="field-hint">Submitting this form does not create legal membership or employment. We will email a verification link valid for 24 hours.</p>
-      <div className="form-actions"><SubmitButton disabled={!enabled}>Submit Contributor application</SubmitButton></div>
+      <div className="form-actions"><SubmitButton>Submit Contributor application</SubmitButton></div>
       </fieldset>
     </form>
   )

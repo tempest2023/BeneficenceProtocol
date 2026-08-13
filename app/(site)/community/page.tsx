@@ -5,7 +5,6 @@ import { Arrow } from '@/components/icons'
 import { CommunitySection } from '@/components/community-shell'
 import { ParticipantForm } from '@/components/forms/participant-form'
 import { ProfileCard } from '@/components/profile-card'
-import { communityFormsOperational } from '@/lib/env'
 import { getPublishedEvents, getPublishedResources, getPublicMemberMetrics, getPublicPeople } from '@/lib/community/data'
 import { publicCommunityAudience } from '@/lib/community/presentation'
 
@@ -50,25 +49,25 @@ export default async function CommunityPage() {
       <p className="legal-note">Website registration and applications do not create legal membership or employment. Board and officer responsibilities are separate.</p>
     </CommunitySection>
 
-    <CommunitySection eyebrow="02 / Community program" title="Learn and gather in public." lead="Free learning and public events are being developed together as one community program." id="program" tone="soft">
+    <CommunitySection eyebrow="02 / Community program" title="Learn and gather in public." lead="Free learning and public events, brought together as one community program." id="program" tone="soft">
       <div className="community-program-list">
         <article>
           <div><p className="article-kicker">Learn</p><h3>Free AI Agent learning.</h3><p>Courses, research briefings, paper discussions, and practical references.</p></div>
-          {resources.length ? <div className="resource-list">{resources.map((resource) => <article className="resource-card" key={resource.id}><span className="resource-card__meta">{resource.resource_type} · {resource.language}{resource.difficulty ? ` · ${resource.difficulty}` : ''}</span><h4>{resource.title}</h4><p>{resource.summary}</p><a href={resource.public_url} target="_blank" rel="noreferrer">Open resource <span aria-hidden="true">↗</span></a></article>)}</div> : <p className="community-availability">Learning resources are being prepared.</p>}
+          {resources.length ? <div className="resource-list">{resources.map((resource) => <article className="resource-card" key={resource.id}><span className="resource-card__meta">{resource.resource_type} · {resource.language}{resource.difficulty ? ` · ${resource.difficulty}` : ''}</span><h4>{resource.title}</h4><p>{resource.summary}</p><a href={resource.public_url} target="_blank" rel="noreferrer">Open resource <span aria-hidden="true">↗</span></a></article>)}</div> : null}
         </article>
         <article>
           <div><p className="article-kicker">Gather</p><h3>Online and local events.</h3><p>Discussions, campus activities, community gatherings, and conference events.</p></div>
-          {upcomingEvents.length ? <div className="event-list">{upcomingEvents.map((event) => { const start = firstStart(event); return <article className="event-card" key={event.id}><span className="event-card__meta">{event.format.replace('_', ' ')} · {event.attendance_status}</span><h4>{event.title}</h4><p>{event.summary}</p>{start ? <p className="field-hint">{new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeStyle: 'short', timeZone: event.timezone }).format(start)}</p> : null}<Link href={`/community/gather/${event.slug}`}>Event details</Link></article> })}</div> : <p className="community-availability">Events are being planned.</p>}
+          {upcomingEvents.length ? <div className="event-list">{upcomingEvents.map((event) => { const start = firstStart(event); return <article className="event-card" key={event.id}><span className="event-card__meta">{event.format.replace('_', ' ')} · {event.attendance_status}</span><h4>{event.title}</h4><p>{event.summary}</p>{start ? <p className="field-hint">{new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeStyle: 'short', timeZone: event.timezone }).format(start)}</p> : null}<Link href={`/community/gather/${event.slug}`}>Event details</Link></article> })}</div> : null}
         </article>
       </div>
     </CommunitySection>
 
     <CommunitySection eyebrow="03 / People" title="People behind the work." lead="Directors and Core Contributors from across the community." id="people">
-      {people.length ? <div className="profile-grid">{people.map((person) => <ProfileCard person={person} key={person.id} />)}</div> : <p className="community-availability">Profiles are being prepared.</p>}
+      {people.length ? <div className="profile-grid">{people.map((person) => <ProfileCard person={person} key={person.id} />)}</div> : null}
     </CommunitySection>
 
     <CommunitySection eyebrow="04 / Stay connected" title="Register for community updates." lead="Share your field and region so we can send relevant news and event announcements. Registration is optional." id="register" tone="soft">
-      <ParticipantForm enabled={communityFormsOperational()} />
+      <ParticipantForm />
     </CommunitySection>
   </main>
 }

@@ -50,9 +50,10 @@ test('Landing, Mission, and Community share page-title and lead typography', asy
 test('Community consolidates Learn, Gather, and People without exposing an empty count', async ({ page }) => {
   await page.goto('/community')
   await expect(page.getByRole('heading', { level: 1, name: 'A community of many active participants.' })).toBeVisible()
-  await expect(page.getByText('Learning resources are being prepared.')).toBeVisible()
-  await expect(page.getByText('Events are being planned.')).toBeVisible()
-  await expect(page.getByText('Profiles are being prepared.')).toBeVisible()
+  await expect(page.getByText(/being prepared|being planned|not open yet|check back soon/i)).toHaveCount(0)
+  await expect(page.getByRole('heading', { name: 'Free AI Agent learning.' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Online and local events.' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'People behind the work.' })).toBeVisible()
   await expect(page.locator('.member-measure')).toHaveCount(0)
   await expect(page.locator('.community-hero__figure img')).toBeVisible()
 })
@@ -72,13 +73,34 @@ test('Community uses a dedicated landscape illustration instead of the Governanc
 test('retired empty pages preserve their URLs as Community section redirects', async ({ page }) => {
   await page.goto('/community/learn')
   await expect(page).toHaveURL(/\/community#program$/)
-  await expect(page.getByText('Learning resources are being prepared.')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Free AI Agent learning.' })).toBeVisible()
   await page.goto('/community/gather')
   await expect(page).toHaveURL(/\/community#program$/)
-  await expect(page.getByText('Events are being planned.')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Online and local events.' })).toBeVisible()
   await page.goto('/community/people')
   await expect(page).toHaveURL(/\/community#people$/)
-  await expect(page.getByText('Profiles are being prepared.')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'People behind the work.' })).toBeVisible()
+})
+
+test('Community registration is compact and reports backend unavailability after submission', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/community#register')
+
+  const form = page.locator('.community-form--participant')
+  await expect(form).toBeVisible()
+  await expect(form.getByText(/not open|not ready|check back soon/i)).toHaveCount(0)
+  await expect(form.getByRole('button', { name: 'Register for community updates' })).toBeEnabled()
+
+  const formBox = await form.boundingBox()
+  expect(formBox).not.toBeNull()
+  expect(formBox!.width).toBeLessThanOrEqual(1088)
+  expect(formBox!.height).toBeLessThanOrEqual(650)
+
+  await form.getByRole('button', { name: 'Register for community updates' }).click()
+  const dialog = page.getByRole('dialog')
+  await expect(dialog).toBeVisible()
+  await expect(dialog.getByRole('heading', { name: 'We couldn’t submit the form.' })).toBeVisible()
+  await expect(dialog).toContainText('Your information was not submitted.')
 })
 
 test('Contributor application sets a low-pressure, non-interview expectation', async ({ page }) => {

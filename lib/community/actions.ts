@@ -9,12 +9,20 @@ import { createVerificationToken, normalizeEmail, protectedRateKey, requestIpHas
 import { sendContributorVerification, sendParticipantConfirmation } from '@/lib/email'
 
 function unavailable(): ActionState {
-  return { status: 'error', message: 'Community forms are not open yet. No information was submitted.' }
+  return {
+    status: 'error',
+    presentation: 'dialog',
+    message: 'Please try again in a few minutes. Your information was not submitted.',
+  }
 }
 
 function databaseMessage(error: { message: string }) {
-  if (error.message.includes('rate_limit_exceeded')) return 'Too many submissions were received from this connection. Please try again later.'
-  return 'We could not save this submission. Nothing was lost from an earlier submission; please try again.'
+  if (error.message.includes('rate_limit_exceeded')) return 'We received too many submissions from this connection. Please try again later. Your information was not submitted.'
+  return 'Please try again in a few minutes. Your information was not submitted.'
+}
+
+function submissionError(error: { message: string }): ActionState {
+  return { status: 'error', presentation: 'dialog', message: databaseMessage(error) }
 }
 
 function hourWindow() {
@@ -51,12 +59,12 @@ export async function registerParticipant(_previous: ActionState, formData: Form
       p_us_state: data.location_scope === 'united_states' ? data.us_state : null,
       p_city_region: data.city_region, p_communications_consent: true, p_privacy_consent: true,
     })
-    if (error) return { status: 'error', message: databaseMessage(error) }
+    if (error) return submissionError(error)
     const participantId = created?.[0]?.participant_id as string | undefined
     after(async () => { try { await sendParticipantConfirmation(data.email, data.name, participantId) } catch { /* administrator can inspect provider configuration */ } })
     return { status: 'success', message: 'You are registered. We will use your information only for community communication and administration.' }
   } catch (error) {
-    return { status: 'error', message: databaseMessage(error as Error) }
+    return submissionError(error as Error)
   }
 }
 
@@ -86,12 +94,12 @@ export async function submitContributorApplication(_previous: ActionState, formD
       p_verification_expires_at: expires.toISOString(), p_privacy_consent: true, p_conduct_consent: true,
     })
     const applicationId = created?.[0]?.application_id as string | undefined
-    if (error || !applicationId) return { status: 'error', message: databaseMessage(error ?? new Error('No application was returned.')) }
+    if (error || !applicationId) return submissionError(error ?? new Error('No application was returned.'))
     const verifyUrl = `${publicEnv.siteUrl}/api/contributor/verify?token=${encodeURIComponent(token)}`
     after(async () => { try { await sendContributorVerification(data.email, data.name, verifyUrl, applicationId) } catch { /* administrator can resend */ } })
     return { status: 'success', message: 'Your application was saved and counted. Check your email within 24 hours to verify it and begin review.' }
   } catch (error) {
-    return { status: 'error', message: databaseMessage(error as Error) }
+    return submissionError(error as Error)
   }
 }
 
@@ -112,9 +120,9 @@ export async function submitResource(_previous: ActionState, formData: FormData)
       p_author_publisher: data.author_publisher, p_access_confirmation: true,
       p_copyright_confirmation: true, p_privacy_consent: true,
     })
-    if (error) return { status: 'error', message: databaseMessage(error) }
+    if (error) return submissionError(error)
     return { status: 'success', message: 'Thank you. Your resource is queued for administrative review. An administrator decides whether to run an Agent review; submission does not create Contributor status.' }
   } catch (error) {
-    return { status: 'error', message: databaseMessage(error as Error) }
+    return submissionError(error as Error)
   }
 }
