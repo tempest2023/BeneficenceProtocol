@@ -26,7 +26,6 @@ export function ParticipantForm() {
         <label className="choice"><input type="checkbox" name="communications_consent" required /><span>I agree to receive community and activity messages. I can unsubscribe at any time.</span></label>
         <label className="choice"><input type="checkbox" name="privacy_consent" required /><span>I have read the <Link href="/privacy" target="_blank">Privacy Policy</Link> and consent to this registration being processed.</span></label>
       </div><FieldError state={state} name="communications_consent" /><FieldError state={state} name="privacy_consent" /></fieldset>
-      <p className="field-hint">Registration is free and does not create legal membership or employment.</p>
       <div className="form-actions"><SubmitButton>Register for community updates</SubmitButton></div>
       </fieldset>
     </form>

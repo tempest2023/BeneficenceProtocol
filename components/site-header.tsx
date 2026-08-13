@@ -18,7 +18,7 @@ const communityLinks = [
   ['/community#program', 'Program'],
   ['/community#people', 'People'],
   ['/community#register', 'Connect'],
-  ['/community/contribute', 'Contribute'],
+  ['/community#contribute', 'Contribute'],
 ] as const
 
 export function SiteHeader() {
@@ -28,7 +28,7 @@ export function SiteHeader() {
   const communityNavigationRef = useRef<HTMLElement>(null)
   const inCommunity = pathname === '/community' || pathname.startsWith('/community/')
   const activeCommunityHref = pathname.startsWith('/community/contribute')
-    ? '/community/contribute'
+    ? '/community#contribute'
     : pathname.startsWith('/community/gather/')
       ? '/community#program'
       : pathname === '/community'
@@ -38,7 +38,9 @@ export function SiteHeader() {
             ? '/community#people'
             : communityHash === '#register'
               ? '/community#register'
-              : '/community'
+              : communityHash === '#contribute'
+                ? '/community#contribute'
+                : '/community'
         : null
 
   useEffect(() => {

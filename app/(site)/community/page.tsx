@@ -3,6 +3,7 @@ import Link from 'next/link'
 import communityConvergence from '@/src/assets/scenes/community-convergence.webp'
 import { Arrow } from '@/components/icons'
 import { CommunitySection } from '@/components/community-shell'
+import { ContributionPaths, getContributionIssueLinks } from '@/components/contribution-paths'
 import { ParticipantForm } from '@/components/forms/participant-form'
 import { ProfileCard } from '@/components/profile-card'
 import { getPublishedEvents, getPublishedResources, getPublicMemberMetrics, getPublicPeople } from '@/lib/community/data'
@@ -16,11 +17,12 @@ function firstStart(event: Awaited<ReturnType<typeof getPublishedEvents>>[number
 }
 
 export default async function CommunityPage() {
-  const [metrics, people, resources, events] = await Promise.all([
+  const [metrics, people, resources, events, contributionIssueLinks] = await Promise.all([
     getPublicMemberMetrics(),
     getPublicPeople({ featured: true }),
     getPublishedResources(),
     getPublishedEvents(),
+    getContributionIssueLinks(),
   ])
   const upcomingEvents = events.filter((event) => (firstStart(event)?.getTime() ?? 0) >= Date.now() && event.attendance_status !== 'closed')
   const audience = publicCommunityAudience(metrics.allTime)
@@ -32,7 +34,7 @@ export default async function CommunityPage() {
           <p className="eyebrow">Beneficence Community</p>
           <h1 id="community-title">A community of {audience}.</h1>
           <p className="community-hero__lead">Learn about AI Agents, meet thoughtful peers, and contribute to work that serves the public.</p>
-          <div className="community-hero__actions"><Link href="#register" className="primary-action">Register for updates <Arrow /></Link><Link href="/community/contribute" className="quiet-action">Ways to contribute</Link></div>
+          <div className="community-hero__actions"><Link href="#register" className="primary-action">Register for updates <Arrow /></Link><Link href="#contribute" className="quiet-action">Ways to contribute</Link></div>
         </div>
         <figure className="community-hero__figure"><img src={communityConvergence.src} alt="" width="1619" height="971" fetchPriority="high" /><figcaption>Paths converge / Community study</figcaption></figure>
       </div>
@@ -45,8 +47,7 @@ export default async function CommunityPage() {
         <li><span>03</span><div><small>Take responsibility</small><h3>Contributor</h3></div><p>Help organize activities or participate in ongoing work.</p></li>
         <li><span>04</span><div><small>Public stewardship</small><h3>Core Contributor</h3></div><p>Existing Contributors recognized for sustained responsibility.</p></li>
       </ol>
-      <Link href="/community/contribute" className="text-action">Explore ways to contribute <Arrow /></Link>
-      <p className="legal-note">Website registration and applications do not create legal membership or employment. Board and officer responsibilities are separate.</p>
+      <Link href="#contribute" className="text-action">Explore ways to contribute <Arrow /></Link>
     </CommunitySection>
 
     <CommunitySection eyebrow="02 / Community program" title="Learn and gather in public." lead="Free learning and public events, brought together as one community program." id="program" tone="soft">
@@ -66,8 +67,12 @@ export default async function CommunityPage() {
       {people.length ? <div className="profile-grid">{people.map((person) => <ProfileCard person={person} key={person.id} />)}</div> : null}
     </CommunitySection>
 
-    <CommunitySection eyebrow="04 / Stay connected" title="Register for community updates." lead="Share your field and region so we can send relevant news and event announcements. Registration is optional." id="register" tone="soft">
+    <CommunitySection eyebrow="04 / Stay connected" title="Register for community updates." lead="Receive new learning resources, event announcements, and opportunities relevant to your field and region." id="register" tone="soft">
       <ParticipantForm />
+    </CommunitySection>
+
+    <CommunitySection eyebrow="05 / Contribute" title="Choose how you want to contribute." lead="Join ongoing work, propose something in public, or share a useful learning resource." id="contribute">
+      <ContributionPaths issueLinks={contributionIssueLinks} />
     </CommunitySection>
   </main>
 }

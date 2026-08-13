@@ -54,6 +54,11 @@ test('Community consolidates Learn, Gather, and People without exposing an empty
   await expect(page.getByRole('heading', { name: 'Free AI Agent learning.' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Online and local events.' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'People behind the work.' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Choose how you want to contribute.' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Join ongoing work.' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Propose public work.' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Share a learning resource.' })).toBeVisible()
+  await expect(page.getByText('Registration is free and does not create legal membership or employment.')).toHaveCount(0)
   await expect(page.locator('.member-measure')).toHaveCount(0)
   await expect(page.locator('.community-hero__figure img')).toBeVisible()
 })
@@ -122,7 +127,7 @@ test('Community pages use the header submenu without an in-page duplicate', asyn
   for (const name of ['Apply', 'Submit resource', 'Code of Conduct']) {
     await expect(communityNav.getByRole('link', { name, exact: true })).toHaveCount(0)
   }
-  await expect(communityNav.getByRole('link', { name: 'Contribute', exact: true })).toHaveAttribute('aria-current', 'page')
+  await expect(communityNav.getByRole('link', { name: 'Contribute', exact: true })).toHaveAttribute('aria-current', 'location')
   await expect(page.locator('.community-subnav')).toHaveCount(0)
 })
 
@@ -135,6 +140,7 @@ test('Community section links update selection and leave headings below the stic
     { name: 'Program', hash: '#program', heading: 'Learn and gather in public.' },
     { name: 'People', hash: '#people', heading: 'People behind the work.' },
     { name: 'Connect', hash: '#register', heading: 'Register for community updates.' },
+    { name: 'Contribute', hash: '#contribute', heading: 'Choose how you want to contribute.' },
   ]) {
     const link = communityNav.getByRole('link', { name: item.name, exact: true })
     await link.click()

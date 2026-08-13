@@ -41,6 +41,7 @@ describe('public community forms', () => {
 
   it('switches between U.S. state and international country without requesting an address', () => {
     const { container } = render(<ParticipantForm />)
+    expect(screen.queryByText(/does not create legal membership/i)).not.toBeInTheDocument()
     expect(screen.getByRole('combobox', { name: /^State/ })).toBeInTheDocument()
     fireEvent.click(screen.getByLabelText('Outside the United States'))
     expect(screen.getByRole('combobox', { name: /^Country/ })).toBeInTheDocument()
