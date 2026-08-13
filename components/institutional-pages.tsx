@@ -160,7 +160,7 @@ export function GovernancePage() {
 }
 
 export function GivingPage() {
-  return <main id="main-content"><ArticleHero eyebrow="Giving architecture" title="Native to the Agent economy. Bound to charitable law." lead="Beneficence supports conventional and digital-asset gifts through verified channels. Every accepted asset is screened, recorded and governed as charitable property." image={losAngeles} imagePosition="50% 58%" caption="Looking beyond / Los Angeles" />
+  return <main id="main-content"><ArticleHero eyebrow="Giving architecture" title="Native to the Agent economy. Bound to charitable law." lead="Beneficence supports conventional and digital-asset gifts through verified channels. Every accepted asset is screened, recorded and governed as charitable property." image={losAngeles} imagePosition="50% 100%" caption="Looking beyond / Los Angeles" />
     <ArticleLayout summaryLabel="Official-channel policy" summary="Giving is not open while the Foundation completes formation and public-control infrastructure. When activated, give only through verified Foundation channels.">
       <p className="article-standfirst" data-reveal>A contribution is not simply a transaction. It creates a charitable asset, a custody obligation, an accounting record and a public responsibility that must remain coherent across fiat and digital rails.</p>
       <aside className="article-inset" data-reveal><p className="article-kicker">Current status</p><h2>Giving is not yet active.</h2><p>No donation address or payment link on an unofficial channel should be treated as authorized. This Community launch does not activate fundraising.</p></aside>
