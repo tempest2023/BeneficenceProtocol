@@ -28,6 +28,18 @@ describe('administration presentation', () => {
     expect(screen.queryByRole('link', { name: 'Meeting Guide' })).not.toBeInTheDocument()
   })
 
+  it('keeps the admin shell responsive while dynamic sections stream', () => {
+    const loading = readFileSync('app/admin/(dashboard)/loading.tsx', 'utf8')
+    const layout = readFileSync('app/admin/(dashboard)/layout.tsx', 'utf8')
+    const auth = readFileSync('lib/admin/auth.ts', 'utf8')
+
+    expect(loading).toContain('aria-busy="true"')
+    expect(loading).toContain('admin-route-loading')
+    expect(layout).toContain('<AdminNavigation />')
+    expect(layout).toContain('className="admin-content"')
+    expect(auth).toContain('cache(async function requireAdmin()')
+  })
+
   it('keeps creation secondary to content and removes implementation-state empty copy', () => {
     const people = readFileSync('app/admin/(dashboard)/people/page.tsx', 'utf8')
     const learn = readFileSync('app/admin/(dashboard)/learn/page.tsx', 'utf8')

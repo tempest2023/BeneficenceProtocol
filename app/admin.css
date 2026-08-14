@@ -127,6 +127,75 @@
   min-width: 0;
 }
 
+.admin-route-loading {
+  animation: admin-loading-enter .12s ease-out both;
+}
+
+.admin-loading-heading {
+  display: grid;
+  gap: .65rem;
+  margin-bottom: 1.35rem;
+  padding-bottom: 1.15rem;
+  border-bottom: 1px solid #cbc3b7;
+}
+
+.admin-loading-panel {
+  display: grid;
+  gap: 1rem;
+  min-height: 15rem;
+  padding: 1.25rem;
+  border: 1px solid #cec6ba;
+  background: #fffaf2;
+}
+
+.admin-loading-line {
+  display: block;
+  height: .8rem;
+  background: linear-gradient(90deg, #ddd5c9 25%, #eee7dc 50%, #ddd5c9 75%);
+  background-size: 200% 100%;
+  animation: admin-loading-shimmer 1.35s ease-in-out infinite;
+}
+
+.admin-loading-line--eyebrow {
+  width: 5rem;
+  height: .55rem;
+}
+
+.admin-loading-line--title {
+  width: min(28rem, 70%);
+  height: 3.2rem;
+}
+
+.admin-loading-line--copy,
+.admin-loading-line--wide {
+  width: min(38rem, 90%);
+}
+
+.admin-loading-line--medium {
+  width: min(25rem, 68%);
+}
+
+.admin-loading-line--short {
+  width: min(15rem, 45%);
+}
+
+@keyframes admin-loading-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes admin-loading-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-route-loading,
+  .admin-loading-line {
+    animation: none;
+  }
+}
+
 .admin-main {
   width: min(100% - 2.5rem, 84rem);
   margin-inline: auto;

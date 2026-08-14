@@ -1,10 +1,11 @@
 import 'server-only'
+import { cache } from 'react'
 import { redirect } from 'next/navigation'
 import { adminEmails } from '@/lib/env'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { requireSecretClient } from '@/lib/supabase/secret'
 
-export async function requireAdmin() {
+export const requireAdmin = cache(async function requireAdmin() {
   const authClient = await createSupabaseServerClient()
   if (!authClient) redirect('/admin/login?error=not_configured')
   const { data: { user } } = await authClient.auth.getUser()
@@ -16,7 +17,7 @@ export async function requireAdmin() {
   if (!envAllowed && !existing?.active) redirect('/admin/login?error=not_authorized')
   await service.from('admin_users').upsert({ user_id: user.id, email, active: true, last_seen_at: new Date().toISOString() }, { onConflict: 'user_id' })
   return { user, service }
-}
+})
 
 export async function isAllowedAdminEmail(email: string) {
   const normalized = email.toLowerCase()
