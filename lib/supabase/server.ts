@@ -2,11 +2,12 @@ import 'server-only'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { publicEnv } from '@/lib/env'
+import { scopeDatabaseClient } from '@/lib/supabase/database-names'
 
 export async function createSupabaseServerClient() {
   if (!publicEnv.supabaseUrl || !publicEnv.supabaseKey) return null
   const cookieStore = await cookies()
-  return createServerClient(publicEnv.supabaseUrl, publicEnv.supabaseKey, {
+  return scopeDatabaseClient(createServerClient(publicEnv.supabaseUrl, publicEnv.supabaseKey, {
     cookies: {
       getAll: () => cookieStore.getAll(),
       setAll: (cookiesToSet) => {
@@ -17,5 +18,5 @@ export async function createSupabaseServerClient() {
         }
       },
     },
-  })
+  }))
 }

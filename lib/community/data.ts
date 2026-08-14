@@ -2,6 +2,7 @@ import 'server-only'
 import { unstable_noStore as noStore } from 'next/cache'
 import { getPublicClient } from '@/lib/supabase/public'
 import { getSecretClient } from '@/lib/supabase/secret'
+import { databaseRelation } from '@/lib/supabase/database-names'
 import type { MemberMetrics, PublicEvent, PublicPerson, PublicResource } from '@/lib/community/types'
 
 const emptyMetrics: MemberMetrics = { allTime: 0, thisMonth: 0, bySource: {} }
@@ -41,7 +42,7 @@ export async function getPublishedEvents(): Promise<PublicEvent[]> {
   noStore()
   const client = getPublicClient()
   if (!client) return []
-  const { data, error } = await client.from('events').select('*,event_sessions(starts_at,ends_at)').eq('publication_status', 'published').order('created_at', { ascending: false })
+  const { data, error } = await client.from('events').select(`*,${databaseRelation('event_sessions')}(starts_at,ends_at)`).eq('publication_status', 'published').order('created_at', { ascending: false })
   return error ? [] : (data as PublicEvent[])
 }
 
@@ -49,7 +50,7 @@ export async function getPublishedEvent(slug: string): Promise<PublicEvent | nul
   noStore()
   const client = getPublicClient()
   if (!client) return null
-  const { data, error } = await client.from('events').select('*,event_sessions(starts_at,ends_at)').eq('publication_status', 'published').eq('slug', slug).maybeSingle()
+  const { data, error } = await client.from('events').select(`*,${databaseRelation('event_sessions')}(starts_at,ends_at)`).eq('publication_status', 'published').eq('slug', slug).maybeSingle()
   return error ? null : (data as PublicEvent | null)
 }
 

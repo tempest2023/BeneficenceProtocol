@@ -1,6 +1,7 @@
 import 'server-only'
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import { isSupabaseSecretKey, publicEnv } from '@/lib/env'
+import { scopeDatabaseClient } from '@/lib/supabase/database-names'
 
 let secretClient: SupabaseClient | null | undefined
 
@@ -11,9 +12,9 @@ export function getSecretClient() {
     secretClient = null
     return secretClient
   }
-  secretClient = createClient(publicEnv.supabaseUrl, secretKey, {
+  secretClient = scopeDatabaseClient(createClient(publicEnv.supabaseUrl, secretKey, {
     auth: { persistSession: false, autoRefreshToken: false },
-  })
+  }))
   return secretClient
 }
 

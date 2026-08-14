@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { requireAdmin } from '@/lib/admin/auth'
+import { databaseRelation } from '@/lib/supabase/database-names'
 import { sendConversationInvitation, sendResourceUpdate } from '@/lib/email'
 import { sendContributorVerification } from '@/lib/email'
 import { isPublicHttpUrl } from '@/lib/community/schemas'
@@ -164,7 +165,7 @@ export async function designateCoreContributor(formData: FormData) {
   const slug = value(formData, 'slug'); assertSlug(slug)
   if (!effectiveDate || !directorId) throw new Error('A nominating director and effective date are required.')
   const [{ data: contributor }, { data: director }] = await Promise.all([
-    service.from('contributors').select('id,contact_id,community_contacts(id)').eq('id', contributorId).eq('status', 'active').single(),
+    service.from('contributors').select(`id,contact_id,${databaseRelation('community_contacts')}(id)`).eq('id', contributorId).eq('status', 'active').single(),
     service.from('people').select('id').eq('id', directorId).eq('person_type', 'director').single(),
   ])
   const { data: application } = await service.from('contributor_applications').select('name').eq('contact_id', contributor?.contact_id ?? '').order('created_at', { ascending: false }).limit(1).maybeSingle()

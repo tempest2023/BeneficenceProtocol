@@ -44,7 +44,9 @@ Without external-service credentials, public content renders with truthful empty
 
 Apply the SQL migrations in [`supabase/migrations`](./supabase/migrations) in filename order. They create all entities, transactional registration/counting functions, retry functions, retention scrubbing, RLS policies, the restricted `community-images` bucket, raw-IP rate limiting, and Supabase Cron retention maintenance.
 
-The migration intentionally grants no anonymous form-table inserts. Validated Server Actions use the server-only Supabase Secret key, and anonymous access is limited to published resources, events, People profiles, event sessions, and the public aggregate metric.
+Development and production use the same Supabase project with isolated table sets. `DATABASE_ENVIRONMENT=dev|prod` is the highest-priority selector and defaults to `dev` in local configuration. When it is omitted, local runs, tests, and Vercel Preview use `dev_*`, while the production deployment uses `prod_*`. Every migration must update both sets in the same transaction. See [`supabase/README.md`](./supabase/README.md).
+
+The migrations intentionally grant no anonymous form-table inserts. Validated Server Actions use the server-only Supabase Secret key, and anonymous access is limited to published resources, events, People profiles, event sessions, and the public aggregate metric.
 
 ## Runtime configuration
 

@@ -2,12 +2,13 @@ import Link from 'next/link'
 import { AdminForm } from '@/components/admin-form'
 import { AdminSubmitButton } from '@/components/admin-submit-button'
 import { requireAdmin } from '@/lib/admin/auth'
+import { databaseRelation } from '@/lib/supabase/database-names'
 
 const relationships = ['Independent','Beneficence-hosted','Co-hosted','Partner event','Official conference event']
 
 export default async function GatherAdminPage() {
   const { service } = await requireAdmin()
-  const { data: events } = await service.from('events').select('*,event_sessions(*)').order('created_at',{ ascending:false })
+  const { data: events } = await service.from('events').select(`*,${databaseRelation('event_sessions')}(*)`).order('created_at',{ ascending:false })
   return (
     <main className="admin-main">
       <header className="admin-heading"><div><p className="eyebrow">Publishing</p><h1>Gather</h1><p>Publish event details and link each event to its external registration.</p></div><Link className="admin-button admin-button--quiet" href="/community/gather" target="_blank">View public page ↗</Link></header>

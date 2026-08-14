@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { requireAdmin } from '@/lib/admin/auth'
+import { databaseRelation } from '@/lib/supabase/database-names'
 import { getPublicMemberMetrics } from '@/lib/community/data'
 
 export default async function AdminOverview() {
@@ -8,7 +9,7 @@ export default async function AdminOverview() {
     getPublicMemberMetrics(),
     service.from('contributor_applications').select('id', { count: 'exact', head: true }).in('status', ['submitted','agent_processing','reviewing','invitation_sent','meeting_scheduled','conversation_complete']),
     service.from('resource_submissions').select('id', { count: 'exact', head: true }).in('status', ['pending','in_review','changes_requested']),
-    service.from('events').select('id,event_sessions!inner(starts_at)', { count: 'exact' }).eq('publication_status','published').gte('event_sessions.starts_at',new Date().toISOString()),
+    service.from('events').select(`id,${databaseRelation('event_sessions')}!inner(starts_at)`, { count: 'exact' }).eq('publication_status','published').gte('event_sessions.starts_at',new Date().toISOString()),
     service.from('agent_jobs').select('id', { count: 'exact', head: true }).eq('status','failed'),
   ])
   const queues = [

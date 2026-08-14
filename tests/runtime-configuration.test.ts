@@ -1,6 +1,8 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { isDirectAdminLoginEnabled, isSupabasePublishableKey, isSupabaseSecretKey } from '@/lib/env'
+import type { SupabaseClient } from '@supabase/supabase-js'
+import { databaseEnvironment, databaseFunction, databaseRelation, databaseTable, scopeDatabaseClient } from '@/lib/supabase/database-names'
 
 afterEach(() => vi.unstubAllEnvs())
 
@@ -76,5 +78,68 @@ describe('runtime configuration', () => {
     vi.stubEnv('NODE_ENV', 'production')
     vi.stubEnv('RESEND_API_KEY', '')
     expect(isDirectAdminLoginEnabled()).toBe(false)
+  })
+
+  it('scopes database names to development outside production', () => {
+    vi.stubEnv('DATABASE_ENVIRONMENT', '')
+    vi.stubEnv('NODE_ENV', 'development')
+    expect(databaseEnvironment()).toBe('dev')
+    expect(databaseTable('people')).toBe('dev_people')
+    expect(databaseFunction('get_public_community_metrics')).toBe('dev_get_public_community_metrics')
+    expect(databaseRelation('event_sessions')).toBe('event_sessions:dev_event_sessions')
+
+    vi.stubEnv('NODE_ENV', 'test')
+    expect(databaseTable('people')).toBe('dev_people')
+  })
+
+  it('scopes database names to production in production builds', () => {
+    vi.stubEnv('DATABASE_ENVIRONMENT', '')
+    vi.stubEnv('NODE_ENV', 'production')
+    vi.stubEnv('VERCEL_ENV', 'production')
+    expect(databaseEnvironment()).toBe('prod')
+    expect(databaseTable('people')).toBe('prod_people')
+    expect(databaseFunction('get_public_community_metrics')).toBe('prod_get_public_community_metrics')
+    expect(databaseRelation('sessions', 'event_sessions')).toBe('sessions:prod_event_sessions')
+  })
+
+  it('keeps local production-mode smoke tests on development data', () => {
+    vi.stubEnv('DATABASE_ENVIRONMENT', '')
+    vi.stubEnv('NODE_ENV', 'production')
+    vi.stubEnv('VERCEL_ENV', '')
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'http://localhost:3000')
+    expect(databaseEnvironment()).toBe('dev')
+  })
+
+  it('gives the explicit database environment the highest priority', () => {
+    vi.stubEnv('NODE_ENV', 'production')
+    vi.stubEnv('VERCEL_ENV', 'production')
+    vi.stubEnv('DATABASE_ENVIRONMENT', 'dev')
+    expect(databaseEnvironment()).toBe('dev')
+
+    vi.stubEnv('NODE_ENV', 'development')
+    vi.stubEnv('VERCEL_ENV', 'preview')
+    vi.stubEnv('DATABASE_ENVIRONMENT', 'prod')
+    expect(databaseEnvironment()).toBe('prod')
+
+    vi.stubEnv('DATABASE_ENVIRONMENT', 'invalid')
+    expect(databaseEnvironment()).toBe('dev')
+  })
+
+  it('scopes Supabase table and RPC calls without changing Auth or Storage', () => {
+    vi.stubEnv('DATABASE_ENVIRONMENT', 'dev')
+    vi.stubEnv('NODE_ENV', 'development')
+    const from = vi.fn((table: string) => table)
+    const rpc = vi.fn((name: string) => name)
+    const auth = { getUser: vi.fn() }
+    const storage = { from: vi.fn() }
+    const client = scopeDatabaseClient({ from, rpc, auth, storage } as unknown as SupabaseClient)
+
+    client.from('people')
+    client.rpc('get_public_community_metrics')
+
+    expect(from).toHaveBeenCalledWith('dev_people')
+    expect(rpc).toHaveBeenCalledWith('dev_get_public_community_metrics', undefined, undefined)
+    expect(client.auth).toBe(auth)
+    expect(client.storage).toBe(storage)
   })
 })

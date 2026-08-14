@@ -1,11 +1,12 @@
 import { AdminForm } from '@/components/admin-form'
 import { AdminSubmitButton } from '@/components/admin-submit-button'
 import { requireAdmin } from '@/lib/admin/auth'
+import { databaseRelation } from '@/lib/supabase/database-names'
 
 export default async function ContributorsPage() {
   const { service } = await requireAdmin()
   const [{ data: contributors }, { data: directors }, { data: corePeople }] = await Promise.all([
-    service.from('contributors').select('*,contributor_applications(name,email)').order('became_contributor_at',{ ascending:false }),
+    service.from('contributors').select(`*,${databaseRelation('contributor_applications')}(name,email)`).order('became_contributor_at',{ ascending:false }),
     service.from('people').select('id,display_name').eq('person_type','director').order('display_name'),
     service.from('people').select('contributor_id').eq('person_type','core_contributor'),
   ])

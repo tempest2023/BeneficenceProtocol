@@ -2,13 +2,14 @@ import { notFound } from 'next/navigation'
 import { AdminForm } from '@/components/admin-form'
 import { AdminSubmitButton } from '@/components/admin-submit-button'
 import { requireAdmin } from '@/lib/admin/auth'
+import { databaseRelation } from '@/lib/supabase/database-names'
 
 const relationships = ['Independent','Beneficence-hosted','Co-hosted','Partner event','Official conference event']
 
 export default async function EditEventPage({params}:{params:Promise<{id:string}>}) {
   const { id } = await params
   const { service } = await requireAdmin()
-  const { data: event } = await service.from('events').select('*,event_sessions(*)').eq('id',id).maybeSingle()
+  const { data: event } = await service.from('events').select(`*,${databaseRelation('event_sessions')}(*)`).eq('id',id).maybeSingle()
   if (!event) notFound()
   return (
     <main className="admin-main">
