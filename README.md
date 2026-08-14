@@ -1,95 +1,78 @@
 # Beneficence Protocol Foundation
 
-> Giving infrastructure for the agent economy.
+Beneficence Protocol Foundation is a public-benefit institution advancing AI Agents that create measurable social value while remaining transparent, governable, and accountable to people. This repository contains its institutional website, public community experience, and private operating dashboard. The organizational source of truth remains [PROJECT.md](./PROJECT.md).
 
-Beneficence Protocol Foundation is a public-benefit institution advancing AI Agents that create measurable social value while remaining transparent, governable and accountable to people. This repository contains the Foundation's official website.
+## Architecture
 
-The site presents the mission, public programs, governance model, stewardship principles and giving architecture. The underlying organizational blueprint is documented in [PROJECT.md](./PROJECT.md).
+- Next.js App Router, React 19, TypeScript, and plain CSS
+- Supabase PostgreSQL, magic-link administrator authentication, RLS, and image storage
+- Resend transactional email
+- OpenAI Responses API with Structured Outputs and `omni-moderation-latest`
+- Vitest for unit/component tests and Playwright for desktop/mobile flows
 
-## Website
+The warm paper palette, Newsreader/Manrope typography, institutional editorial layout, original URLs, and source-image credits are preserved from the prior Vite site.
 
-The website is a responsive single-page React application with five public routes:
+## Routes
 
-| Route | Purpose |
-| --- | --- |
-| `/` | Foundation overview, principles, programs, and stewardship model |
-| `/mission` | Editorial explanation of the constructive and protective mission |
-| `/programs` | Detailed public-program descriptions and use of funds |
-| `/governance` | Human, DAO, and AI Agent responsibilities; fund stewardship and reporting |
-| `/giving` | Giving rails, asset controls, accounting, and operational safeguards |
+The institutional routes remain `/`, `/mission`, `/programs`, `/governance`, and `/giving`. Community routes are:
 
-The experience includes accessible navigation, reduced-motion support, responsive layouts, deferred image loading, route-specific document titles, and print styles. Client-side routes use the browser History API; `vercel.json` provides the production fallback to `index.html`.
+- `/community`
+- `/community/people`
+- `/community/learn`
+- `/community/gather` and `/community/gather/[slug]`
+- `/community/contribute`
+- `/community/contribute/apply`
+- `/community/contribute/resources/submit`
+- `/community/code-of-conduct`
+- `/privacy`
 
-## Technology
-
-- React 19 and TypeScript
-- Vite 8 with the React Compiler
-- Oxlint
-- Plain CSS with locally hosted Manrope and Newsreader fonts
-- Vercel deployment configuration
+The unified private dashboard is at `/admin`.
 
 ## Local development
 
-Node.js 24 is recommended to match the configured Vercel runtime.
+Use a current Node.js 22 or 24 runtime.
 
 ```bash
-git clone git@github.com:tempest2023/BeneficenceProtocol.git
-cd BeneficenceProtocol
 npm install
+cp .env.example .env.local
 npm run dev
 ```
 
-Vite will print the local development URL, typically `http://localhost:5173`.
+Without external-service credentials, public content renders with truthful empty states and a zero all-time count. Forms are always visible and enabled; a submission displays a service error if its required backend is unavailable.
+
+## Database setup
+
+Apply the SQL migrations in [`supabase/migrations`](./supabase/migrations) in filename order. They create all entities, transactional registration/counting functions, retry functions, retention scrubbing, RLS policies, the restricted `community-images` bucket, raw-IP rate limiting, and Supabase Cron retention maintenance.
+
+Development and production use the same Supabase project with isolated table sets. `DATABASE_ENVIRONMENT=dev|prod` is the highest-priority selector and defaults to `dev` in local configuration. When it is omitted, local runs, tests, and Vercel Preview use `dev_*`, while the production deployment uses `prod_*`. Every migration must update both sets in the same transaction. See [`supabase/README.md`](./supabase/README.md).
+
+The migrations intentionally grant no anonymous form-table inserts. Validated Server Actions use the server-only Supabase Secret key, and anonymous access is limited to published resources, events, People profiles, event sessions, and the public aggregate metric.
+
+## Runtime configuration
+
+Forms do not use a launch flag and are enabled by default. Supabase is required to accept submissions and to use the administrator dashboard. Resend is required for verification and transactional email, while OpenAI is required only when an administrator explicitly starts an Agent review.
+
+The scheduling URL and GitHub URLs are managed in `/admin/settings`, not environment variables. Supabase Cron runs retention maintenance inside the database, so no public cron route or cron secret is required. Community launch does not activate donations or fundraising.
 
 ## Commands
 
-| Command | Description |
+| Command | Purpose |
 | --- | --- |
-| `npm run dev` | Start the Vite development server |
-| `npm run build` | Type-check and create a production build in `dist/` |
-| `npm run lint` | Run Oxlint across the project |
-| `npm run preview` | Serve the production build locally |
+| `npm run dev` | Start Next.js development |
+| `npm run typecheck` | Run strict TypeScript checks |
+| `npm run lint` | Run Oxlint |
+| `npm test` | Run unit and component tests |
+| `npm run test:e2e` | Run Playwright desktop/mobile flows |
+| `npm run build` | Create the production Next.js build |
 
-Before submitting changes, run:
+## Agent and privacy boundary
 
-```bash
-npm run lint
-npm run build
-```
+Contributor processing sends only reasons, contribution interests, related “Other” text, general location, and optional industry to OpenAI. It never sends email or professional links and never crawls them. Requests use `store: false`, a hashed `safety_identifier`, low reasoning, and a strict Zod output schema. Meetings are not recorded or transcribed and are never analyzed by the Agent.
 
-## Project structure
+Automatic rejection is limited to exact-evidence, high-confidence severe conduct. Administrators can restore the application, which disables the same automated closing path. OpenAI failure cannot roll back a registration, verification, count event, or manually reviewable record.
 
-```text
-.
-├── public/                 # Static metadata, favicon, and crawler rules
-├── src/
-│   ├── assets/
-│   │   ├── fonts/          # Locally hosted web fonts
-│   │   ├── scenes/         # Optimized artwork used by the website
-│   │   └── sources/        # Source images for the scene artwork
-│   ├── App.tsx             # Pages, routing, navigation, and UI behavior
-│   ├── App.css             # Page and component styles
-│   ├── index.css           # Global tokens, fonts, accessibility, and print styles
-│   └── main.tsx            # React entry point
-├── PROJECT.md              # Founding constitution and operating blueprint
-├── vercel.json             # SPA route fallback for Vercel
-└── vite.config.ts          # Vite and React Compiler configuration
-```
+## Deployment operations
 
-## Content source of truth
+Submissions create durable Agent jobs without sending their content to OpenAI. After email verification where required, an administrator can explicitly start or retry an Agent review from the dashboard. Agent work never starts automatically from a public submission or a scheduled job. Daily retention maintenance runs within Supabase PostgreSQL. In the dashboard, administrators can resend verification, restore automated rejections, export formula-safe CSV, record Core Contributor nominations, and publish only consented profiles.
 
-Public website claims should remain consistent with [PROJECT.md](./PROJECT.md), especially the charitable programs, asset-acceptance policy and governance boundaries. When the blueprint and website differ, resolve the policy decision in the blueprint before publishing revised public copy.
-
-## Deployment
-
-The project is configured for Vercel. A production deployment should use:
-
-- Build command: `npm run build`
-- Output directory: `dist`
-- Node.js runtime: `24.x`
-
-The catch-all rewrite in `vercel.json` is required so direct visits to `/mission`, `/governance`, and `/giving` load the React application correctly.
-
-## Image attribution
-
-The site uses source-preserving paper-collage interpretations based on openly licensed or public-domain photographs. Detailed creator, license, and source links are published in the website footer. Keep those credits intact when replacing or redistributing the artwork.
+Do not seed fabricated courses, events, people, projects, or member records. Public empty states are part of the intended first release.

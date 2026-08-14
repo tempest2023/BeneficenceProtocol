@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 .vercel
+.next
+next-env.d.ts
+tsconfig.tsbuildinfo
+test-results
+playwright-report
 
 # Editor directories and files
 .vscode/*

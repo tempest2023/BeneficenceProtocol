@@ -1,0 +1,32 @@
+import type { NextConfig } from 'next'
+
+const nextConfig: NextConfig = {
+  allowedDevOrigins: ['127.0.0.1'],
+  turbopack: { root: process.cwd() },
+  experimental: {
+    serverActions: { bodySizeLimit: '11mb' },
+  },
+  async headers() {
+    return [{
+      source: '/:path*',
+      headers: [
+        { key: 'X-Content-Type-Options', value: 'nosniff' },
+        { key: 'X-Frame-Options', value: 'DENY' },
+        { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+        { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+      ],
+    }, {
+      source: '/admin/:path*',
+      headers: [{ key: 'Cache-Control', value: 'private, no-store, max-age=0' }],
+    }]
+  },
+  images: {
+    formats: ['image/avif', 'image/webp'],
+    remotePatterns: [
+      { protocol: 'https', hostname: '**' },
+    ],
+  },
+  poweredByHeader: false,
+}
+
+export default nextConfig

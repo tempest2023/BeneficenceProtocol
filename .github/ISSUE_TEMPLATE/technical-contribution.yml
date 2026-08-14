@@ -1,0 +1,37 @@
+name: Technical contribution
+description: Propose a bounded technical or open-source improvement.
+title: "[Technical contribution] "
+labels: ["enhancement"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This issue and its history are public. Do not include credentials, vulnerability details that could create immediate risk, private contact information, personal addresses, or proprietary code.
+  - type: dropdown
+    id: contribution_type
+    attributes:
+      label: Contribution type
+      options: [Documentation, Frontend, Backend, Data or evaluation, Accessibility, Security-safe disclosure coordination, Other]
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or public need
+    validations:
+      required: true
+  - type: textarea
+    id: approach
+    attributes:
+      label: Proposed approach
+      description: Keep the proposal bounded and identify any dependencies.
+    validations:
+      required: true
+  - type: checkboxes
+    id: conduct
+    attributes:
+      label: Public and safety acknowledgement
+      options:
+        - label: I have not included secrets or private contact/address information and I will follow the Community Code of Conduct.
+          required: true

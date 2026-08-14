@@ -1,0 +1,67 @@
+import 'server-only'
+import { unstable_noStore as noStore } from 'next/cache'
+import { getPublicClient } from '@/lib/supabase/public'
+import { getSecretClient } from '@/lib/supabase/secret'
+import { databaseRelation } from '@/lib/supabase/database-names'
+import type { MemberMetrics, PublicEvent, PublicPerson, PublicResource } from '@/lib/community/types'
+
+const emptyMetrics: MemberMetrics = { allTime: 0, thisMonth: 0, bySource: {} }
+
+export async function getPublicMemberMetrics(): Promise<MemberMetrics> {
+  noStore()
+  const client = getPublicClient()
+  if (!client) return emptyMetrics
+  const { data, error } = await client.rpc('get_public_community_metrics')
+  if (error || !data?.[0]) return emptyMetrics
+  return {
+    allTime: Number(data[0].all_time ?? 0),
+    thisMonth: Number(data[0].this_month ?? 0),
+    bySource: data[0].by_source ?? {},
+  }
+}
+
+export async function getPublicPeople(options: { featured?: boolean } = {}): Promise<PublicPerson[]> {
+  noStore()
+  const client = getPublicClient()
+  if (!client) return []
+  let query = client.from('people').select('*').eq('publication_status', 'published').order('sort_order').order('display_name')
+  if (options.featured) query = query.eq('featured', true).limit(4)
+  const { data, error } = await query
+  return error ? [] : (data as PublicPerson[])
+}
+
+export async function getPublishedResources(): Promise<PublicResource[]> {
+  noStore()
+  const client = getPublicClient()
+  if (!client) return []
+  const { data, error } = await client.from('resources').select('id,slug,title,summary,public_url,resource_type,language,difficulty,topics,author_publisher,access_notes,featured').eq('publication_status', 'published').order('sort_order').order('published_at', { ascending: false })
+  return error ? [] : (data as PublicResource[])
+}
+
+export async function getPublishedEvents(): Promise<PublicEvent[]> {
+  noStore()
+  const client = getPublicClient()
+  if (!client) return []
+  const { data, error } = await client.from('events').select(`*,${databaseRelation('event_sessions')}(starts_at,ends_at)`).eq('publication_status', 'published').order('created_at', { ascending: false })
+  return error ? [] : (data as PublicEvent[])
+}
+
+export async function getPublishedEvent(slug: string): Promise<PublicEvent | null> {
+  noStore()
+  const client = getPublicClient()
+  if (!client) return null
+  const { data, error } = await client.from('events').select(`*,${databaseRelation('event_sessions')}(starts_at,ends_at)`).eq('publication_status', 'published').eq('slug', slug).maybeSingle()
+  return error ? null : (data as PublicEvent | null)
+}
+
+export async function getPublicSiteSettings(keys: string[]): Promise<Record<string, string>> {
+  noStore()
+  const allowed = new Set(['github_repository_url', 'github_event_url', 'github_campus_url', 'github_technical_url'])
+  const requested = keys.filter((key) => allowed.has(key))
+  if (!requested.length) return {}
+  const client = getSecretClient()
+  if (!client) return {}
+  const { data, error } = await client.from('site_settings').select('setting_key,setting_value').in('setting_key', requested)
+  if (error) return {}
+  return Object.fromEntries((data ?? []).map((item) => [item.setting_key, item.setting_value]))
+}
