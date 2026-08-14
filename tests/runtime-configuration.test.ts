@@ -1,6 +1,8 @@
 import { existsSync, readFileSync } from 'node:fs'
-import { describe, expect, it } from 'vitest'
-import { isSupabasePublishableKey, isSupabaseSecretKey } from '@/lib/env'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { isDirectAdminLoginEnabled, isSupabasePublishableKey, isSupabaseSecretKey } from '@/lib/env'
+
+afterEach(() => vi.unstubAllEnvs())
 
 describe('runtime configuration', () => {
   it('accepts current Supabase keys and rejects legacy JWT keys', () => {
@@ -61,5 +63,18 @@ describe('runtime configuration', () => {
     expect(privacy).toContain('IP address')
     expect(privacy).toContain('within seven days')
     expect(migration).toContain("identifier_type in ('ip','email_hash')")
+  })
+
+  it('allows direct admin login only in development when Resend is absent', () => {
+    vi.stubEnv('NODE_ENV', 'development')
+    vi.stubEnv('RESEND_API_KEY', '')
+    expect(isDirectAdminLoginEnabled()).toBe(true)
+
+    vi.stubEnv('RESEND_API_KEY', 're_test')
+    expect(isDirectAdminLoginEnabled()).toBe(false)
+
+    vi.stubEnv('NODE_ENV', 'production')
+    vi.stubEnv('RESEND_API_KEY', '')
+    expect(isDirectAdminLoginEnabled()).toBe(false)
   })
 })

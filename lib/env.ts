@@ -36,3 +36,7 @@ export function adminReadiness() {
 export function adminEmails() {
   return new Set((process.env.ADMIN_EMAILS ?? '').split(',').map((email) => email.trim().toLowerCase()).filter(Boolean))
 }
+
+export function isDirectAdminLoginEnabled() {
+  return process.env.NODE_ENV === 'development' && !process.env.RESEND_API_KEY?.trim()
+}
