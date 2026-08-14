@@ -1,5 +1,6 @@
-import { reviewResourceSubmission } from '@/app/admin/actions'
 import { AdminAgentReviewControl } from '@/components/admin-agent-review-control'
+import { AdminForm } from '@/components/admin-form'
+import { AdminSubmitButton } from '@/components/admin-submit-button'
 import { requireAdmin } from '@/lib/admin/auth'
 
 export const maxDuration = 120
@@ -14,77 +15,50 @@ export default async function ResourceReviewPage() {
 
   return (
     <main className="admin-main">
-      <header className="admin-heading">
-        <div>
-          <p className="eyebrow">Resource Review</p>
-          <h1>Public-link submissions</h1>
-          <p>
-            Submissions wait for an administrator to start Agent review. The Agent classifies only submitted descriptions and never opens URLs; administrators verify content, free access, attribution, and copyright before approval.
-          </p>
-        </div>
-      </header>
-      <div className="admin-table-wrap">
-        <table className="admin-table">
-          <thead>
-            <tr><th>Submission</th><th>Review evidence</th><th>Agent review</th><th>Decision</th></tr>
-          </thead>
-          <tbody>
-            {submissions?.map((submission) => {
-              const job = jobByRecord.get(submission.id)
-              const canStartAgent = Boolean(
-                job
-                && ['pending', 'retry', 'failed'].includes(job.status)
-                && ['pending', 'in_review'].includes(submission.status),
-              )
-
-              return (
-                <tr key={submission.id}>
-                  <td>
-                    <strong>{submission.title}</strong><br />
-                    <a href={submission.public_url} target="_blank" rel="noreferrer">Open URL for human review ↗</a><br />
-                    <small>{submission.format} · {submission.language}</small>
-                    <p>Factual author/publisher: {submission.author_publisher}</p>
-                  </td>
-                  <td>
+      <header className="admin-heading"><div><p className="eyebrow">Publishing</p><h1>Review</h1><p>Evaluate public learning-resource submissions before they enter Learn.</p></div></header>
+      <aside className="admin-note" style={{ marginBottom: '1rem' }}>Open every URL yourself. The Agent classifies the submitted description but does not inspect the external content.</aside>
+      {submissions?.length ? (
+        <div className="admin-record-list">
+          {submissions.map((submission) => {
+            const job = jobByRecord.get(submission.id)
+            const canStartAgent = Boolean(job && ['pending', 'retry', 'failed'].includes(job.status) && ['pending', 'in_review'].includes(submission.status))
+            return (
+              <details className="admin-record" name="resource-submissions" key={submission.id}>
+                <summary>
+                  <span className="admin-record__title"><strong>{submission.title}</strong><small>{submission.author_publisher}</small></span>
+                  <span className="admin-record__meta">{submission.format} · {submission.language}</span>
+                  <span className="status-badge">{submission.status}</span>
+                  <small className="admin-record__meta">{new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(new Date(submission.created_at))}</small>
+                </summary>
+                <div className="admin-record__body">
+                  <section className="admin-record__section">
+                    <h2>Submission</h2>
+                    <p><a href={submission.public_url} target="_blank" rel="noreferrer">Open URL for review ↗</a></p>
                     <p>{submission.description}</p>
-                    <small>Submitter remains private: {submission.contact_email}</small>
-                  </td>
-                  <td>
-                    {submission.agent_output
-                      ? <pre className="audit-json">{JSON.stringify(submission.agent_output, null, 2)}</pre>
-                      : <p>Not run. Administrator approval is required.</p>}
-                    {job ? (
-                      <>
-                        <p><span className="status-badge">{job.status}</span> · {job.attempts} {job.attempts === 1 ? 'attempt' : 'attempts'}</p>
-                        {job.last_error ? <p>{job.last_error}</p> : null}
-                        {canStartAgent ? <AdminAgentReviewControl jobId={job.id} jobStatus={job.status} reviewKind="resource" /> : null}
-                      </>
-                    ) : null}
-                  </td>
-                  <td>
-                    <p><span className="status-badge">{submission.status}</span></p>
-                    <form className="admin-form" action={reviewResourceSubmission}>
+                    <p><strong>Author or publisher:</strong> {submission.author_publisher}</p>
+                    <p><small>Private submitter: {submission.contact_email}</small></p>
+                  </section>
+                  <section className="admin-record__section">
+                    <h2>Agent review</h2>
+                    {submission.agent_output ? <details className="admin-disclosure"><summary>Inspect structured output</summary><pre className="audit-json">{JSON.stringify(submission.agent_output, null, 2)}</pre></details> : <p>Ready for administrator-approved Agent review.</p>}
+                    {job ? <><p><span className="status-badge">Job {job.status}</span> · {job.attempts} {job.attempts === 1 ? 'attempt' : 'attempts'}</p>{job.last_error ? <p className="admin-action-feedback admin-action-feedback--error">{job.last_error}</p> : null}{canStartAgent ? <AdminAgentReviewControl jobId={job.id} jobStatus={job.status} reviewKind="resource" /> : null}</> : <p>No Agent job is attached.</p>}
+                  </section>
+                  <section className="admin-record__section">
+                    <h2>Decision</h2>
+                    <AdminForm actionId="review_resource_submission" successMessage="Review recorded and submitter notified.">
                       <input type="hidden" name="id" value={submission.id} />
-                      <label>
-                        Outcome
-                        <select name="outcome" defaultValue={submission.status === 'pending' || submission.status === 'in_review' ? 'approved' : submission.status}>
-                          <option value="approved">Approve to Learn draft</option>
-                          <option value="changes_requested">Request changes</option>
-                          <option value="rejected">Reject</option>
-                        </select>
-                      </label>
+                      <label>Outcome<select name="outcome" defaultValue={submission.status === 'pending' || submission.status === 'in_review' ? 'approved' : submission.status}><option value="approved">Approve to Learn draft</option><option value="changes_requested">Request changes</option><option value="rejected">Reject</option></select></label>
                       <label>Review notes<textarea name="review_notes" defaultValue={submission.review_notes ?? ''} /></label>
-                      <button>Record review and email submitter</button>
-                    </form>
+                      <AdminSubmitButton pendingLabel="Recording review…">Record decision and email submitter</AdminSubmitButton>
+                    </AdminForm>
                     {submission.created_resource_id ? <p>Learn draft: <code>{submission.created_resource_id}</code></p> : null}
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-        {!submissions?.length ? <p className="admin-empty">No public resources have been submitted.</p> : null}
-      </div>
+                  </section>
+                </div>
+              </details>
+            )
+          })}
+        </div>
+      ) : <div className="admin-empty"><strong>No submissions to review</strong><span>New public resource submissions will appear here.</span></div>}
     </main>
   )
 }

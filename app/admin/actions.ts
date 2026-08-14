@@ -355,6 +355,83 @@ export async function saveSetting(formData: FormData) {
   revalidatePath('/admin/settings')
 }
 
+export type AdminFormActionId =
+  | 'add_direct_member'
+  | 'add_event_session'
+  | 'create_contributor'
+  | 'create_event'
+  | 'create_person'
+  | 'create_resource'
+  | 'delete_participant_data'
+  | 'designate_core_contributor'
+  | 'invite_applicant'
+  | 'merge_contacts'
+  | 'resend_contributor_verification'
+  | 'restore_application'
+  | 'review_resource_submission'
+  | 'save_setting'
+  | 'set_application_status'
+  | 'set_event_publication'
+  | 'set_person_publication'
+  | 'set_resource_publication'
+  | 'update_event'
+  | 'update_person'
+  | 'update_resource'
+
+export type AdminFormActionState = {
+  status: 'idle' | 'success' | 'error'
+  message: string
+}
+
+const adminFormActions: Record<AdminFormActionId, (formData: FormData) => Promise<unknown>> = {
+  add_direct_member: addDirectMember,
+  add_event_session: addEventSession,
+  create_contributor: createContributor,
+  create_event: createEvent,
+  create_person: createPerson,
+  create_resource: createResource,
+  delete_participant_data: deleteParticipantData,
+  designate_core_contributor: designateCoreContributor,
+  invite_applicant: inviteApplicant,
+  merge_contacts: mergeContacts,
+  resend_contributor_verification: resendContributorVerification,
+  restore_application: restoreApplication,
+  review_resource_submission: reviewResourceSubmission,
+  save_setting: saveSetting,
+  set_application_status: setApplicationStatus,
+  set_event_publication: setEventPublication,
+  set_person_publication: setPersonPublication,
+  set_resource_publication: setResourcePublication,
+  update_event: updateEvent,
+  update_person: updatePerson,
+  update_resource: updateResource,
+}
+
+function safeAdminFormError(error: unknown) {
+  const fallback = 'We could not complete this action. Review the fields and try again.'
+  if (!(error instanceof Error)) return fallback
+  if (process.env.NODE_ENV === 'development') return error.message
+  return /^(A |Alt text|An approval|Application|Choose|Confirm|Contributor|Core Contributors|Could not|Directors|Enter|Event|Images|Invalid|Nominating|Only|Partner|Select|This|Use)/.test(error.message)
+    ? error.message
+    : fallback
+}
+
+export async function runAdminFormAction(
+  _previous: AdminFormActionState,
+  formData: FormData,
+): Promise<AdminFormActionState> {
+  const actionId = value(formData, '_admin_action') as AdminFormActionId
+  const action = adminFormActions[actionId]
+  if (!action) return { status: 'error', message: 'This action is not available. Refresh the page and try again.' }
+  formData.delete('_admin_action')
+  try {
+    await action(formData)
+    return { status: 'success', message: '' }
+  } catch (error) {
+    return { status: 'error', message: safeAdminFormError(error) }
+  }
+}
+
 export type AgentReviewActionState = {
   status: 'idle' | 'success' | 'error'
   message: string

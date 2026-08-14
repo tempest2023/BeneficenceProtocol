@@ -1,4 +1,5 @@
-import { designateCoreContributor } from '@/app/admin/actions'
+import { AdminForm } from '@/components/admin-form'
+import { AdminSubmitButton } from '@/components/admin-submit-button'
 import { requireAdmin } from '@/lib/admin/auth'
 
 export default async function ContributorsPage() {
@@ -9,5 +10,26 @@ export default async function ContributorsPage() {
     service.from('people').select('contributor_id').eq('person_type','core_contributor'),
   ])
   const designated = new Set((corePeople ?? []).map((person) => person.contributor_id))
-  return <main className="admin-main"><header className="admin-heading"><div><p className="eyebrow">Contributors</p><h1>Private participation records</h1><p>Contributor status is private. Core Contributor designation requires only a director nomination and effective date in this release.</p></div></header><div className="admin-grid"><section className="admin-panel"><h2>Designate a Core Contributor</h2><form className="admin-form" action={designateCoreContributor}><label>Existing Contributor<select name="contributor_id" required defaultValue=""><option value="" disabled>Select a Contributor</option>{contributors?.filter((c) => !designated.has(c.id)).map((contributor) => <option value={contributor.id} key={contributor.id}>{contributor.contributor_applications?.name ?? contributor.id}</option>)}</select></label><label>Nominating director<select name="nominating_director_id" required defaultValue=""><option value="" disabled>Select a director</option>{directors?.map((director) => <option value={director.id} key={director.id}>{director.display_name}</option>)}</select></label><label>Effective date<input type="date" name="effective_date" required /></label><label>Public display name<input name="display_name" required /></label><label>Public profile slug<input name="slug" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" required /></label><label>Role<input name="role" defaultValue="Core Contributor" required /></label><button>Record designation as a draft profile</button></form>{!directors?.length ? <p className="form-status" data-kind="error">Create at least one director in People before recording a Core Contributor.</p> : null}</section><section className="admin-panel"><h2>What is intentionally absent</h2><ul><li>No contribution score or threshold</li><li>No formal Board-voting workflow</li><li>No public explanation of nomination mechanics</li><li>No Agent-generated nominations in the first release</li></ul></section></div><div className="admin-table-wrap" style={{ marginTop:'1rem' }}><table className="admin-table"><thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Contributor since</th><th>Core</th></tr></thead><tbody>{contributors?.map((contributor) => <tr key={contributor.id}><td>{contributor.contributor_applications?.name ?? 'Direct contributor'}</td><td>{contributor.contributor_applications?.email ?? '—'}</td><td><span className="status-badge">{contributor.status}</span></td><td>{new Intl.DateTimeFormat('en-US',{ dateStyle:'medium' }).format(new Date(contributor.became_contributor_at))}</td><td>{designated.has(contributor.id) ? 'Yes' : 'No'}</td></tr>)}</tbody></table>{!contributors?.length ? <p className="admin-empty">No Contributors have been recorded.</p> : null}</div></main>
+
+  return (
+    <main className="admin-main">
+      <header className="admin-heading"><div><p className="eyebrow">Community</p><h1>Contributors</h1><p>Manage private Contributor records and director-nominated Core Contributors.</p></div></header>
+      <details className="admin-create-panel" style={{ marginBottom: '1rem' }}>
+        <summary><strong>Designate Core Contributor</strong><span>Director nomination and effective date</span></summary>
+        <AdminForm className="admin-form admin-form--grid" actionId="designate_core_contributor" successMessage="Core Contributor designation recorded.">
+          <label>Existing Contributor<select name="contributor_id" required defaultValue=""><option value="" disabled>Select a Contributor</option>{contributors?.filter((c) => !designated.has(c.id)).map((contributor) => <option value={contributor.id} key={contributor.id}>{contributor.contributor_applications?.name ?? contributor.id}</option>)}</select></label>
+          <label>Nominating director<select name="nominating_director_id" required defaultValue=""><option value="" disabled>Select a director</option>{directors?.map((director) => <option value={director.id} key={director.id}>{director.display_name}</option>)}</select></label>
+          <label>Effective date<input type="date" name="effective_date" required /></label>
+          <label>Public role<input name="role" defaultValue="Core Contributor" required /></label>
+          <label>Public display name<input name="display_name" required /></label>
+          <label>Profile slug<input name="slug" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" required /></label>
+          {!directors?.length ? <p className="form-status admin-field--wide" data-kind="error">Add a director in People before recording a Core Contributor.</p> : null}
+          <AdminSubmitButton pendingLabel="Recording designation…">Create draft profile</AdminSubmitButton>
+        </AdminForm>
+      </details>
+      {contributors?.length ? (
+        <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Contributor</th><th>Status</th><th>Contributor since</th><th>Core</th></tr></thead><tbody>{contributors.map((contributor) => <tr key={contributor.id}><td><strong>{contributor.contributor_applications?.name ?? 'Direct contributor'}</strong><br /><small>{contributor.contributor_applications?.email ?? 'No application email'}</small></td><td><span className="status-badge">{contributor.status}</span></td><td>{new Intl.DateTimeFormat('en-US',{ dateStyle:'medium' }).format(new Date(contributor.became_contributor_at))}</td><td>{designated.has(contributor.id) ? 'Yes' : 'No'}</td></tr>)}</tbody></table></div>
+      ) : <div className="admin-empty"><strong>No Contributors yet</strong><span>Accepted applicants will appear here.</span></div>}
+    </main>
+  )
 }

@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { addDirectMember, deleteParticipantData, mergeContacts } from '@/app/admin/actions'
+import { AdminForm } from '@/components/admin-form'
+import { AdminSubmitButton } from '@/components/admin-submit-button'
 import { requireAdmin } from '@/lib/admin/auth'
 import { INDUSTRIES } from '@/lib/community/constants'
 import { sanitizePostgrestSearch } from '@/lib/security'
@@ -12,9 +13,53 @@ export default async function ParticipantsPage({ searchParams }: { searchParams:
   const location = filters.location ? sanitizePostgrestSearch(filters.location) : ''
   if (location) query = query.or(`country.ilike.%${location}%,city_region.ilike.%${location}%,us_state.ilike.%${location}%`)
   const { data: participants } = await query
-  return <main className="admin-main"><header className="admin-heading"><div><p className="eyebrow">Participants</p><h1>Contacts and identities</h1><p>Filter subscriptions, merge a GitHub-only identity into an existing contact, or export the current filtered record safely.</p></div><Link className="admin-button" href={`/api/admin/participants/export?industry=${encodeURIComponent(filters.industry ?? '')}&location=${encodeURIComponent(filters.location ?? '')}`}>Export secure CSV</Link></header>
-    <div className="admin-grid"><section className="admin-panel"><h2>Filter</h2><form className="admin-form" method="get"><label>Industry<select name="industry" defaultValue={filters.industry ?? ''}><option value="">All industries</option>{INDUSTRIES.map((industry) => <option key={industry}>{industry}</option>)}</select></label><label>Country, state, city, or region<input name="location" defaultValue={filters.location ?? ''} /></label><button type="submit">Apply filters</button></form></section><section className="admin-panel"><h2>Add an all-time member</h2><form className="admin-form" action={addDirectMember}><label>Identity type<select name="identity_kind"><option value="github">GitHub username</option><option value="email">Email</option></select></label><label>Identity<input name="identity_value" required /></label><label>Source<select name="source"><option value="github_contributor">Direct GitHub contributor</option><option value="director">Director</option><option value="core_contributor">Core Contributor</option><option value="manual">Manual</option></select></label><button>Add or match contact</button></form></section></div>
-    <section className="admin-panel" style={{ marginTop:'1rem' }}><h2>Merge contacts</h2><p>Use the record to merge a GitHub-only contact into the person’s email contact. The historical count event remains, so the all-time total never decreases.</p><form className="admin-form" action={mergeContacts}><label>Source contact UUID<input name="source_contact_id" required /></label><label>Target contact UUID<input name="target_contact_id" required /></label><button>Merge identity and records</button></form></section>
-    <div className="admin-table-wrap" style={{ marginTop:'1rem' }}><table className="admin-table"><thead><tr><th>Name / email</th><th>Industry</th><th>Location</th><th>Status</th><th>Contact ID</th><th>Action</th></tr></thead><tbody>{participants?.map((participant) => <tr key={participant.id}><td>{participant.name || '—'}<br /><small>{participant.email}</small></td><td>{participant.industry}{participant.industry_other ? ` — ${participant.industry_other}` : ''}</td><td>{[participant.city_region,participant.us_state,participant.country].filter(Boolean).join(', ')}</td><td><span className="status-badge">{participant.subscription_status}</span></td><td><code>{participant.contact_id}</code></td><td><form className="admin-form" action={deleteParticipantData}><input type="hidden" name="id" value={participant.id} /><label><span><input type="checkbox" name="confirm_delete" required /> Confirm irreversible personal-data deletion; the anonymous count remains.</span></label><button className="admin-button admin-button--quiet">Unsubscribe &amp; delete personal data</button></form></td></tr>)}</tbody></table>{!participants?.length ? <p className="admin-empty">No participant records match these filters.</p> : null}</div>
-  </main>
+  const exportHref = `/api/admin/participants/export?industry=${encodeURIComponent(filters.industry ?? '')}&location=${encodeURIComponent(filters.location ?? '')}`
+
+  return (
+    <main className="admin-main">
+      <header className="admin-heading"><div><p className="eyebrow">Community</p><h1>Participants</h1><p>Find contacts, manage subscriptions, and reconcile identities.</p></div></header>
+      <div className="admin-toolbar">
+        <form className="admin-form admin-toolbar__form" method="get">
+          <label>Industry<select name="industry" defaultValue={filters.industry ?? ''}><option value="">All industries</option>{INDUSTRIES.map((industry) => <option key={industry}>{industry}</option>)}</select></label>
+          <label>Location<input name="location" defaultValue={filters.location ?? ''} placeholder="Country, state, city, or region" /></label>
+          <AdminSubmitButton pendingLabel="Filtering…">Apply filters</AdminSubmitButton>
+        </form>
+        <Link className="admin-button admin-button--quiet" href={exportHref}>Export CSV</Link>
+      </div>
+      <div className="admin-grid" style={{ marginBottom: '1rem' }}>
+        <details className="admin-create-panel">
+          <summary><strong>Add member</strong><span>GitHub, director, or manual source</span></summary>
+          <AdminForm className="admin-form admin-form--grid" actionId="add_direct_member" successMessage="Member record added.">
+            <label>Identity type<select name="identity_kind"><option value="github">GitHub username</option><option value="email">Email</option></select></label>
+            <label>Source<select name="source"><option value="github_contributor">Direct GitHub contributor</option><option value="director">Director</option><option value="core_contributor">Core Contributor</option><option value="manual">Manual</option></select></label>
+            <label className="admin-field--wide">Email or GitHub username<input name="identity_value" required /></label>
+            <AdminSubmitButton pendingLabel="Adding member…">Add or match member</AdminSubmitButton>
+          </AdminForm>
+        </details>
+        <details className="admin-create-panel">
+          <summary><strong>Merge contacts</strong><span>Move one identity into another</span></summary>
+          <AdminForm className="admin-form admin-form--grid" actionId="merge_contacts" successMessage="Contacts merged.">
+            <label>Source contact ID<input name="source_contact_id" required /></label>
+            <label>Target contact ID<input name="target_contact_id" required /></label>
+            <p className="admin-note admin-field--wide">The source identity moves to the target contact. Historical count events remain unchanged.</p>
+            <AdminSubmitButton pendingLabel="Merging contacts…">Merge contacts</AdminSubmitButton>
+          </AdminForm>
+        </details>
+      </div>
+      {participants?.length ? (
+        <div className="admin-table-wrap">
+          <table className="admin-table"><thead><tr><th>Participant</th><th>Industry</th><th>Location</th><th>Status</th><th>Contact ID</th><th>Privacy</th></tr></thead>
+            <tbody>{participants.map((participant) => <tr key={participant.id}>
+              <td><strong>{participant.name || 'Unnamed'}</strong><br /><small>{participant.email}</small></td>
+              <td>{participant.industry}{participant.industry_other ? ` — ${participant.industry_other}` : ''}</td>
+              <td>{[participant.city_region,participant.us_state,participant.country].filter(Boolean).join(', ')}</td>
+              <td><span className="status-badge">{participant.subscription_status}</span></td>
+              <td><code>{participant.contact_id}</code></td>
+              <td><details className="admin-disclosure"><summary>Delete data</summary><div className="admin-disclosure__body"><AdminForm actionId="delete_participant_data" successMessage="Personal data deleted."><input type="hidden" name="id" value={participant.id} /><label className="admin-check"><input type="checkbox" name="confirm_delete" required /> Confirm permanent deletion. The anonymous count remains.</label><AdminSubmitButton className="admin-button admin-button--quiet" pendingLabel="Deleting…">Unsubscribe and delete</AdminSubmitButton></AdminForm></div></details></td>
+            </tr>)}</tbody>
+          </table>
+        </div>
+      ) : <div className="admin-empty"><strong>No matching participants</strong><span>Adjust the filters or add a member above.</span></div>}
+    </main>
+  )
 }
