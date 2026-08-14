@@ -815,6 +815,34 @@
   border-top: 1px solid #c9c1b5;
 }
 
+.admin-settings-section + .admin-settings-section {
+  margin-top: 2rem;
+}
+
+.admin-settings-section > header {
+  margin-bottom: .8rem;
+}
+
+.admin-settings-section > header h2 {
+  margin: .15rem 0 0;
+  font: 500 1.55rem var(--font-display);
+}
+
+.admin-settings-section > header > p:last-child:not(.eyebrow) {
+  margin: .3rem 0 0;
+  color: #6b6258;
+  font-size: .78rem;
+}
+
+.admin-agent-settings {
+  grid-template-columns: minmax(0, 1.35fr) minmax(13rem, .65fr) auto;
+  gap: 1rem;
+  align-items: end;
+  padding: .85rem;
+  border: 1px solid #cec6ba;
+  background: #fffaf2;
+}
+
 .admin-setting-row {
   display: grid;
   grid-template-columns: minmax(12rem, .55fr) minmax(18rem, 1.45fr) auto;
@@ -936,6 +964,7 @@
   .admin-setting-row { grid-template-columns: 1fr auto; }
   .admin-setting-row label { grid-column: 1 / -1; grid-template-columns: 1fr; gap: .35rem; }
   .admin-setting-row button { grid-column: 1; }
+  .admin-agent-settings { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 38rem) {

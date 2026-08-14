@@ -23,14 +23,26 @@ describe('runtime configuration', () => {
     expect(actions).not.toContain('communityFormsOperational')
   })
 
-  it('keeps operational URLs in Dashboard settings rather than environment variables', () => {
+  it('keeps operational and Agent choices in Dashboard settings rather than environment variables', () => {
     const example = readFileSync('.env.example', 'utf8')
     const adminSettings = readFileSync('app/admin/(dashboard)/settings/page.tsx', 'utf8')
+    const email = readFileSync('lib/email.ts', 'utf8')
+    const privacy = readFileSync('app/(site)/privacy/page.tsx', 'utf8')
+    const conduct = readFileSync('app/(site)/community/code-of-conduct/page.tsx', 'utf8')
 
     expect(example).not.toContain('SCHEDULING_URL')
     expect(example).not.toContain('GITHUB_REPOSITORY_URL')
+    expect(example).not.toContain('MONITORED_CONTACT_EMAIL')
+    expect(example).not.toContain('OPENAI_MODEL')
     expect(adminSettings).toContain('scheduling_url')
     expect(adminSettings).toContain('github_repository_url')
+    expect(adminSettings).toContain('email_identity')
+    expect(adminSettings).toContain('openai_model')
+    expect(adminSettings).toContain('openai_reasoning_effort')
+    expect(email).toContain(".eq('setting_key', 'email_identity')")
+    expect(email).not.toContain('process.env.MONITORED_CONTACT_EMAIL')
+    expect(privacy).toContain("getPublicSiteSettings(['email_identity'])")
+    expect(conduct).toContain("getPublicSiteSettings(['email_identity'])")
   })
 
   it('uses only current Supabase publishable and secret environment variables', () => {
