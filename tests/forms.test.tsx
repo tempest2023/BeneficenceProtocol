@@ -56,7 +56,7 @@ describe('public community forms', () => {
     expect(dialog).toHaveAttribute('data-kind', 'success')
     expect(screen.getByText(dialogKicker)).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: dialogTitle })).toBeInTheDocument()
-    expect(dialog.querySelector('.submission-dialog__art img')).toHaveAttribute('src', '/images/submission-threshold.png')
+    expect(dialog.querySelector('.submission-dialog__art img')).toHaveAttribute('src', '/images/submission-sf-distillation-zine.png')
     expect(dialog.querySelector('.submission-dialog__art img')).toHaveAttribute('alt', '')
     fireEvent.click(screen.getByRole('button', { name: 'Done' }))
     await waitFor(() => expect(dialog).not.toHaveAttribute('open'))

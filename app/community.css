@@ -734,9 +734,7 @@
 
 .submission-dialog__art {
   display: grid;
-  place-items: center;
   margin: 0;
-  padding: clamp(.9rem, 2vw, 1.35rem);
   overflow: hidden;
   background: var(--paper-deep);
   border-right: 1px solid var(--line);
@@ -745,7 +743,9 @@
 .submission-dialog__art img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .submission-dialog__content {
@@ -957,14 +957,15 @@
   }
 
   .submission-dialog__art {
-    padding: .75rem;
+    height: clamp(8.5rem, 42vw, 10rem);
     border-right: 0;
     border-bottom: 1px solid var(--line);
   }
 
   .submission-dialog__art img {
-    max-height: 13rem;
-    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .submission-dialog__content {

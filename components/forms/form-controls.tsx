@@ -45,7 +45,7 @@ export function FormStatus({ state }: { state: ActionState }) {
           <div className="submission-dialog__success-layout">
             <figure className="submission-dialog__art" aria-hidden="true">
               <Image
-                src="/images/submission-threshold.png"
+                src="/images/submission-sf-distillation-zine.png"
                 alt=""
                 width={1619}
                 height={971}
