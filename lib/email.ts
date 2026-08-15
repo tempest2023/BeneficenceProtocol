@@ -1,6 +1,7 @@
 import 'server-only'
 import { Resend } from 'resend'
-import { getSecretClient } from '@/lib/supabase/secret'
+import { getSecretClient, requireSecretClient } from '@/lib/supabase/secret'
+import { isPlausibleEmail } from '@/lib/security'
 import {
   applicationReceivedTemplate,
   automaticRejectionTemplate,
@@ -89,7 +90,11 @@ export async function sendConversationInvitation(email: string, name: string, sc
 }
 
 export async function sendAutomaticRejection(email: string, name: string, applicationId: string) {
-  const monitored = process.env.MONITORED_CONTACT_EMAIL ?? 'contact@beneficence.foundation'
+  const client = requireSecretClient()
+  const { data, error } = await client.from('site_settings').select('setting_value').eq('setting_key', 'email_identity').maybeSingle()
+  if (error) throw error
+  const monitored = String(data?.setting_value ?? '').trim().toLowerCase()
+  if (!isPlausibleEmail(monitored)) throw new Error('A monitored contact email is required in Settings.')
   return sendTransactionalEmail({
     to: email,
     subject: 'Update on your Beneficence Contributor application',

@@ -52,7 +52,7 @@ The migrations intentionally grant no anonymous form-table inserts. Validated Se
 
 Forms do not use a launch flag and are enabled by default. Supabase is required to accept submissions and to use the administrator dashboard. Resend is required for verification and transactional email, while OpenAI is required only when an administrator explicitly starts an Agent review.
 
-The scheduling URL and GitHub URLs are managed in `/admin/settings`, not environment variables. Supabase Cron runs retention maintenance inside the database, so no public cron route or cron secret is required. Community launch does not activate donations or fundraising.
+The scheduling URL, GitHub URLs, monitored public contact email, OpenAI model, and reasoning effort are managed in `/admin/settings`, not environment variables. The OpenAI API key remains a server-only environment secret. Supabase Cron runs retention maintenance inside the database, so no public cron route or cron secret is required. Community launch does not activate donations or fundraising.
 
 ## Commands
 
@@ -67,7 +67,7 @@ The scheduling URL and GitHub URLs are managed in `/admin/settings`, not environ
 
 ## Agent and privacy boundary
 
-Contributor processing sends only reasons, contribution interests, related “Other” text, general location, and optional industry to OpenAI. It never sends email or professional links and never crawls them. Requests use `store: false`, a hashed `safety_identifier`, low reasoning, and a strict Zod output schema. Meetings are not recorded or transcribed and are never analyzed by the Agent.
+Contributor processing sends only reasons, contribution interests, related “Other” text, general location, and optional industry to OpenAI. It never sends email or professional links and never crawls them. Requests use `store: false`, a hashed `safety_identifier`, the reasoning effort selected in `/admin/settings`, and a strict Zod output schema. Meetings are not recorded or transcribed and are never analyzed by the Agent.
 
 Automatic rejection is limited to exact-evidence, high-confidence severe conduct. Administrators can restore the application, which disables the same automated closing path. OpenAI failure cannot roll back a registration, verification, count event, or manually reviewable record.
 

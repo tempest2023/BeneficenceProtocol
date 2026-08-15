@@ -68,6 +68,8 @@ export type ActionState = {
   message?: string
   fieldErrors?: Record<string, string[]>
   presentation?: 'inline' | 'dialog'
+  dialogKicker?: string
+  dialogTitle?: string
 }
 
 export const initialActionState: ActionState = { status: 'idle' }

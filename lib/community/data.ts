@@ -56,7 +56,7 @@ export async function getPublishedEvent(slug: string): Promise<PublicEvent | nul
 
 export async function getPublicSiteSettings(keys: string[]): Promise<Record<string, string>> {
   noStore()
-  const allowed = new Set(['github_repository_url', 'github_event_url', 'github_campus_url', 'github_technical_url'])
+  const allowed = new Set(['github_repository_url', 'github_event_url', 'github_campus_url', 'github_technical_url', 'email_identity'])
   const requested = keys.filter((key) => allowed.has(key))
   if (!requested.length) return {}
   const client = getSecretClient()

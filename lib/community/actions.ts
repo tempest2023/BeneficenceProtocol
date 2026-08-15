@@ -54,7 +54,10 @@ export async function registerParticipant(_previous: ActionState, formData: Form
     if (error) return submissionError(error)
     const participantId = created?.[0]?.participant_id as string | undefined
     after(async () => { try { await sendParticipantConfirmation(data.email, data.name, participantId) } catch { /* administrator can inspect provider configuration */ } })
-    return { status: 'success', message: 'You are registered. We will use your information only for community communication and administration.' }
+    return {
+      status: 'success', presentation: 'dialog', dialogKicker: 'Registration complete', dialogTitle: 'You’re registered.',
+      message: 'We will use your information only for community communication and administration.',
+    }
   } catch (error) {
     return submissionError(error as Error)
   }
@@ -88,7 +91,10 @@ export async function submitContributorApplication(_previous: ActionState, formD
     if (error || !applicationId) return submissionError(error ?? new Error('No application was returned.'))
     const verifyUrl = `${publicEnv.siteUrl}/api/contributor/verify?token=${encodeURIComponent(token)}`
     after(async () => { try { await sendContributorVerification(data.email, data.name, verifyUrl, applicationId) } catch { /* administrator can resend */ } })
-    return { status: 'success', message: 'Your application was saved and counted. Check your email within 24 hours to verify it and begin review.' }
+    return {
+      status: 'success', presentation: 'dialog', dialogKicker: 'Application received', dialogTitle: 'Application submitted.',
+      message: 'Your application was saved and counted. Check your email within 24 hours to verify it and begin review.',
+    }
   } catch (error) {
     return submissionError(error as Error)
   }
@@ -113,7 +119,10 @@ export async function submitResource(_previous: ActionState, formData: FormData)
       p_copyright_confirmation: true, p_privacy_consent: true,
     })
     if (error) return submissionError(error)
-    return { status: 'success', message: 'Thank you. Your resource is queued for administrative review. An administrator decides whether to run an Agent review; submission does not create Contributor status.' }
+    return {
+      status: 'success', presentation: 'dialog', dialogKicker: 'Resource received', dialogTitle: 'Resource submitted.',
+      message: 'Your resource is queued for administrative review. An administrator decides whether to run an Agent review; submission does not create Contributor status.',
+    }
   } catch (error) {
     return submissionError(error as Error)
   }

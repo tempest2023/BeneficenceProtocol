@@ -11,7 +11,13 @@ export async function GET(request: Request) {
   const { data, error } = await client.rpc('verify_contributor_application', { p_token_hash: hashToken(token) })
   const verified = data?.[0]
   if (error || !verified) return NextResponse.redirect(`${publicEnv.siteUrl}/community/contribute/apply/verified?status=invalid`)
-  after(async () => { await sendApplicationReceived(verified.email, verified.name, verified.application_id) })
+  after(async () => {
+    try {
+      await sendApplicationReceived(verified.email, verified.name, verified.application_id)
+    } catch {
+      // Verification remains durable; an administrator can recover email delivery separately.
+    }
+  })
   return NextResponse.redirect(`${publicEnv.siteUrl}/community/contribute/apply/verified?status=success`)
 }
 

@@ -1,12 +1,12 @@
 import 'server-only'
 import OpenAI from 'openai'
 import { zodTextFormat } from 'openai/helpers/zod'
+import { getAgentConfiguration } from '@/lib/agent/config'
 import { applicationAgentSchema, qualifiesForAutomaticRejection, resourceAgentSchema } from '@/lib/agent/schemas'
 import { requireSecretClient } from '@/lib/supabase/secret'
 import { safetyIdentifier } from '@/lib/security'
 import { sendAutomaticRejection } from '@/lib/email'
 
-const model = process.env.OPENAI_MODEL ?? 'gpt-5.6'
 const promptVersion = 'community-review-v1'
 
 function openaiClient() {
@@ -25,6 +25,7 @@ function applicationText(application: Record<string, unknown>) {
 
 export async function analyzeApplication(application: Record<string, unknown>) {
   const openai = openaiClient()
+  const { model, reasoningEffort } = await getAgentConfiguration()
   const source = applicationText(application)
   const moderation = await openai.moderations.create({ model: 'omni-moderation-latest', input: source })
   const moderationResult = moderation.results[0]
@@ -39,7 +40,7 @@ export async function analyzeApplication(application: Record<string, unknown>) {
   }
   const response = await openai.responses.parse({
     model,
-    reasoning: { effort: 'low' },
+    reasoning: { effort: reasoningEffort },
     store: false,
     safety_identifier: safetyIdentifier(String(application.contact_id)),
     instructions: `You support a low-barrier nonprofit Contributor review. Return only the requested structure. Welcome different industries, education, nationality, political or cultural backgrounds, technical seniority, public influence, limited English fluency, criticism, disagreement, and blunt or awkward phrasing. These must never cause rejection. A lack of an immediate project is not grounds for rejection. Recommend auto_reject only for an explicit threat, severe targeted hate or harassment, explicit fraud or impersonation, or explicit malicious disruption or sabotage intent. For any auto_reject recommendation, include exact verbatim excerpts from the supplied application and use confidence >= 0.95 only when unambiguous. Otherwise use manual_review. Do not infer facts, identity, or intent beyond the supplied fields. Draft concise, warm emails, but do not claim acceptance.`,
@@ -47,14 +48,15 @@ export async function analyzeApplication(application: Record<string, unknown>) {
     text: { format: zodTextFormat(applicationAgentSchema, 'application_review') },
   })
   if (!response.output_parsed) throw new Error('The application Agent returned no structured output.')
-  return { output: response.output_parsed, moderation: moderationResult, source, responseId: response.id, responseModel: response.model }
+  return { output: response.output_parsed, moderation: moderationResult, source, responseId: response.id, responseModel: response.model, reasoningEffort }
 }
 
 export async function analyzeResource(submission: Record<string, unknown>, exactDuplicate: boolean) {
   const openai = openaiClient()
+  const { model, reasoningEffort } = await getAgentConfiguration()
   const response = await openai.responses.parse({
     model,
-    reasoning: { effort: 'low' },
+    reasoning: { effort: reasoningEffort },
     store: false,
     safety_identifier: safetyIdentifier(String(submission.contact_id)),
     instructions: `Assist an administrator reviewing a submitted public learning resource. Return only the requested structure. Assess only the submitter's description; do not visit, crawl, fetch, summarize, or make claims about the external URL. Treat exact_url_duplicate_warning as the supplied database fact. Recommend accept only when the description indicates a free, publicly accessible resource focused on AI Agent learning or technical discussion. Administrators remain responsible for opening the URL, verifying the content, access, attribution, and copyright.`,
@@ -67,7 +69,7 @@ export async function analyzeResource(submission: Record<string, unknown>, exact
     text: { format: zodTextFormat(resourceAgentSchema, 'resource_review') },
   })
   if (!response.output_parsed) throw new Error('The resource Agent returned no structured output.')
-  return { output: response.output_parsed, responseId: response.id, responseModel: response.model }
+  return { output: response.output_parsed, responseId: response.id, responseModel: response.model, reasoningEffort }
 }
 
 async function processApplication(recordId: string, jobId: string) {
@@ -95,7 +97,7 @@ async function processApplication(recordId: string, jobId: string) {
   const { error: auditError } = await client.from('admin_audit_log').insert({
     actor_type: 'agent', actor_id: jobId, action: autoReject ? 'application.auto_rejected' : 'application.review_prepared',
     entity_type: 'contributor_application', entity_id: recordId,
-    details: { agent_run_id: savedRun.id, decision: nextStatus, prompt_version: promptVersion, confidence: result.output.confidence },
+    details: { agent_run_id: savedRun.id, decision: nextStatus, prompt_version: promptVersion, model: result.responseModel, reasoning_effort: result.reasoningEffort, confidence: result.output.confidence },
   })
   if (auditError) throw auditError
   if (autoReject) {
@@ -123,7 +125,7 @@ async function processResource(recordId: string, jobId: string) {
   if (updateError) throw updateError
   const { error: auditError } = await client.from('admin_audit_log').insert({
     actor_type: 'agent', actor_id: jobId, action: 'resource.review_prepared', entity_type: 'resource_submission', entity_id: recordId,
-    details: { agent_run_id: savedRun.id, recommendation: result.output.recommendation, prompt_version: promptVersion },
+    details: { agent_run_id: savedRun.id, recommendation: result.output.recommendation, prompt_version: promptVersion, model: result.responseModel, reasoning_effort: result.reasoningEffort },
   })
   if (auditError) throw auditError
 }

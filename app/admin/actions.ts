@@ -10,6 +10,7 @@ import { databaseRelation } from '@/lib/supabase/database-names'
 import { sendConversationInvitation, sendResourceUpdate } from '@/lib/email'
 import { sendContributorVerification } from '@/lib/email'
 import { isPublicHttpUrl } from '@/lib/community/schemas'
+import { isAgentModel, isAgentReasoningEffort } from '@/lib/agent/options'
 import { publicEnv } from '@/lib/env'
 import { createVerificationToken, isGithubUsername, isPlausibleEmail, normalizeEmail, normalizeGithubUsername } from '@/lib/security'
 
@@ -348,11 +349,31 @@ export async function addEventSession(formData: FormData) {
 }
 
 export async function saveSetting(formData: FormData) {
-  const { user, service } = await requireAdmin(); const key = value(formData, 'setting_key'); const settingValue = value(formData, 'setting_value')
+  const { user, service } = await requireAdmin(); const key = value(formData, 'setting_key'); const rawSettingValue = value(formData, 'setting_value')
   if (!['scheduling_url','github_repository_url','github_event_url','github_campus_url','github_technical_url','email_identity'].includes(key)) throw new Error('Unknown setting.')
+  const settingValue = key === 'email_identity' ? normalizeEmail(rawSettingValue) : rawSettingValue
   if (key.includes('url')) assertExternalUrl(settingValue, true)
+  if (key === 'email_identity' && !isPlausibleEmail(settingValue)) throw new Error('Enter a valid monitored contact email.')
   const { error } = await service.from('site_settings').upsert({ setting_key: key, setting_value: settingValue, updated_by: user.id, updated_at: new Date().toISOString() }); if (error) throw error
   await audit('setting.updated', 'site_setting', null, { key })
+  revalidatePath('/admin/settings')
+  if (key === 'email_identity') { revalidatePath('/privacy'); revalidatePath('/community/code-of-conduct') }
+}
+
+export async function saveAgentSettings(formData: FormData) {
+  const { user, service } = await requireAdmin()
+  const model = value(formData, 'openai_model')
+  const reasoningEffort = value(formData, 'openai_reasoning_effort')
+  if (!isAgentModel(model)) throw new Error('Select a supported GPT-5.6 model.')
+  if (!isAgentReasoningEffort(reasoningEffort)) throw new Error('Select a supported reasoning effort.')
+
+  const updatedAt = new Date().toISOString()
+  const { error } = await service.from('site_settings').upsert([
+    { setting_key: 'openai_model', setting_value: model, updated_by: user.id, updated_at: updatedAt },
+    { setting_key: 'openai_reasoning_effort', setting_value: reasoningEffort, updated_by: user.id, updated_at: updatedAt },
+  ])
+  if (error) throw error
+  await audit('agent_configuration.updated', 'site_setting', null, { model, reasoning_effort: reasoningEffort })
   revalidatePath('/admin/settings')
 }
 
@@ -370,6 +391,7 @@ export type AdminFormActionId =
   | 'resend_contributor_verification'
   | 'restore_application'
   | 'review_resource_submission'
+  | 'save_agent_settings'
   | 'save_setting'
   | 'set_application_status'
   | 'set_event_publication'
@@ -398,6 +420,7 @@ const adminFormActions: Record<AdminFormActionId, (formData: FormData) => Promis
   resend_contributor_verification: resendContributorVerification,
   restore_application: restoreApplication,
   review_resource_submission: reviewResourceSubmission,
+  save_agent_settings: saveAgentSettings,
   save_setting: saveSetting,
   set_application_status: setApplicationStatus,
   set_event_publication: setEventPublication,
