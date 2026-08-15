@@ -11,7 +11,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:e2e:data": "node scripts/run-e2e-data.mjs",
+    "test:e2e:all": "npm run test:e2e && npm run test:e2e:data"
   },
   "dependencies": {
     "@supabase/ssr": "latest",

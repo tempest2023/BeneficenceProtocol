@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from 'react'
 import { useFormStatus } from 'react-dom'
+import Image from 'next/image'
 import { COUNTRIES, US_STATES } from '@/lib/community/constants'
 import type { ActionState } from '@/lib/community/types'
 
@@ -28,7 +29,10 @@ export function FormStatus({ state }: { state: ActionState }) {
     statusRef.current?.focus()
   }, [state])
   if (state.status === 'idle') return null
-  if (state.status === 'error' && state.presentation === 'dialog') {
+  if (state.presentation === 'dialog') {
+    const isSuccess = state.status === 'success'
+    const dialogKicker = isSuccess ? (state.dialogKicker ?? 'Submission complete') : 'Submission interrupted'
+    const dialogTitle = isSuccess ? (state.dialogTitle ?? 'Submission received.') : 'We couldn’t submit the form.'
     const closeDialog = () => {
       const dialog = dialogRef.current
       if (!dialog) return
@@ -36,11 +40,33 @@ export function FormStatus({ state }: { state: ActionState }) {
       else dialog.removeAttribute('open')
     }
     return (
-      <dialog ref={dialogRef} className="submission-dialog" aria-labelledby={dialogTitleId} aria-describedby={dialogMessageId}>
-        <p className="article-kicker">Submission interrupted</p>
-        <h2 id={dialogTitleId}>We couldn’t submit the form.</h2>
-        <p id={dialogMessageId}>{state.message}</p>
-        <button className="primary-action" type="button" onClick={closeDialog}>Close and try again</button>
+      <dialog ref={dialogRef} className="submission-dialog" data-kind={state.status} aria-labelledby={dialogTitleId} aria-describedby={dialogMessageId}>
+        {isSuccess ? (
+          <div className="submission-dialog__success-layout">
+            <figure className="submission-dialog__art" aria-hidden="true">
+              <Image
+                src="/images/submission-threshold.png"
+                alt=""
+                width={1619}
+                height={971}
+                sizes="(max-width: 767px) calc(100vw - 3rem), 24rem"
+              />
+            </figure>
+            <div className="submission-dialog__content">
+              <p className="article-kicker">{dialogKicker}</p>
+              <h2 id={dialogTitleId}>{dialogTitle}</h2>
+              <p id={dialogMessageId}>{state.message}</p>
+              <button className="primary-action" type="button" onClick={closeDialog}>Done</button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <p className="article-kicker">{dialogKicker}</p>
+            <h2 id={dialogTitleId}>{dialogTitle}</h2>
+            <p id={dialogMessageId}>{state.message}</p>
+            <button className="primary-action" type="button" onClick={closeDialog}>Close and try again</button>
+          </>
+        )}
       </dialog>
     )
   }
@@ -54,27 +80,38 @@ export function FormStatus({ state }: { state: ActionState }) {
   )
 }
 
-export function SubmitButton({ children }: { children: React.ReactNode }) {
+export function SubmitButton({ children, pending: pendingOverride }: { children: React.ReactNode; pending?: boolean }) {
   const { pending } = useFormStatus()
-  return <button className="primary-action submit-button" type="submit" disabled={pending} aria-disabled={pending}>{pending ? 'Submitting…' : children}</button>
+  const isPending = pendingOverride ?? pending
+  return <button className="primary-action submit-button" type="submit" disabled={isPending} aria-disabled={isPending}>{isPending ? 'Submitting…' : children}</button>
 }
 
 export function LocationFields({ state }: { state: ActionState }) {
   const [scope, setScope] = useState<'united_states' | 'international'>('united_states')
+  const regionLabelId = useId()
+  const isInternational = scope === 'international'
+  useEffect(() => {
+    if (state.status === 'success') setScope('united_states')
+  }, [state])
   return (
-    <fieldset className="field-group field-group--full">
-      <legend>Region <span aria-hidden="true">*</span></legend>
+    <div className="field-group field-group--full location-group" role="group" aria-labelledby={regionLabelId}>
+      <div className="location-header">
+        <span className="field-label" id={regionLabelId}>Region</span>
+        <button className="location-switch" type="button" role="switch" aria-checked={isInternational} onClick={() => setScope(isInternational ? 'united_states' : 'international')}>
+          <span className="location-switch__track" aria-hidden="true"><span className="location-switch__thumb" /></span>
+          <span>Outside the United States</span>
+        </button>
+      </div>
+      <input type="hidden" name="location_scope" value={scope} />
       <div className="location-grid">
-        <label className="choice"><input type="radio" name="location_scope" value="united_states" checked={scope === 'united_states'} onChange={() => setScope('united_states')} /><span>United States</span></label>
-        <label className="choice"><input type="radio" name="location_scope" value="international" checked={scope === 'international'} onChange={() => setScope('international')} /><span>Outside the United States</span></label>
-        {scope === 'united_states' ? (
-          <label className="field-group"><span className="field-label">State <span aria-hidden="true">*</span></span><select name="us_state" required defaultValue=""><option value="" disabled>Select a state</option>{US_STATES.map(([code, name]) => <option value={code} key={code}>{name}</option>)}</select><FieldError state={state} name="us_state" /></label>
+        {!isInternational ? (
+          <label className="field-group"><span className="field-label">State <span aria-hidden="true">*</span></span><select name="us_state" autoComplete="address-level1" required defaultValue=""><option value="" disabled>Select a state</option>{US_STATES.map(([code, name]) => <option value={code} key={code}>{name}</option>)}</select><FieldError state={state} name="us_state" /></label>
         ) : (
-          <label className="field-group"><span className="field-label">Country <span aria-hidden="true">*</span></span><select name="country" required defaultValue=""><option value="" disabled>Select a country</option>{COUNTRIES.map((country) => <option value={country} key={country}>{country}</option>)}</select><FieldError state={state} name="country" /></label>
+          <label className="field-group"><span className="field-label">Country <span aria-hidden="true">*</span></span><select name="country" autoComplete="country-name" required defaultValue=""><option value="" disabled>Select a country</option>{COUNTRIES.map((country) => <option value={country} key={country}>{country}</option>)}</select><FieldError state={state} name="country" /></label>
         )}
-        <label className="field-group"><span className="field-label">{scope === 'united_states' ? 'City' : 'City or region'} <span aria-hidden="true">*</span></span><input type="text" name="city_region" maxLength={120} autoComplete="address-level2" required aria-describedby="location-hint city_region-error" /><span className="field-hint" id="location-hint">Do not enter a street address.</span><FieldError state={state} name="city_region" /></label>
+        <label className="field-group"><span className="field-label">{isInternational ? 'City or region' : 'City'} <span aria-hidden="true">*</span></span><input type="text" name="city_region" maxLength={120} autoComplete="address-level2" required aria-describedby="city_region-error" /><FieldError state={state} name="city_region" /></label>
       </div>
       <FieldError state={state} name="location_scope" />
-    </fieldset>
+    </div>
   )
 }
