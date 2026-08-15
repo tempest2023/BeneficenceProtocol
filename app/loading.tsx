@@ -1,4 +1,4 @@
-import loadingFerry from '@/src/assets/scenes/system-loading-ferry.webp'
+import loadingFerry from '@/src/assets/scenes/system-loading-ferry-distilled.webp'
 import { SystemPage } from '@/components/system-page'
 
 export default function Loading() {

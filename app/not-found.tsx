@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import notFoundBradbury from '@/src/assets/scenes/system-not-found-bradbury.webp'
+import notFoundBradbury from '@/src/assets/scenes/system-not-found-bradbury-distilled.webp'
 import { Arrow } from '@/components/icons'
 import { SystemPage } from '@/components/system-page'
 

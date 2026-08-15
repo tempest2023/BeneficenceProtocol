@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import errorSixthStreet from '@/src/assets/scenes/system-error-sixth-street.webp'
+import errorSixthStreet from '@/src/assets/scenes/system-error-sixth-street-distilled.webp'
 import { Arrow } from '@/components/icons'
 import { SystemPage } from '@/components/system-page'
 
