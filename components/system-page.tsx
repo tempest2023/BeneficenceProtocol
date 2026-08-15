@@ -1,13 +1,16 @@
 import Image, { type StaticImageData } from 'next/image'
+import Link from 'next/link'
 import type { ReactNode } from 'react'
+import { FoundationMark } from '@/components/icons'
 
 type SystemPageProps = {
-  variant: 'loading' | 'error'
+  variant: 'loading' | 'not-found' | 'error'
   eyebrow: string
   title: ReactNode
   description?: string
   artwork: StaticImageData
   artworkCaption: string
+  artworkHref: string
   children?: ReactNode
   busy?: boolean
   live?: 'polite' | 'assertive'
@@ -20,6 +23,7 @@ export function SystemPage({
   description,
   artwork,
   artworkCaption,
+  artworkHref,
   children,
   busy = false,
   live,
@@ -39,15 +43,24 @@ export function SystemPage({
           src={artwork}
           alt=""
           fill
-          sizes="(min-width: 64rem) 42vw, 100vw"
+          sizes="100vw"
           placeholder="blur"
           loading="eager"
           fetchPriority="high"
         />
-        <figcaption>{artworkCaption}</figcaption>
+        <figcaption>
+          <a href={artworkHref} target="_blank" rel="noreferrer">
+            {artworkCaption}
+          </a>
+        </figcaption>
       </figure>
 
       <div className="system-page__frame page-shell">
+        <Link href="/" className="wordmark system-page__brand" aria-label="Beneficence Protocol Foundation home">
+          <FoundationMark />
+          <span>Beneficence Protocol<small>Foundation</small></span>
+        </Link>
+
         <section className="system-page__content">
           <p className="eyebrow">{eyebrow}</p>
           <h1 id={titleId}>{title}</h1>

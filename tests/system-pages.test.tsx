@@ -16,21 +16,23 @@ import Loading from '@/app/loading'
 import NotFound from '@/app/not-found'
 
 describe('public system pages', () => {
-  it('presents the San Francisco loading artwork as an indeterminate status', () => {
+  it('presents an independent San Francisco loading artwork as an indeterminate status', () => {
     const { container } = render(<Loading />)
 
     expect(screen.getByRole('main')).toHaveAttribute('aria-busy', 'true')
-    expect(screen.getByRole('heading', { name: 'Preparing the public record…' })).toBeInTheDocument()
-    expect(screen.getByRole('status')).toHaveTextContent('Gathering the public view')
-    expect(screen.getByText(/San Francisco \/ Golden Gate Bridge/)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Bringing the next page into view.' })).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent('Loading page')
+    expect(screen.getByText(/San Francisco \/ Ferry Building/)).toBeInTheDocument()
+    expect(container.querySelector('img')).toHaveAttribute('src', expect.stringContaining('system-loading-ferry'))
     expect(container.querySelector('img')).toHaveAttribute('alt', '')
   })
 
-  it('uses the shared Los Angeles composition for a recoverable 404', () => {
-    render(<NotFound />)
+  it('uses a dedicated Los Angeles composition for a recoverable 404', () => {
+    const { container } = render(<NotFound />)
 
-    expect(screen.getByRole('heading', { name: 'This page is outside the public record.' })).toBeInTheDocument()
-    expect(screen.getByText(/Los Angeles \/ Griffith Observatory/)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'We couldn’t find that page.' })).toBeInTheDocument()
+    expect(screen.getByText(/Los Angeles \/ Bradbury Building/)).toBeInTheDocument()
+    expect(container.querySelector('img')).toHaveAttribute('src', expect.stringContaining('system-not-found-bradbury'))
     expect(screen.getByRole('link', { name: /Return home/ })).toHaveAttribute('href', '/')
   })
 
@@ -40,6 +42,8 @@ describe('public system pages', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /Try again/ }))
     expect(retry).toHaveBeenCalledOnce()
+    expect(screen.getByRole('heading', { name: 'This page couldn’t be loaded.' })).toBeInTheDocument()
+    expect(screen.getByText(/Los Angeles \/ Sixth Street Viaduct/)).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Return home' })).toHaveAttribute('href', '/')
   })
 })

@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import losAngeles from '@/src/assets/scenes/los-angeles.webp'
+import errorSixthStreet from '@/src/assets/scenes/system-error-sixth-street.webp'
 import { Arrow } from '@/components/icons'
 import { SystemPage } from '@/components/system-page'
 
@@ -9,11 +9,12 @@ export default function ErrorPage({ retry }: { error: Error & { digest?: string 
   return (
     <SystemPage
       variant="error"
-      eyebrow="Temporary interruption"
-      title={<>The record paused<br />before this page.</>}
-      description="Nothing has been submitted or changed. Try the request again, or return to the home page."
-      artwork={losAngeles}
-      artworkCaption="Los Angeles / Griffith Observatory / Serouj"
+      eyebrow="Something went wrong"
+      title={<>This page couldn’t<br />be loaded.</>}
+      description="Your request was not completed. Try again, or return to the home page."
+      artwork={errorSixthStreet}
+      artworkCaption="Los Angeles / Sixth Street Viaduct / Steve Lyon · CC BY-SA 2.0 · altered"
+      artworkHref="https://commons.wikimedia.org/wiki/File:Sixth_Street_Viaduct_Los_Angeles_River_(9066252968).jpg"
       live="assertive"
     >
       <div className="system-page__actions">

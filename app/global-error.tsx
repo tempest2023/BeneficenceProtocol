@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import losAngeles from '@/src/assets/scenes/los-angeles.webp'
+import errorSixthStreet from '@/src/assets/scenes/system-error-sixth-street.webp'
 import { Arrow } from '@/components/icons'
 import { SystemPage } from '@/components/system-page'
 import '../src/index.css'
@@ -15,10 +15,11 @@ export default function GlobalError({ retry }: { error: Error & { digest?: strin
         <SystemPage
           variant="error"
           eyebrow="System interruption"
-          title={<>The public record<br />is temporarily unavailable.</>}
+          title={<>The site couldn’t<br />be loaded.</>}
           description="The interruption is temporary. Try again, or return to the home page."
-          artwork={losAngeles}
-          artworkCaption="Los Angeles / Griffith Observatory / Serouj"
+          artwork={errorSixthStreet}
+          artworkCaption="Los Angeles / Sixth Street Viaduct / Steve Lyon · CC BY-SA 2.0 · altered"
+          artworkHref="https://commons.wikimedia.org/wiki/File:Sixth_Street_Viaduct_Los_Angeles_River_(9066252968).jpg"
           live="assertive"
         >
           <div className="system-page__actions">
