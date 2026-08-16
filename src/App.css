@@ -1432,9 +1432,8 @@
 
 .system-page__content {
   width: min(100%, 52rem);
-  margin-top: auto;
-  padding-top: clamp(2rem, 8svh, 5rem);
-  padding-bottom: 0.5rem;
+  margin-block: auto;
+  padding-block: clamp(1.25rem, 4svh, 2.5rem);
   animation: system-content-enter 620ms var(--ease-out) 80ms both;
 }
 
@@ -1594,7 +1593,7 @@
 
   .system-page__content {
     width: min(68vw, 60rem);
-    padding: clamp(3rem, 9svh, 6rem) 0 0;
+    padding-block: clamp(1.5rem, 4svh, 3rem);
   }
 
   .system-page__content h1 {
@@ -1608,7 +1607,7 @@
 
 @media (min-width: 64rem) and (max-height: 45rem) {
   .system-page__content {
-    padding-top: 2rem;
+    padding-block: 1rem;
   }
 
   .system-page__content h1 {
