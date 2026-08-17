@@ -13,7 +13,7 @@ test.describe('administration access boundary', () => {
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/)
   })
 
-  test('login exposes readiness without public registration', async ({ page }) => {
+  test('login exposes controlled access without public registration', async ({ page }) => {
     await page.goto('/admin/login')
     await expect(page.getByText(/There is no public administrator registration|Development mode/)).toBeVisible()
 
@@ -25,7 +25,7 @@ test.describe('administration access boundary', () => {
       await page.getByRole('button', { name: /Sign in|Send magic link/ }).click()
       await expect(page.locator('.form-status[role="alert"]')).toContainText('Enter a valid administrator email.')
     } else {
-      await expect(page.getByText('Production setup is incomplete.')).toBeVisible()
+      await expect(page.getByText('Administrative access is environment-controlled.')).toBeVisible()
     }
   })
 })

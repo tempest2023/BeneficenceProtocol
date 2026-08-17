@@ -23,7 +23,8 @@ test.describe('institutional site', () => {
     await expect(page.getByRole('link', { name: 'Read our mission' })).toHaveAttribute('href', '/mission')
     await expect(page.getByRole('heading', { name: /A public network of/ })).toBeVisible()
     await expect(page.getByRole('link', { name: 'Enter the community' })).toHaveAttribute('href', '/community')
-    await expect(page.getByText('Donation intake is not active.')).toBeVisible()
+    await expect(page.getByText('Registered. Operational. Accountable.')).toBeVisible()
+    await expect(page.getByText(/not active|not ready|pre-launch|in formation/i)).toHaveCount(0)
   })
 
   test('mobile navigation opens, closes, and preserves route links', async ({ page }) => {
